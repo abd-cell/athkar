@@ -1,0 +1,76 @@
+name: athkar_app
+description: أذكاري — أذكار ومواقيت صلاة وقبلة، يعمل دون إنترنت.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # ── Network ──
+  # `http` only. The app talks to one API through one gateway, and a heavier
+  # client would buy interceptors this codebase already has in ApiClient.
+  http: ^1.2.2
+
+  # ── Local storage ──
+  shared_preferences: ^2.3.2
+  path_provider: ^2.1.4
+  # The Qur'an package is a prepared SQLite file the app downloads and queries
+  # directly. Nothing else in the app uses a database — the adhkar catalogue is
+  # small enough to live in preferences as JSON.
+  sqflite: ^2.4.0
+
+  # ── Prayer times, computed on the device ──
+  # The whole reason the server never sees a coordinate. See core/prayer_times.dart.
+  adhan: ^2.0.0+1
+  hijri: ^3.0.0
+
+  # ── Notifications ──
+  # Local for anything anchored to a prayer time; FCM for what the admin sends.
+  flutter_local_notifications: ^22.3.0
+  timezone: ^0.11.0
+  flutter_timezone: ^4.1.1
+  firebase_core: ^4.14.0
+  firebase_messaging: ^16.6.0
+
+  # ── Sensors and location, both optional at runtime ──
+  geolocator: ^14.0.3
+  flutter_compass: ^0.8.1
+
+  # ── Presentation ──
+  google_fonts: ^8.2.1
+  intl: ^0.20.3
+  share_plus: ^13.3.0
+  url_launcher: ^6.3.2
+  # Lets the reader put one of their own photographs behind a widget. The
+  # system photo picker, so no gallery permission is asked for and no album is
+  # read — the app receives one file the reader chose and nothing else.
+  image_picker: ^1.1.2
+  # Keeps the screen awake during a counting session — the one place where a
+  # screen timeout ruins the interaction.
+  wakelock_plus: ^1.2.8
+  # NOTE: `home_widget` was removed rather than upgraded. It brought
+  # androidx.glance (an alpha demanding compileSdk 37) on 0.8+, and on 0.7 it
+  # brought androidx.work, whose Room database fails to initialise under R8 and
+  # crashed the app on launch. The widget's *native* half was never written, so
+  # the package was buying nothing but breakage. The editor screen and its live
+  # preview remain; publishing to the home screen needs an AppWidgetProvider and
+  # a WidgetKit extension, which is the outstanding work.
+  # Verifying a downloaded Qur'an package against the checksum the server sent.
+  crypto: ^3.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/audio/

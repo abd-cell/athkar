@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The dark counterpart of `AthkarTokens.paper`. -->
+<resources>
+    <color name="launch_background">#1B1814</color>
+</resources>

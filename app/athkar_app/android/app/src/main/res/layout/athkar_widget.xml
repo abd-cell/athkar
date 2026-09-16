@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One layout for every widget the gallery offers.
+
+    RemoteViews supports a small subset of the view system, so this is
+    deliberately plain: a vertical stack of text views plus one five-column row,
+    with visibility toggled from Kotlin. Anything cleverer — a custom view, a
+    constraint layout with chains — either is not supported in a widget or fails
+    silently on some launcher, which is worse.
+
+    **One layout, not thirty.** The gallery names thirty widgets, but a separate
+    RemoteViews layout per name would be thirty files to keep in step with the
+    Dart previews, and a launcher that failed to inflate one of them would show
+    a blank rectangle with nothing to say why. Instead the app composes finished
+    strings for whichever entry the reader chose and this arrangement renders
+    them; the row of times appears only for the entries that are about the
+    timetable.
+
+    `layoutDirection=locale` matters: the app is Arabic-first, and without it the
+    text lands left-aligned on a right-to-left phone.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:layoutDirection="locale"
+    android:padding="16dp"
+    android:background="@drawable/widget_background_light">
+
+    <TextView
+        android:id="@+id/widget_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp"
+        android:textColor="@color/widget_muted_light" />
+
+    <TextView
+        android:id="@+id/widget_headline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_brand_light" />
+
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="1.3"
+        android:textSize="17sp"
+        android:textColor="@color/widget_ink_light" />
+
+    <!--
+        The five obligatory prayers, shown only for the entries that are about
+        the timetable. Sunrise is deliberately not among them: it is a boundary,
+        not a prayer, and a widget that lists it among the five teaches the wrong
+        thing in the one place nobody reads carefully.
+
+        Five fixed columns rather than a ListView: a widget's collection view
+        needs a RemoteViewsService, a bound remote adapter and a second process
+        wake-up, for a row whose length never changes.
+    -->
+    <LinearLayout
+        android:id="@+id/widget_prayers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/prayer_label_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/widget_muted_light" />
+            <TextView
+                android:id="@+id/prayer_time_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:textColor="@color/widget_ink_light" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/prayer_label_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/widget_muted_light" />
+            <TextView
+                android:id="@+id/prayer_time_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:textColor="@color/widget_ink_light" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/prayer_label_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/widget_muted_light" />
+            <TextView
+                android:id="@+id/prayer_time_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:textColor="@color/widget_ink_light" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/prayer_label_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/widget_muted_light" />
+            <TextView
+                android:id="@+id/prayer_time_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:textColor="@color/widget_ink_light" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/prayer_label_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/widget_muted_light" />
+            <TextView
+                android:id="@+id/prayer_time_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:textColor="@color/widget_ink_light" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp"
+        android:textColor="@color/widget_muted_light" />
+
+</LinearLayout>

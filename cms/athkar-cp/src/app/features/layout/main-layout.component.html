@@ -1,0 +1,41 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <span class="mark">ذ</span>
+      <div>
+        <div class="name">{{ 'app.name' | translate }}</div>
+        <div class="sub">{{ 'app.console' | translate }}</div>
+      </div>
+    </div>
+
+    <nav>
+      @for (group of groups(); track group.key) {
+        <div class="sidebar__group">
+          @for (item of group.items; track item.path) {
+            <a
+              [routerLink]="['/', language(), item.path]"
+              routerLinkActive="on"
+              class="sidebar__link"
+            >
+              {{ item.key | translate }}
+            </a>
+          }
+        </div>
+      }
+    </nav>
+
+    <div class="sidebar__foot">
+      <div class="who">{{ global.user()?.fullName }}</div>
+      <button type="button" class="btn btn--ghost btn--sm" (click)="switchLanguage()">
+        {{ language() === 'ar' ? 'English' : 'العربية' }}
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" (click)="signOut()">
+        {{ 'nav.signOut' | translate }}
+      </button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

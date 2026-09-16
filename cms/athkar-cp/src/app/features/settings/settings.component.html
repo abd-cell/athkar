@@ -1,0 +1,113 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'settings.title' | translate }}</h1>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+  @if (saved()) {
+    <div class="notice notice--info">{{ 'common.saved' | translate }}</div>
+  }
+
+  @if (form(); as f) {
+    <form (ngSubmit)="save()">
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'settings.brand' | translate }}</h3>
+        <div class="field" style="max-width: 200px">
+          <label>{{ 'settings.primaryColor' | translate }}</label>
+          <input type="color" name="primaryColor" [(ngModel)]="f.primaryColor" />
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'settings.prayer' | translate }}</h3>
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'settings.method' | translate }}</label>
+            <select name="defaultCalculationMethod" [(ngModel)]="f.defaultCalculationMethod">
+              @for (option of methods; track option.value) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>{{ 'settings.madhab' | translate }}</label>
+            <select name="defaultMadhab" [(ngModel)]="f.defaultMadhab">
+              <option [ngValue]="Madhab.Standard">{{ 'settings.madhab.standard' | translate }}</option>
+              <option [ngValue]="Madhab.Hanafi">{{ 'settings.madhab.hanafi' | translate }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>{{ 'settings.morningOffset' | translate }}</label>
+            <input type="number" name="morningOffsetMinutes" [(ngModel)]="f.morningOffsetMinutes" />
+          </div>
+          <div class="field">
+            <label>{{ 'settings.eveningOffset' | translate }}</label>
+            <input type="number" name="eveningOffsetMinutes" [(ngModel)]="f.eveningOffsetMinutes" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'settings.about' | translate }}</h3>
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'settings.reviewingScholar' | translate }}</label>
+            <input type="text" name="reviewingScholar" [(ngModel)]="f.reviewingScholar" />
+            <span class="field__hint">{{ 'settings.reviewingScholarHint' | translate }}</span>
+          </div>
+          <div class="field">
+            <label>{{ 'settings.credential' | translate }}</label>
+            <input type="text" name="credential" [(ngModel)]="f.reviewingScholarCredential" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'settings.support' | translate }}</h3>
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'settings.supportEmail' | translate }}</label>
+            <input type="email" dir="ltr" name="supportEmail" [(ngModel)]="f.supportEmail" />
+          </div>
+          <div class="field">
+            <label>{{ 'settings.supportWebsite' | translate }}</label>
+            <input type="text" dir="ltr" name="supportWebsite" [(ngModel)]="f.supportWebsite" />
+          </div>
+          <div class="field">
+            <label>{{ 'settings.privacyUrl' | translate }}</label>
+            <input type="text" dir="ltr" name="privacyPolicyUrl" [(ngModel)]="f.privacyPolicyUrl" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'settings.store' | translate }}</h3>
+        <div class="grid cols-3">
+          <div class="field">
+            <label>{{ 'settings.androidPackage' | translate }}</label>
+            <input type="text" dir="ltr" name="androidPackageName" [(ngModel)]="f.androidPackageName" />
+          </div>
+          <div class="field">
+            <label>{{ 'settings.iosAppStoreId' | translate }}</label>
+            <input type="text" dir="ltr" name="iosAppStoreId" [(ngModel)]="f.iosAppStoreId" />
+          </div>
+          <div class="field">
+            <label>{{ 'settings.minimumBuild' | translate }}</label>
+            <input type="number" name="minimumAppBuild" [(ngModel)]="f.minimumAppBuild" />
+          </div>
+        </div>
+        <div class="card__hint">
+          {{ 'settings.contentVersion' | translate }}: {{ contentVersion() }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary" [disabled]="saving()">
+        {{ 'common.save' | translate }}
+      </button>
+    </form>
+  } @else {
+    <div class="empty">{{ 'common.loading' | translate }}</div>
+  }
+</div>

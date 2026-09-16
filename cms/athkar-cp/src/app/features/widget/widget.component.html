@@ -1,0 +1,188 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'widget.title' | translate }}</h1>
+  </div>
+
+  <div class="notice notice--info">{{ 'widget.intro' | translate }}</div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+  @if (saved()) {
+    <div class="notice notice--info">{{ 'common.saved' | translate }}</div>
+  }
+
+  @if (form(); as f) {
+    <form (ngSubmit)="save()">
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'widget.availability' | translate }}</h3>
+
+        <label class="checkbox" style="margin-bottom: 12px">
+          <input type="checkbox" name="isEnabled" [(ngModel)]="f.isEnabled" />
+          {{ 'widget.enabled' | translate }}
+        </label>
+        <div class="field__hint" style="margin-bottom: 16px">
+          {{ 'widget.enabledHint' | translate }}
+        </div>
+
+        <div class="row" style="gap: 20px; flex-wrap: wrap">
+          <label class="checkbox">
+            <input type="checkbox" name="allowPrayer" [(ngModel)]="f.allowPrayerWidget" />
+            {{ 'widget.allowPrayer' | translate }}
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="allowDhikr" [(ngModel)]="f.allowDhikrWidget" />
+            {{ 'widget.allowDhikr' | translate }}
+          </label>
+        </div>
+
+        <div class="field" style="margin-top: 16px; max-width: 280px">
+          <label>{{ 'widget.defaultKind' | translate }}</label>
+          <select name="defaultKind" [(ngModel)]="f.defaultKind">
+            <option [ngValue]="Kind.NextPrayer">{{ 'widget.type.prayer' | translate }}</option>
+            <option [ngValue]="Kind.Dhikr">{{ 'widget.type.dhikr' | translate }}</option>
+          </select>
+          <span class="field__hint">{{ 'widget.defaultKindHint' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'widget.appearance' | translate }}</h3>
+
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'widget.theme' | translate }}</label>
+            <select name="theme" [(ngModel)]="f.theme">
+              @for (option of themes; track option.value) {
+                <option [ngValue]="option.value">{{ option.key | translate }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label>{{ 'widget.refresh' | translate }}</label>
+            <input type="number" name="refreshMinutes" min="15" max="1440" [(ngModel)]="f.refreshMinutes" />
+            <span class="field__hint">{{ 'widget.refreshHint' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="row" style="gap: 20px; flex-wrap: wrap">
+          <label class="checkbox">
+            <input type="checkbox" name="showHijri" [(ngModel)]="f.showHijriDate" />
+            {{ 'widget.showHijri' | translate }}
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="showCountdown" [(ngModel)]="f.showCountdown" />
+            {{ 'widget.showCountdown' | translate }}
+          </label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'widget.defaultWidget' | translate }}</h3>
+
+        <div class="field" style="max-width: 340px">
+          <label>{{ 'widget.defaultWidget' | translate }}</label>
+          <select name="defaultWidgetKey" [(ngModel)]="f.defaultWidgetKey">
+            <!--
+              Null is not "unset" — it is a setting: the reader gets whichever
+              widget their own build can draw first, which is the right answer
+              for an install that may be a release behind this server.
+            -->
+            <option [ngValue]="null">{{ 'widget.defaultWidgetAuto' | translate }}</option>
+            @for (item of offerable(); track item.id) {
+              <option [ngValue]="item.key">{{ widgetName(item) }}</option>
+            }
+          </select>
+          <span class="field__hint">{{ 'widget.defaultWidgetHint' | translate }}</span>
+        </div>
+
+        @if (offerable().length === 0) {
+          <div class="field__hint">{{ 'widget.defaultWidgetEmpty' | translate }}</div>
+        }
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'widget.customisation' | translate }}</h3>
+
+        <!--
+          Permissions, not preferences. The reader's own choice lives on their
+          phone and never reaches this server; these exist because a
+          customisation can break the promise the widget makes — a transparent
+          panel over a photographic wallpaper can render a dhikr unreadable —
+          so there is a way to withdraw one without shipping an app update.
+        -->
+        <div class="field__hint" style="margin-bottom: 16px">
+          {{ 'widget.customisationHint' | translate }}
+        </div>
+
+        <div class="row" style="gap: 20px; flex-wrap: wrap">
+          <label class="checkbox">
+            <input type="checkbox" name="allowBackgroundColor" [(ngModel)]="f.allowBackgroundColor" />
+            {{ 'widget.allowBackgroundColor' | translate }}
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="allowTransparency" [(ngModel)]="f.allowTransparency" />
+            {{ 'widget.allowTransparency' | translate }}
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="allowBackgroundImage" [(ngModel)]="f.allowBackgroundImage" />
+            {{ 'widget.allowBackgroundImage' | translate }}
+          </label>
+        </div>
+
+        <div class="row" style="gap: 20px; flex-wrap: wrap; margin-top: 16px">
+          <label class="checkbox">
+            <input type="checkbox" name="allowCustomWidget" [(ngModel)]="f.allowCustomWidget" />
+            {{ 'widget.allowCustomWidget' | translate }}
+          </label>
+        </div>
+        <div class="field__hint" style="margin-top: 8px">
+          {{ 'widget.allowCustomWidgetHint' | translate }}
+        </div>
+
+        <div class="field" style="margin-top: 16px; max-width: 280px">
+          <label>{{ 'widget.customLength' | translate }}</label>
+          <input
+            type="number"
+            name="customWidgetMaxLength"
+            min="40"
+            max="600"
+            [(ngModel)]="f.customWidgetMaxLength"
+          />
+          <span class="field__hint">{{ 'widget.customLengthHint' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 14px">
+        <h3 style="margin-bottom: 14px">{{ 'widget.content' | translate }}</h3>
+
+        <div class="field" style="max-width: 340px">
+          <label>{{ 'widget.dhikrCategory' | translate }}</label>
+          <select name="dhikrCategoryId" [(ngModel)]="f.dhikrCategoryId">
+            <!--
+              The default is deliberately "follow the time of day" rather than a
+              chapter: it is what the app's own home screen does, so the widget
+              and the app agree without anybody configuring it twice.
+            -->
+            <option [ngValue]="null">{{ 'widget.followTimeOfDay' | translate }}</option>
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">{{ categoryName(category) }}</option>
+            }
+          </select>
+          <span class="field__hint">{{ 'widget.dhikrCategoryHint' | translate }}</span>
+        </div>
+
+        <div class="card__hint">
+          {{ 'widget.version' | translate }}: {{ version() }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary" [disabled]="saving()">
+        {{ 'common.save' | translate }}
+      </button>
+    </form>
+  } @else {
+    <div class="empty">{{ 'common.loading' | translate }}</div>
+  }
+</div>

@@ -1,0 +1,298 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'sessions.title' | translate }}</h1>
+    <span class="spacer"></span>
+
+    <div class="row">
+      <button
+        type="button"
+        class="chip"
+        [class.chip--on]="tab() === 'installs'"
+        (click)="show('installs')"
+      >
+        {{ 'sessions.tab.installs' | translate }}
+        @if (deviceTotal()) {
+          · {{ deviceTotal() }}
+        }
+      </button>
+      <button
+        type="button"
+        class="chip"
+        [class.chip--on]="tab() === 'staff'"
+        (click)="show('staff')"
+      >
+        {{ 'sessions.tab.staff' | translate }}
+        @if (liveSessions()) {
+          · {{ liveSessions() }}
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+  @if (note(); as message) {
+    <div class="notice notice--info">{{ message | translate }}</div>
+  }
+
+  <!-- ─────────────────────────── installs ─────────────────────────── -->
+
+  @if (tab() === 'installs') {
+    <div class="notice notice--info">{{ 'sessions.installsHint' | translate }}</div>
+
+    <div class="row" style="flex-wrap: wrap; margin-bottom: 14px">
+      @for (option of reachFilters; track option.key) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip--on]="reachFilter() === option.value"
+          (click)="filterReach(option.value)"
+        >
+          {{ option.key | translate }}
+        </button>
+      }
+
+      <span class="spacer"></span>
+
+      <input
+        type="text"
+        dir="ltr"
+        [ngModel]="deviceSearch()"
+        (ngModelChange)="deviceSearch.set($event)"
+        (keyup.enter)="loadDevices()"
+        [placeholder]="'sessions.searchKey' | translate"
+        style="width: 260px"
+      />
+    </div>
+
+    <div class="card card--flush">
+      @if (loadingDevices()) {
+        <div class="empty">{{ 'common.loading' | translate }}</div>
+      } @else if (devices().length === 0) {
+        <div class="empty">{{ 'common.empty' | translate }}</div>
+      } @else {
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{ 'sessions.install' | translate }}</th>
+              <th>{{ 'sessions.platform' | translate }}</th>
+              <th>{{ 'sessions.fcm' | translate }}</th>
+              <th>{{ 'sessions.state' | translate }}</th>
+              <th>{{ 'sessions.lastSeen' | translate }}</th>
+              <th>{{ 'sessions.inbox' | translate }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of devices(); track row.id) {
+              <tr>
+                <td>
+                  <code style="font-size: 11px" dir="ltr">{{ row.deviceKey }}</code>
+                  <div class="field__hint">
+                    {{ row.languageCode }} · {{ row.timeZoneId }}
+                    @if (row.countryCode) {
+                      · {{ row.countryCode }}
+                    }
+                    @if (row.appVersion) {
+                      · v{{ row.appVersion }}
+                    }
+                  </div>
+                </td>
+
+                <td>{{ platformName(row.platform) }}</td>
+
+                <td>
+                  @if (revealed()[row.id]; as token) {
+                    <!--
+                      Shown once asked for, and wrapped: an FCM token is ~160
+                      characters and would otherwise stretch the table past the
+                      window on a single line.
+                    -->
+                    <code
+                      dir="ltr"
+                      style="font-size: 10.5px; word-break: break-all; display: block; max-width: 280px"
+                      >{{ token }}</code
+                    >
+                    <button type="button" class="btn btn--sm btn--ghost" (click)="copy(token)">
+                      {{ 'sessions.copy' | translate }}
+                    </button>
+                  } @else if (row.hasPushToken) {
+                    <code dir="ltr" style="font-size: 11px; color: var(--muted)"
+                      >…{{ row.pushTokenTail }}</code
+                    >
+                    <button
+                      type="button"
+                      class="btn btn--sm"
+                      [disabled]="revealing() !== null"
+                      (click)="reveal(row)"
+                    >
+                      {{ 'sessions.revealToken' | translate }}
+                    </button>
+                  } @else {
+                    <span class="field__hint">{{ 'sessions.noToken' | translate }}</span>
+                  }
+                </td>
+
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge--ok]="row.reach === Reach.Reachable"
+                    [class.badge--warn]="row.reach === Reach.Muted || row.reach === Reach.Silent"
+                    [class.badge--danger]="row.reach === Reach.Tokenless"
+                  >
+                    {{ reachKey(row.reach) | translate }}
+                  </span>
+                </td>
+
+                <td>
+                  {{ row.lastSeenAt | appDate }}
+                  <div class="field__hint">
+                    {{ 'sessions.firstSeen' | translate }}: {{ row.firstSeenAt | appDate: 'date' }}
+                  </div>
+                </td>
+
+                <td>
+                  @if (row.unreadCount) {
+                    <span class="badge badge--warn">{{ row.unreadCount }}</span>
+                  } @else {
+                    <span class="field__hint">—</span>
+                  }
+                </td>
+
+                <td>
+                  <button type="button" class="btn btn--sm" (click)="openInbox(row)">
+                    {{ 'sessions.viewInbox' | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- ────────────────────────── staff sessions ───────────────────────── -->
+
+  @if (tab() === 'staff') {
+    <div class="row" style="margin-bottom: 14px">
+      <label class="checkbox">
+        <input type="checkbox" [checked]="includeExpired()" (change)="toggleExpired()" />
+        {{ 'sessions.includeExpired' | translate }}
+      </label>
+    </div>
+
+    <div class="card card--flush">
+      @if (loadingSessions()) {
+        <div class="empty">{{ 'common.loading' | translate }}</div>
+      } @else if (sessions().length === 0) {
+        <div class="empty">{{ 'common.empty' | translate }}</div>
+      } @else {
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{ 'staff.fullName' | translate }}</th>
+              <th>{{ 'sessions.from' | translate }}</th>
+              <th>{{ 'sessions.signedIn' | translate }}</th>
+              <th>{{ 'sessions.lastUsed' | translate }}</th>
+              <th>{{ 'sessions.expires' | translate }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of sessions(); track row.id) {
+              <tr>
+                <td>
+                  <div>
+                    {{ row.userName }}
+                    @if (row.isCurrent) {
+                      <span class="badge badge--ok">{{ 'sessions.thisDevice' | translate }}</span>
+                    }
+                  </div>
+                  <div class="field__hint" dir="ltr">{{ row.email }}</div>
+                </td>
+
+                <td>
+                  <!-- Text, never markup: the agent string is whatever the browser sent. -->
+                  <div style="font-size: 12px">{{ shortAgent(row.userAgent) }}</div>
+                  <code class="field__hint" dir="ltr">{{ row.ipAddress ?? '—' }}</code>
+                </td>
+
+                <td>{{ row.signedInAt | appDate }}</td>
+                <td>{{ row.lastUsedAt | appDate }}</td>
+
+                <td>
+                  @if (row.isExpired) {
+                    <span class="badge badge--draft">{{ 'sessions.expired' | translate }}</span>
+                  } @else {
+                    {{ row.refreshExpiresAt | appDate: 'date' }}
+                  }
+                </td>
+
+                <td>
+                  <div class="row">
+                    <button type="button" class="btn btn--sm btn--danger" (click)="revoke(row)">
+                      {{ 'sessions.revoke' | translate }}
+                    </button>
+                    <button type="button" class="btn btn--sm btn--ghost" (click)="revokeAll(row)">
+                      {{ 'sessions.revokeAll' | translate }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- ───────────────────────── one install's inbox ──────────────────────── -->
+
+  @if (inboxOf(); as device) {
+    <div class="overlay" (click)="closeInbox()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog__head">
+          <h2>{{ 'sessions.inboxOf' | translate }}</h2>
+          <button type="button" class="btn btn--sm btn--ghost" (click)="closeInbox()">
+            {{ 'common.close' | translate }}
+          </button>
+        </div>
+
+        <code class="field__hint" dir="ltr" style="display: block; margin-bottom: 12px">{{
+          device.deviceKey
+        }}</code>
+
+        <div class="notice notice--info">{{ 'sessions.inboxHint' | translate }}</div>
+
+        @if (loadingInbox()) {
+          <div class="empty">{{ 'common.loading' | translate }}</div>
+        } @else if (inbox().length === 0) {
+          <div class="empty">{{ 'common.empty' | translate }}</div>
+        } @else {
+          @for (row of inbox(); track row.id) {
+            <div class="card" style="margin-bottom: 10px">
+              <div class="row">
+                <strong>{{ row.title }}</strong>
+                <span class="spacer"></span>
+                @if (row.readAt) {
+                  <span class="badge badge--ok">{{ 'sessions.read' | translate }}</span>
+                } @else {
+                  <span class="badge badge--warn">{{ 'sessions.unread' | translate }}</span>
+                }
+              </div>
+              <div style="margin-top: 4px">{{ row.body }}</div>
+              <div class="field__hint" style="margin-top: 6px">
+                {{ row.createdAt | appDate }} · {{ row.languageCode }}
+                @if (row.route) {
+                  · <code dir="ltr">{{ row.route }}</code>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

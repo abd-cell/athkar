@@ -1,0 +1,970 @@
+[
+ {
+  "key": "fatiha",
+  "name_ar": "الفاتحة",
+  "reference": "1:1-7",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "1:1",
+    "text": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "search_text": "بسم الله الرحمن الرحيم",
+    "en": "In the name of Allāh,<sup foot_note=227140>1</sup> the Entirely Merciful, the Especially Merciful.<sup foot_note=227141>2</sup>"
+   },
+   {
+    "ayah": "1:2",
+    "text": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ",
+    "search_text": "الحمد لله رب العالمين",
+    "en": "[All] praise is [due] to Allāh, Lord<sup foot_note=227142>1</sup> of the worlds -"
+   },
+   {
+    "ayah": "1:3",
+    "text": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    "search_text": "الرحمن الرحيم",
+    "en": "The Entirely Merciful, the Especially Merciful,"
+   },
+   {
+    "ayah": "1:4",
+    "text": "مَٰلِكِ يَوْمِ ٱلدِّينِ",
+    "search_text": "مالك يوم الدين",
+    "en": "Sovereign of the Day of Recompense.<sup foot_note=227143>1</sup>"
+   },
+   {
+    "ayah": "1:5",
+    "text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+    "search_text": "إياك نعبد وإياك نستعين",
+    "en": "It is You we worship and You we ask for help."
+   },
+   {
+    "ayah": "1:6",
+    "text": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+    "search_text": "اهدنا الصراط المستقيم",
+    "en": "Guide us to the straight path -"
+   },
+   {
+    "ayah": "1:7",
+    "text": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+    "search_text": "صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين",
+    "en": "The path of those upon whom You have bestowed favor, not of those who have earned [Your] anger or of those who are astray."
+   }
+  ]
+ },
+ {
+  "key": "baqarah-opening",
+  "name_ar": "أوائل البقرة",
+  "reference": "2:1-5",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "2:1",
+    "text": "الٓمٓ",
+    "search_text": "الم",
+    "en": "Alif, Lām, Meem.<sup foot_note=227144>1</sup>"
+   },
+   {
+    "ayah": "2:2",
+    "text": "ذَٰلِكَ ٱلْكِتَٰبُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ",
+    "search_text": "ذلك الكتاب لا ريب فيه هدى للمتقين",
+    "en": "This is the Book about which there is no doubt, a guidance for those conscious of Allāh<sup foot_note=227145>1</sup> -"
+   },
+   {
+    "ayah": "2:3",
+    "text": "ٱلَّذِينَ يُؤْمِنُونَ بِٱلْغَيْبِ وَيُقِيمُونَ ٱلصَّلَوٰةَ وَمِمَّا رَزَقْنَٰهُمْ يُنفِقُونَ",
+    "search_text": "الذين يؤمنون بالغيب ويقيمون الصلاة ومما رزقناهم ينفقون",
+    "en": "Who believe in the unseen, establish prayer,<sup foot_note=227146>1</sup> and spend out of what We<sup foot_note=227147>2</sup> have provided for them,"
+   },
+   {
+    "ayah": "2:4",
+    "text": "وَٱلَّذِينَ يُؤْمِنُونَ بِمَآ أُنزِلَ إِلَيْكَ وَمَآ أُنزِلَ مِن قَبْلِكَ وَبِٱلْءَاخِرَةِ هُمْ يُوقِنُونَ",
+    "search_text": "والذين يؤمنون بما أنزل إليك وما أنزل من قبلك وبالآخرة هم يوقنون",
+    "en": "And who believe in what has been revealed to you, [O Muḥammad], and what was revealed before you, and of the Hereafter they are certain [in faith]."
+   },
+   {
+    "ayah": "2:5",
+    "text": "أُو۟لَٰٓئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ ۖ وَأُو۟لَٰٓئِكَ هُمُ ٱلْمُفْلِحُونَ",
+    "search_text": "أولئك على هدى من ربهم وأولئك هم المفلحون",
+    "en": "Those are upon [right] guidance from their Lord, and it is those who are the successful."
+   }
+  ]
+ },
+ {
+  "key": "ayat-al-kursi",
+  "name_ar": "آية الكرسي",
+  "reference": "2:255",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "2:255",
+    "text": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+    "search_text": "الله لا إله إلا هو الحي القيوم لا تأخذه سنة ولا نوم له ما في السماوات وما في الأرض من ذا الذي يشفع عنده إلا بإذنه يعلم ما بين أيديهم وما خلفهم ولا يحيطون بشيء من علمه إلا بما شاء وسع كرسيه السماوات والأرض ولا يئوده حفظهما وهو العلي العظيم",
+    "en": "Allāh - there is no deity except Him, the Ever-Living,<sup foot_note=227235>1</sup> the Self-Sustaining.<sup foot_note=227236>2</sup> Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them,<sup foot_note=227237>3</sup> and they encompass not a thing of His knowledge except for what He wills. His Kursī<sup foot_note=227238>4</sup> extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High,<sup foot_note=227239>5</sup> the Most Great.<sup foot_note=227240>6</sup>"
+   }
+  ]
+ },
+ {
+  "key": "baqarah-closing",
+  "name_ar": "خواتيم البقرة",
+  "reference": "2:285-286",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "2:285",
+    "text": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ",
+    "search_text": "آمن الرسول بما أنزل إليه من ربه والمؤمنون كل آمن بالله وملائكته وكتبه ورسله لا نفرق بين أحد من رسله وقالوا سمعنا وأطعنا غفرانك ربنا وإليك المصير",
+    "en": "The Messenger has believed in what was revealed to him from his Lord, and [so have] the believers. All of them have believed in Allāh and His angels and His books and His messengers, [saying], \"We make no distinction between any of His messengers.\" And they say, \"We hear and we obey. [We seek] Your forgiveness, our Lord, and to You is the [final] destination.\""
+   },
+   {
+    "ayah": "2:286",
+    "text": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ",
+    "search_text": "لا يكلف الله نفسا إلا وسعها لها ما كسبت وعليها ما اكتسبت ربنا لا تؤاخذنا إن نسينا أو أخطأنا ربنا ولا تحمل علينا إصرا كما حملته على الذين من قبلنا ربنا ولا تحملنا ما لا طاقة لنا به واعف عنا واغفر لنا وارحمنا أنت مولانا فانصرنا على القوم الكافرين",
+    "en": "Allāh does not charge a soul except [with that within] its capacity. It will have [the consequence of] what [good] it has gained, and it will bear [the consequence of] what [evil] it has earned. \"Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, and lay not upon us a burden like that which You laid upon those before us. Our Lord, and burden us not with that which we have no ability to bear. And pardon us; and forgive us; and have mercy upon us. You are our protector, so give us victory over the disbelieving people.\"<sup foot_note=227248>1</sup>"
+   }
+  ]
+ },
+ {
+  "key": "imran-tafakkur",
+  "name_ar": "آيات التفكر",
+  "reference": "3:190-200",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "3:190",
+    "text": "إِنَّ فِى خَلْقِ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ وَٱخْتِلَٰفِ ٱلَّيْلِ وَٱلنَّهَارِ لَءَايَٰتٍ لِّأُو۟لِى ٱلْأَلْبَٰبِ",
+    "search_text": "إن في خلق السماوات والأرض واختلاف الليل والنهار لآيات لأولي الألباب",
+    "en": "Indeed, in the creation of the heavens and the earth and the alternation of the night and the day are signs for those of understanding -"
+   },
+   {
+    "ayah": "3:191",
+    "text": "ٱلَّذِينَ يَذْكُرُونَ ٱللَّهَ قِيَٰمًا وَقُعُودًا وَعَلَىٰ جُنُوبِهِمْ وَيَتَفَكَّرُونَ فِى خَلْقِ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ رَبَّنَا مَا خَلَقْتَ هَٰذَا بَٰطِلًا سُبْحَٰنَكَ فَقِنَا عَذَابَ ٱلنَّارِ",
+    "search_text": "الذين يذكرون الله قياما وقعودا وعلى جنوبهم ويتفكرون في خلق السماوات والأرض ربنا ما خلقت هذا باطلا سبحانك فقنا عذاب النار",
+    "en": "Who remember Allāh while standing or sitting or [lying] on their sides and give thought to the creation of the heavens and the earth, [saying], \"Our Lord, You did not create this aimlessly; exalted are You [above such a thing]; then protect us from the punishment of the Fire."
+   },
+   {
+    "ayah": "3:192",
+    "text": "رَبَّنَآ إِنَّكَ مَن تُدْخِلِ ٱلنَّارَ فَقَدْ أَخْزَيْتَهُۥ ۖ وَمَا لِلظَّٰلِمِينَ مِنْ أَنصَارٍ",
+    "search_text": "ربنا إنك من تدخل النار فقد أخزيته وما للظالمين من أنصار",
+    "en": "Our Lord, indeed whoever You admit to the Fire - You have disgraced him, and for the wrongdoers there are no helpers."
+   },
+   {
+    "ayah": "3:193",
+    "text": "رَّبَّنَآ إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِى لِلْإِيمَٰنِ أَنْ ءَامِنُوا۟ بِرَبِّكُمْ فَـَٔامَنَّا ۚ رَبَّنَا فَٱغْفِرْ لَنَا ذُنُوبَنَا وَكَفِّرْ عَنَّا سَيِّـَٔاتِنَا وَتَوَفَّنَا مَعَ ٱلْأَبْرَارِ",
+    "search_text": "ربنا إننا سمعنا مناديا ينادي للإيمان أن آمنوا بربكم فآمنا ربنا فاغفر لنا ذنوبنا وكفر عنا سيئاتنا وتوفنا مع الأبرار",
+    "en": "Our Lord, indeed we have heard a caller [i.e., Prophet Muḥammad (ﷺ)] calling to faith, [saying], 'Believe in your Lord,' and we have believed. Our Lord, so forgive us our sins and remove from us our misdeeds and cause us to die among the righteous."
+   },
+   {
+    "ayah": "3:194",
+    "text": "رَبَّنَا وَءَاتِنَا مَا وَعَدتَّنَا عَلَىٰ رُسُلِكَ وَلَا تُخْزِنَا يَوْمَ ٱلْقِيَٰمَةِ ۗ إِنَّكَ لَا تُخْلِفُ ٱلْمِيعَادَ",
+    "search_text": "ربنا وآتنا ما وعدتنا على رسلك ولا تخزنا يوم القيامة إنك لا تخلف الميعاد",
+    "en": "Our Lord, and grant us what You promised us through Your messengers and do not disgrace us on the Day of Resurrection. Indeed, You do not fail in [Your] promise.\""
+   },
+   {
+    "ayah": "3:195",
+    "text": "فَٱسْتَجَابَ لَهُمْ رَبُّهُمْ أَنِّى لَآ أُضِيعُ عَمَلَ عَٰمِلٍ مِّنكُم مِّن ذَكَرٍ أَوْ أُنثَىٰ ۖ بَعْضُكُم مِّنۢ بَعْضٍ ۖ فَٱلَّذِينَ هَاجَرُوا۟ وَأُخْرِجُوا۟ مِن دِيَٰرِهِمْ وَأُوذُوا۟ فِى سَبِيلِى وَقَٰتَلُوا۟ وَقُتِلُوا۟ لَأُكَفِّرَنَّ عَنْهُمْ سَيِّـَٔاتِهِمْ وَلَأُدْخِلَنَّهُمْ جَنَّٰتٍ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَٰرُ ثَوَابًا مِّنْ عِندِ ٱللَّهِ ۗ وَٱللَّهُ عِندَهُۥ حُسْنُ ٱلثَّوَابِ",
+    "search_text": "فاستجاب لهم ربهم أني لا أضيع عمل عامل منكم من ذكر أو أنثى بعضكم من بعض فالذين هاجروا وأخرجوا من ديارهم وأوذوا في سبيلي وقاتلوا وقتلوا لأكفرن عنهم سيئاتهم ولأدخلنهم جنات تجري من تحتها الأنهار ثوابا من عند الله والله عنده حسن الثواب",
+    "en": "And their Lord responded to them, \"Never will I allow to be lost the work of [any] worker among you, whether male or female; you are of one another. So those who emigrated or were evicted from their homes or were harmed in My cause or fought or were killed - I will surely remove from them their misdeeds, and I will surely admit them to gardens beneath which rivers flow as reward from Allāh, and Allāh has with Him the best reward.\""
+   },
+   {
+    "ayah": "3:196",
+    "text": "لَا يَغُرَّنَّكَ تَقَلُّبُ ٱلَّذِينَ كَفَرُوا۟ فِى ٱلْبِلَٰدِ",
+    "search_text": "لا يغرنك تقلب الذين كفروا في البلاد",
+    "en": "Be not deceived by the [uninhibited] movement of the disbelievers throughout the land."
+   },
+   {
+    "ayah": "3:197",
+    "text": "مَتَٰعٌ قَلِيلٌ ثُمَّ مَأْوَىٰهُمْ جَهَنَّمُ ۚ وَبِئْسَ ٱلْمِهَادُ",
+    "search_text": "متاع قليل ثم مأواهم جهنم وبئس المهاد",
+    "en": "[It is but] a small enjoyment; then their [final] refuge is Hell, and wretched is the resting place."
+   },
+   {
+    "ayah": "3:198",
+    "text": "لَٰكِنِ ٱلَّذِينَ ٱتَّقَوْا۟ رَبَّهُمْ لَهُمْ جَنَّٰتٌ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَٰرُ خَٰلِدِينَ فِيهَا نُزُلًا مِّنْ عِندِ ٱللَّهِ ۗ وَمَا عِندَ ٱللَّهِ خَيْرٌ لِّلْأَبْرَارِ",
+    "search_text": "لكن الذين اتقوا ربهم لهم جنات تجري من تحتها الأنهار خالدين فيها نزلا من عند الله وما عند الله خير للأبرار",
+    "en": "But those who feared their Lord will have gardens beneath which rivers flow, abiding eternally therein, as accommodation from Allāh. And that which is with Allāh is best for the righteous."
+   },
+   {
+    "ayah": "3:199",
+    "text": "وَإِنَّ مِنْ أَهْلِ ٱلْكِتَٰبِ لَمَن يُؤْمِنُ بِٱللَّهِ وَمَآ أُنزِلَ إِلَيْكُمْ وَمَآ أُنزِلَ إِلَيْهِمْ خَٰشِعِينَ لِلَّهِ لَا يَشْتَرُونَ بِـَٔايَٰتِ ٱللَّهِ ثَمَنًا قَلِيلًا ۗ أُو۟لَٰٓئِكَ لَهُمْ أَجْرُهُمْ عِندَ رَبِّهِمْ ۗ إِنَّ ٱللَّهَ سَرِيعُ ٱلْحِسَابِ",
+    "search_text": "وإن من أهل الكتاب لمن يؤمن بالله وما أنزل إليكم وما أنزل إليهم خاشعين لله لا يشترون بآيات الله ثمنا قليلا أولئك لهم أجرهم عند ربهم إن الله سريع الحساب",
+    "en": "And indeed, among the People of the Scripture are those who believe in Allāh and what was revealed to you and what was revealed to them, [being] humbly submissive to Allāh. They do not exchange the verses of Allāh for a small price. Those will have their reward with their Lord. Indeed, Allāh is swift in account."
+   },
+   {
+    "ayah": "3:200",
+    "text": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱصْبِرُوا۟ وَصَابِرُوا۟ وَرَابِطُوا۟ وَٱتَّقُوا۟ ٱللَّهَ لَعَلَّكُمْ تُفْلِحُونَ",
+    "search_text": "يا أيها الذين آمنوا اصبروا وصابروا ورابطوا واتقوا الله لعلكم تفلحون",
+    "en": "O you who have believed, persevere<sup foot_note=227288>1</sup> and endure<sup foot_note=227289>2</sup> and remain stationed<sup foot_note=227290>3</sup> and fear Allāh that you may be successful."
+   }
+  ]
+ },
+ {
+  "key": "kahf-opening",
+  "name_ar": "أوائل الكهف",
+  "reference": "18:1-10",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "18:1",
+    "text": "ٱلْحَمْدُ لِلَّهِ ٱلَّذِىٓ أَنزَلَ عَلَىٰ عَبْدِهِ ٱلْكِتَٰبَ وَلَمْ يَجْعَل لَّهُۥ عِوَجَا ۜ",
+    "search_text": "الحمد لله الذي أنزل على عبده الكتاب ولم يجعل له عوجا",
+    "en": "[All] praise is [due] to Allāh, who has sent down upon His Servant [Muḥammad (ﷺ)] the Book and has not made therein any deviance.<sup foot_note=228513>1</sup>"
+   },
+   {
+    "ayah": "18:2",
+    "text": "قَيِّمًا لِّيُنذِرَ بَأْسًا شَدِيدًا مِّن لَّدُنْهُ وَيُبَشِّرَ ٱلْمُؤْمِنِينَ ٱلَّذِينَ يَعْمَلُونَ ٱلصَّٰلِحَٰتِ أَنَّ لَهُمْ أَجْرًا حَسَنًا",
+    "search_text": "قيما لينذر بأسا شديدا من لدنه ويبشر المؤمنين الذين يعملون الصالحات أن لهم أجرا حسنا",
+    "en": "[He has made it] straight, to warn of severe punishment from Him and to give good tidings to the believers who do righteous deeds that they will have a good reward [i.e., Paradise]"
+   },
+   {
+    "ayah": "18:3",
+    "text": "مَّٰكِثِينَ فِيهِ أَبَدًا",
+    "search_text": "ماكثين فيه أبدا",
+    "en": "In which they will remain forever"
+   },
+   {
+    "ayah": "18:4",
+    "text": "وَيُنذِرَ ٱلَّذِينَ قَالُوا۟ ٱتَّخَذَ ٱللَّهُ وَلَدًا",
+    "search_text": "وينذر الذين قالوا اتخذ الله ولدا",
+    "en": "And to warn those who say, \"Allāh has taken a son.\""
+   },
+   {
+    "ayah": "18:5",
+    "text": "مَّا لَهُم بِهِۦ مِنْ عِلْمٍ وَلَا لِءَابَآئِهِمْ ۚ كَبُرَتْ كَلِمَةً تَخْرُجُ مِنْ أَفْوَٰهِهِمْ ۚ إِن يَقُولُونَ إِلَّا كَذِبًا",
+    "search_text": "ما لهم به من علم ولا لآبائهم كبرت كلمة تخرج من أفواههم إن يقولون إلا كذبا",
+    "en": "They have no knowledge of it,<sup foot_note=228514>1</sup> nor had their fathers. Grave is the word that comes out of their mouths; they speak not except a lie."
+   },
+   {
+    "ayah": "18:6",
+    "text": "فَلَعَلَّكَ بَٰخِعٌ نَّفْسَكَ عَلَىٰٓ ءَاثَٰرِهِمْ إِن لَّمْ يُؤْمِنُوا۟ بِهَٰذَا ٱلْحَدِيثِ أَسَفًا",
+    "search_text": "فلعلك باخع نفسك على آثارهم إن لم يؤمنوا بهذا الحديث أسفا",
+    "en": "Then perhaps you would kill yourself through grief over them, [O Muḥammad], if they do not believe in this message, [and] out of sorrow."
+   },
+   {
+    "ayah": "18:7",
+    "text": "إِنَّا جَعَلْنَا مَا عَلَى ٱلْأَرْضِ زِينَةً لَّهَا لِنَبْلُوَهُمْ أَيُّهُمْ أَحْسَنُ عَمَلًا",
+    "search_text": "إنا جعلنا ما على الأرض زينة لها لنبلوهم أيهم أحسن عملا",
+    "en": "Indeed, We have made that which is on the earth adornment for it that We may test them [as to] which of them is best in deed."
+   },
+   {
+    "ayah": "18:8",
+    "text": "وَإِنَّا لَجَٰعِلُونَ مَا عَلَيْهَا صَعِيدًا جُرُزًا",
+    "search_text": "وإنا لجاعلون ما عليها صعيدا جرزا",
+    "en": "And indeed, We will make that which is upon it [into] a barren ground."
+   },
+   {
+    "ayah": "18:9",
+    "text": "أَمْ حَسِبْتَ أَنَّ أَصْحَٰبَ ٱلْكَهْفِ وَٱلرَّقِيمِ كَانُوا۟ مِنْ ءَايَٰتِنَا عَجَبًا",
+    "search_text": "أم حسبت أن أصحاب الكهف والرقيم كانوا من آياتنا عجبا",
+    "en": "Or have you thought that the companions of the cave and the inscription were, among Our signs, a wonder?<sup foot_note=228517>1</sup>"
+   },
+   {
+    "ayah": "18:10",
+    "text": "إِذْ أَوَى ٱلْفِتْيَةُ إِلَى ٱلْكَهْفِ فَقَالُوا۟ رَبَّنَآ ءَاتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
+    "search_text": "إذ أوى الفتية إلى الكهف فقالوا ربنا آتنا من لدنك رحمة وهيئ لنا من أمرنا رشدا",
+    "en": "[Mention] when the youths retreated to the cave and said, \"Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance.\""
+   }
+  ]
+ },
+ {
+  "key": "kahf-closing",
+  "name_ar": "خواتيم الكهف",
+  "reference": "18:107-110",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "18:107",
+    "text": "إِنَّ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ كَانَتْ لَهُمْ جَنَّٰتُ ٱلْفِرْدَوْسِ نُزُلًا",
+    "search_text": "إن الذين آمنوا وعملوا الصالحات كانت لهم جنات الفردوس نزلا",
+    "en": "Indeed, those who have believed and done righteous deeds - they will have the Gardens of Paradise<sup foot_note=228559>1</sup> as a lodging,"
+   },
+   {
+    "ayah": "18:108",
+    "text": "خَٰلِدِينَ فِيهَا لَا يَبْغُونَ عَنْهَا حِوَلًا",
+    "search_text": "خالدين فيها لا يبغون عنها حولا",
+    "en": "Wherein they abide eternally. They will not desire from it any transfer."
+   },
+   {
+    "ayah": "18:109",
+    "text": "قُل لَّوْ كَانَ ٱلْبَحْرُ مِدَادًا لِّكَلِمَٰتِ رَبِّى لَنَفِدَ ٱلْبَحْرُ قَبْلَ أَن تَنفَدَ كَلِمَٰتُ رَبِّى وَلَوْ جِئْنَا بِمِثْلِهِۦ مَدَدًا",
+    "search_text": "قل لو كان البحر مدادا لكلمات ربي لنفد البحر قبل أن تنفد كلمات ربي ولو جئنا بمثله مددا",
+    "en": "Say, \"If the sea were ink for [writing] the words<sup foot_note=228560>1</sup> of my Lord, the sea would be exhausted before the words of my Lord were exhausted, even if We brought the like of it in [continual] supplement.\""
+   },
+   {
+    "ayah": "18:110",
+    "text": "قُلْ إِنَّمَآ أَنَا۠ بَشَرٌ مِّثْلُكُمْ يُوحَىٰٓ إِلَىَّ أَنَّمَآ إِلَٰهُكُمْ إِلَٰهٌ وَٰحِدٌ ۖ فَمَن كَانَ يَرْجُوا۟ لِقَآءَ رَبِّهِۦ فَلْيَعْمَلْ عَمَلًا صَٰلِحًا وَلَا يُشْرِكْ بِعِبَادَةِ رَبِّهِۦٓ أَحَدًۢا",
+    "search_text": "قل إنما أنا بشر مثلكم يوحى إلي أنما إلهكم إله واحد فمن كان يرجو لقاء ربه فليعمل عملا صالحا ولا يشرك بعبادة ربه أحدا",
+    "en": "Say, \"I am only a man like you, to whom has been revealed that your god is one God. So whoever would hope for the meeting with his Lord - let him do righteous work and not associate in the worship of his Lord anyone.\""
+   }
+  ]
+ },
+ {
+  "key": "hashr-closing",
+  "name_ar": "خواتيم الحشر",
+  "reference": "59:22-24",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "59:22",
+    "text": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَٰهَ إِلَّا هُوَ ۖ عَٰلِمُ ٱلْغَيْبِ وَٱلشَّهَٰدَةِ ۖ هُوَ ٱلرَّحْمَٰنُ ٱلرَّحِيمُ",
+    "search_text": "هو الله الذي لا إله إلا هو عالم الغيب والشهادة هو الرحمن الرحيم",
+    "en": "He is Allāh, other than whom there is no deity, Knower of the unseen and the witnessed.<sup foot_note=230010>1</sup> He is the Entirely Merciful, the Especially Merciful."
+   },
+   {
+    "ayah": "59:23",
+    "text": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
+    "search_text": "هو الله الذي لا إله إلا هو الملك القدوس السلام المؤمن المهيمن العزيز الجبار المتكبر سبحان الله عما يشركون",
+    "en": "He is Allāh, other than whom there is no deity, the Sovereign,<sup foot_note=230011>1</sup> the Pure,<sup foot_note=230012>2</sup> the Perfection,<sup foot_note=230013>3</sup> the Grantor of Security,<sup foot_note=230014>4</sup> the Overseer,<sup foot_note=230015>5</sup> the Exalted in Might,<sup foot_note=230016>6</sup> the Compeller,<sup foot_note=230017>7</sup> the Superior.<sup foot_note=230018>8</sup> Exalted is Allāh above whatever they associate with Him."
+   },
+   {
+    "ayah": "59:24",
+    "text": "هُوَ ٱللَّهُ ٱلْخَٰلِقُ ٱلْبَارِئُ ٱلْمُصَوِّرُ ۖ لَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ ۚ يُسَبِّحُ لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۖ وَهُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
+    "search_text": "هو الله الخالق البارئ المصور له الأسماء الحسنى يسبح له ما في السماوات والأرض وهو العزيز الحكيم",
+    "en": "He is Allāh, the Creator,<sup foot_note=230019>1</sup> the Producer,<sup foot_note=230020>2</sup> the Fashioner;<sup foot_note=230021>3</sup> to Him belong the best names.<sup foot_note=230022>4</sup> Whatever is in the heavens and earth is exalting Him. And He is the Exalted in Might, the Wise.<sup foot_note=230023>5</sup>"
+   }
+  ]
+ },
+ {
+  "key": "sajdah",
+  "name_ar": "السجدة",
+  "reference": "32:1-30",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "32:1",
+    "text": "الٓمٓ",
+    "search_text": "الم",
+    "en": "Alif, Lām, Meem.<sup foot_note=229158>1</sup>"
+   },
+   {
+    "ayah": "32:2",
+    "text": "تَنزِيلُ ٱلْكِتَٰبِ لَا رَيْبَ فِيهِ مِن رَّبِّ ٱلْعَٰلَمِينَ",
+    "search_text": "تنزيل الكتاب لا ريب فيه من رب العالمين",
+    "en": "[This is] the revelation of the Book about which there is no doubt from the Lord of the worlds."
+   },
+   {
+    "ayah": "32:3",
+    "text": "أَمْ يَقُولُونَ ٱفْتَرَىٰهُ ۚ بَلْ هُوَ ٱلْحَقُّ مِن رَّبِّكَ لِتُنذِرَ قَوْمًا مَّآ أَتَىٰهُم مِّن نَّذِيرٍ مِّن قَبْلِكَ لَعَلَّهُمْ يَهْتَدُونَ",
+    "search_text": "أم يقولون افتراه بل هو الحق من ربك لتنذر قوما ما أتاهم من نذير من قبلك لعلهم يهتدون",
+    "en": "Or do they say, \"He invented it\"? Rather, it is the truth from your Lord, [O Muḥammad], that you may warn a people to whom no warner has come before you [so] perhaps they will be guided."
+   },
+   {
+    "ayah": "32:4",
+    "text": "ٱللَّهُ ٱلَّذِى خَلَقَ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ وَمَا بَيْنَهُمَا فِى سِتَّةِ أَيَّامٍ ثُمَّ ٱسْتَوَىٰ عَلَى ٱلْعَرْشِ ۖ مَا لَكُم مِّن دُونِهِۦ مِن وَلِىٍّ وَلَا شَفِيعٍ ۚ أَفَلَا تَتَذَكَّرُونَ",
+    "search_text": "الله الذي خلق السماوات والأرض وما بينهما في ستة أيام ثم استوى على العرش ما لكم من دونه من وليّ ولا شفيع أفلا تتذكرون",
+    "en": "It is Allāh who created the heavens and the earth and whatever is between them in six days; then He established Himself above the Throne.<sup foot_note=229159>1</sup> You have not besides Him any protector or any intercessor; so will you not be reminded?"
+   },
+   {
+    "ayah": "32:5",
+    "text": "يُدَبِّرُ ٱلْأَمْرَ مِنَ ٱلسَّمَآءِ إِلَى ٱلْأَرْضِ ثُمَّ يَعْرُجُ إِلَيْهِ فِى يَوْمٍ كَانَ مِقْدَارُهُۥٓ أَلْفَ سَنَةٍ مِّمَّا تَعُدُّونَ",
+    "search_text": "يدبر الأمر من السماء إلى الأرض ثم يعرج إليه في يوم كان مقداره ألف سنة مما تعدون",
+    "en": "He arranges [each] matter from the heaven to the earth; then it will ascend to Him in a Day, the extent of which is a thousand years of those which you count."
+   },
+   {
+    "ayah": "32:6",
+    "text": "ذَٰلِكَ عَٰلِمُ ٱلْغَيْبِ وَٱلشَّهَٰدَةِ ٱلْعَزِيزُ ٱلرَّحِيمُ",
+    "search_text": "ذلك عالم الغيب والشهادة العزيز الرحيم",
+    "en": "That is the Knower of the unseen and the witnessed, the Exalted in Might, the Merciful,"
+   },
+   {
+    "ayah": "32:7",
+    "text": "ٱلَّذِىٓ أَحْسَنَ كُلَّ شَىْءٍ خَلَقَهُۥ ۖ وَبَدَأَ خَلْقَ ٱلْإِنسَٰنِ مِن طِينٍ",
+    "search_text": "الذي أحسن كل شيء خلقه وبدأ خلق الإنسان من طين",
+    "en": "Who perfected everything which He created and began the creation of man from clay."
+   },
+   {
+    "ayah": "32:8",
+    "text": "ثُمَّ جَعَلَ نَسْلَهُۥ مِن سُلَٰلَةٍ مِّن مَّآءٍ مَّهِينٍ",
+    "search_text": "ثم جعل نسله من سلالة من ماء مهين",
+    "en": "Then He made his posterity out of the extract of a liquid disdained."
+   },
+   {
+    "ayah": "32:9",
+    "text": "ثُمَّ سَوَّىٰهُ وَنَفَخَ فِيهِ مِن رُّوحِهِۦ ۖ وَجَعَلَ لَكُمُ ٱلسَّمْعَ وَٱلْأَبْصَٰرَ وَٱلْأَفْـِٔدَةَ ۚ قَلِيلًا مَّا تَشْكُرُونَ",
+    "search_text": "ثم سواه ونفخ فيه من روحه وجعل لكم السمع والأبصار والأفئدة قليلا ما تشكرون",
+    "en": "Then He proportioned him and breathed into him from His [created] soul<sup foot_note=229160>1</sup> and made for you hearing and vision and hearts [i.e., intellect]; little are you grateful."
+   },
+   {
+    "ayah": "32:10",
+    "text": "وَقَالُوٓا۟ أَءِذَا ضَلَلْنَا فِى ٱلْأَرْضِ أَءِنَّا لَفِى خَلْقٍ جَدِيدٍۭ ۚ بَلْ هُم بِلِقَآءِ رَبِّهِمْ كَٰفِرُونَ",
+    "search_text": "وقالوا أإذا ضللنا في الأرض أإنا لفي خلق جديد بل هم بلقاء ربهم كافرون",
+    "en": "And they say, \"When we are lost [i.e., disintegrated] within the earth, will we indeed be [recreated] in a new creation?\" Rather, they are, in the meeting with their Lord, disbelievers."
+   },
+   {
+    "ayah": "32:11",
+    "text": "قُلْ يَتَوَفَّىٰكُم مَّلَكُ ٱلْمَوْتِ ٱلَّذِى وُكِّلَ بِكُمْ ثُمَّ إِلَىٰ رَبِّكُمْ تُرْجَعُونَ",
+    "search_text": "قل يتوفاكم ملك الموت الذي وكل بكم ثم إلى ربكم ترجعون",
+    "en": "Say, \"The angel of death who has been entrusted with you will take you. Then to your Lord you will be returned.\""
+   },
+   {
+    "ayah": "32:12",
+    "text": "وَلَوْ تَرَىٰٓ إِذِ ٱلْمُجْرِمُونَ نَاكِسُوا۟ رُءُوسِهِمْ عِندَ رَبِّهِمْ رَبَّنَآ أَبْصَرْنَا وَسَمِعْنَا فَٱرْجِعْنَا نَعْمَلْ صَٰلِحًا إِنَّا مُوقِنُونَ",
+    "search_text": "ولو ترى إذ المجرمون ناكسو رءوسهم عند ربهم ربنا أبصرنا وسمعنا فارجعنا نعمل صالحا إنا موقنون",
+    "en": "If you could but see when the criminals are hanging their heads before their Lord, [saying], \"Our Lord, we have seen and heard, so return us [to the world]; we will work righteousness. Indeed, we are [now] certain.\""
+   },
+   {
+    "ayah": "32:13",
+    "text": "وَلَوْ شِئْنَا لَءَاتَيْنَا كُلَّ نَفْسٍ هُدَىٰهَا وَلَٰكِنْ حَقَّ ٱلْقَوْلُ مِنِّى لَأَمْلَأَنَّ جَهَنَّمَ مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ أَجْمَعِينَ",
+    "search_text": "ولو شئنا لآتينا كل نفس هداها ولكن حق القول مني لأملأن جهنم من الجنة والناس أجمعين",
+    "en": "And if We had willed, We could have given every soul its guidance, but the word<sup foot_note=229163>1</sup> from Me will come into effect [that] \"I will surely fill Hell with jinn and people all together."
+   },
+   {
+    "ayah": "32:14",
+    "text": "فَذُوقُوا۟ بِمَا نَسِيتُمْ لِقَآءَ يَوْمِكُمْ هَٰذَآ إِنَّا نَسِينَٰكُمْ ۖ وَذُوقُوا۟ عَذَابَ ٱلْخُلْدِ بِمَا كُنتُمْ تَعْمَلُونَ",
+    "search_text": "فذوقوا بما نسيتم لقاء يومكم هذا إنا نسيناكم وذوقوا عذاب الخلد بما كنتم تعملون",
+    "en": "So taste [punishment] because you forgot the meeting of this, your Day; indeed, We have [accordingly] forgotten you. And taste the punishment of eternity for what you used to do.\""
+   },
+   {
+    "ayah": "32:15",
+    "text": "إِنَّمَا يُؤْمِنُ بِـَٔايَٰتِنَا ٱلَّذِينَ إِذَا ذُكِّرُوا۟ بِهَا خَرُّوا۟ سُجَّدًا وَسَبَّحُوا۟ بِحَمْدِ رَبِّهِمْ وَهُمْ لَا يَسْتَكْبِرُونَ",
+    "search_text": "إنما يؤمن بآياتنا الذين إذا ذكروا بها خروا سجدا وسبحوا بحمد ربهم وهم لا يستكبرون",
+    "en": "Only those believe in Our verses who, when they are reminded by them, fall down in prostration and exalt [Allāh] with praise of their Lord, and they are not arrogant."
+   },
+   {
+    "ayah": "32:16",
+    "text": "تَتَجَافَىٰ جُنُوبُهُمْ عَنِ ٱلْمَضَاجِعِ يَدْعُونَ رَبَّهُمْ خَوْفًا وَطَمَعًا وَمِمَّا رَزَقْنَٰهُمْ يُنفِقُونَ",
+    "search_text": "تتجافى جنوبهم عن المضاجع يدعون ربهم خوفا وطمعا ومما رزقناهم ينفقون",
+    "en": "Their sides part [i.e., they arise] from [their] beds; they supplicate their Lord in fear and aspiration, and from what We have provided them, they spend.<sup foot_note=229164>1</sup>"
+   },
+   {
+    "ayah": "32:17",
+    "text": "فَلَا تَعْلَمُ نَفْسٌ مَّآ أُخْفِىَ لَهُم مِّن قُرَّةِ أَعْيُنٍ جَزَآءًۢ بِمَا كَانُوا۟ يَعْمَلُونَ",
+    "search_text": "فلا تعلم نفس ما أخفي لهم من قرة أعين جزاء بما كانوا يعملون",
+    "en": "And no soul knows what has been hidden for them of comfort for eyes [i.e., satisfaction] as reward for what they used to do."
+   },
+   {
+    "ayah": "32:18",
+    "text": "أَفَمَن كَانَ مُؤْمِنًا كَمَن كَانَ فَاسِقًا ۚ لَّا يَسْتَوُۥنَ",
+    "search_text": "أفمن كان مؤمنا كمن كان فاسقا لا يستوون",
+    "en": "Then is one who was a believer like one who was defiantly disobedient? They are not equal."
+   },
+   {
+    "ayah": "32:19",
+    "text": "أَمَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ فَلَهُمْ جَنَّٰتُ ٱلْمَأْوَىٰ نُزُلًۢا بِمَا كَانُوا۟ يَعْمَلُونَ",
+    "search_text": "أما الذين آمنوا وعملوا الصالحات فلهم جنات المأوى نزلا بما كانوا يعملون",
+    "en": "As for those who believed and did righteous deeds, for them will be the Gardens of Refuge as accommodation for what they used to do."
+   },
+   {
+    "ayah": "32:20",
+    "text": "وَأَمَّا ٱلَّذِينَ فَسَقُوا۟ فَمَأْوَىٰهُمُ ٱلنَّارُ ۖ كُلَّمَآ أَرَادُوٓا۟ أَن يَخْرُجُوا۟ مِنْهَآ أُعِيدُوا۟ فِيهَا وَقِيلَ لَهُمْ ذُوقُوا۟ عَذَابَ ٱلنَّارِ ٱلَّذِى كُنتُم بِهِۦ تُكَذِّبُونَ",
+    "search_text": "وأما الذين فسقوا فمأواهم النار كلما أرادوا أن يخرجوا منها أعيدوا فيها وقيل لهم ذوقوا عذاب النار الذي كنتم به تكذبون",
+    "en": "But as for those who defiantly disobeyed, their refuge is the Fire. Every time they wish to emerge from it, they will be returned to it while it is said to them, \"Taste the punishment of the Fire which you used to deny.\""
+   },
+   {
+    "ayah": "32:21",
+    "text": "وَلَنُذِيقَنَّهُم مِّنَ ٱلْعَذَابِ ٱلْأَدْنَىٰ دُونَ ٱلْعَذَابِ ٱلْأَكْبَرِ لَعَلَّهُمْ يَرْجِعُونَ",
+    "search_text": "ولنذيقنهم من العذاب الأدنى دون العذاب الأكبر لعلهم يرجعون",
+    "en": "And We will surely let them taste the nearer punishment<sup foot_note=229165>1</sup> short of the greater punishment that perhaps they will return [i.e., repent]."
+   },
+   {
+    "ayah": "32:22",
+    "text": "وَمَنْ أَظْلَمُ مِمَّن ذُكِّرَ بِـَٔايَٰتِ رَبِّهِۦ ثُمَّ أَعْرَضَ عَنْهَآ ۚ إِنَّا مِنَ ٱلْمُجْرِمِينَ مُنتَقِمُونَ",
+    "search_text": "ومن أظلم ممن ذكر بآيات ربه ثم أعرض عنها إنا من المجرمين منتقمون",
+    "en": "And who is more unjust than one who is reminded of the verses of his Lord; then he turns away from them? Indeed We, from the criminals, will take retribution."
+   },
+   {
+    "ayah": "32:23",
+    "text": "وَلَقَدْ ءَاتَيْنَا مُوسَى ٱلْكِتَٰبَ فَلَا تَكُن فِى مِرْيَةٍ مِّن لِّقَآئِهِۦ ۖ وَجَعَلْنَٰهُ هُدًى لِّبَنِىٓ إِسْرَٰٓءِيلَ",
+    "search_text": "ولقد آتينا موسى الكتاب فلا تكن في مرية من لقائه وجعلناه هدى لبني إسرائيل",
+    "en": "And We certainly gave Moses the Scripture, so do not be in doubt over his meeting.<sup foot_note=229166>1</sup> And We made it [i.e., the Torah] guidance for the Children of Israel."
+   },
+   {
+    "ayah": "32:24",
+    "text": "وَجَعَلْنَا مِنْهُمْ أَئِمَّةً يَهْدُونَ بِأَمْرِنَا لَمَّا صَبَرُوا۟ ۖ وَكَانُوا۟ بِـَٔايَٰتِنَا يُوقِنُونَ",
+    "search_text": "وجعلنا منهم أئمة يهدون بأمرنا لما صبروا وكانوا بآياتنا يوقنون",
+    "en": "And We made from among them leaders guiding by Our command when they were patient and [when] they were certain of Our signs."
+   },
+   {
+    "ayah": "32:25",
+    "text": "إِنَّ رَبَّكَ هُوَ يَفْصِلُ بَيْنَهُمْ يَوْمَ ٱلْقِيَٰمَةِ فِيمَا كَانُوا۟ فِيهِ يَخْتَلِفُونَ",
+    "search_text": "إن ربك هو يفصل بينهم يوم القيامة فيما كانوا فيه يختلفون",
+    "en": "Indeed, your Lord will judge between them on the Day of Resurrection concerning that over which they used to differ."
+   },
+   {
+    "ayah": "32:26",
+    "text": "أَوَلَمْ يَهْدِ لَهُمْ كَمْ أَهْلَكْنَا مِن قَبْلِهِم مِّنَ ٱلْقُرُونِ يَمْشُونَ فِى مَسَٰكِنِهِمْ ۚ إِنَّ فِى ذَٰلِكَ لَءَايَٰتٍ ۖ أَفَلَا يَسْمَعُونَ",
+    "search_text": "أولم يهد لهم كم أهلكنا من قبلهم من القرون يمشون في مساكنهم إن في ذلك لآيات أفلا يسمعون",
+    "en": "Has it not become clear to them how many generations We destroyed before them, [as] they walk among their dwellings? Indeed in that are signs; then do they not hear?"
+   },
+   {
+    "ayah": "32:27",
+    "text": "أَوَلَمْ يَرَوْا۟ أَنَّا نَسُوقُ ٱلْمَآءَ إِلَى ٱلْأَرْضِ ٱلْجُرُزِ فَنُخْرِجُ بِهِۦ زَرْعًا تَأْكُلُ مِنْهُ أَنْعَٰمُهُمْ وَأَنفُسُهُمْ ۖ أَفَلَا يُبْصِرُونَ",
+    "search_text": "أولم يروا أنا نسوق الماء إلى الأرض الجرز فنخرج به زرعا تأكل منه أنعامهم وأنفسهم أفلا يبصرون",
+    "en": "Have they not seen that We drive water [in clouds] to barren land and bring forth thereby crops from which their livestock eat and [they] themselves? Then do they not see?"
+   },
+   {
+    "ayah": "32:28",
+    "text": "وَيَقُولُونَ مَتَىٰ هَٰذَا ٱلْفَتْحُ إِن كُنتُمْ صَٰدِقِينَ",
+    "search_text": "ويقولون متى هذا الفتح إن كنتم صادقين",
+    "en": "And they say, \"When will be this conquest,<sup foot_note=229169>1</sup> if you should be truthful?\""
+   },
+   {
+    "ayah": "32:29",
+    "text": "قُلْ يَوْمَ ٱلْفَتْحِ لَا يَنفَعُ ٱلَّذِينَ كَفَرُوٓا۟ إِيمَٰنُهُمْ وَلَا هُمْ يُنظَرُونَ",
+    "search_text": "قل يوم الفتح لا ينفع الذين كفروا إيمانهم ولا هم ينظرون",
+    "en": "Say, [O Muḥammad], \"On the Day of Conquest the belief of those who had disbelieved will not benefit them, nor will they be reprieved.\""
+   },
+   {
+    "ayah": "32:30",
+    "text": "فَأَعْرِضْ عَنْهُمْ وَٱنتَظِرْ إِنَّهُم مُّنتَظِرُونَ",
+    "search_text": "فأعرض عنهم وانتظر إنهم منتظرون",
+    "en": "So turn away from them and wait. Indeed, they are waiting."
+   }
+  ]
+ },
+ {
+  "key": "mulk",
+  "name_ar": "الملك",
+  "reference": "67:1-30",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "67:1",
+    "text": "تَبَٰرَكَ ٱلَّذِى بِيَدِهِ ٱلْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
+    "search_text": "تبارك الذي بيده الملك وهو على كل شيء قدير",
+    "en": "Blessed is He in whose hand is dominion, and He is over all things competent -"
+   },
+   {
+    "ayah": "67:2",
+    "text": "ٱلَّذِى خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلًا ۚ وَهُوَ ٱلْعَزِيزُ ٱلْغَفُورُ",
+    "search_text": "الذي خلق الموت والحياة ليبلوكم أيكم أحسن عملا وهو العزيز الغفور",
+    "en": "[He] who created death and life to test you [as to] which of you is best in deed - and He is the Exalted in Might, the Forgiving -"
+   },
+   {
+    "ayah": "67:3",
+    "text": "ٱلَّذِى خَلَقَ سَبْعَ سَمَٰوَٰتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِى خَلْقِ ٱلرَّحْمَٰنِ مِن تَفَٰوُتٍ ۖ فَٱرْجِعِ ٱلْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ",
+    "search_text": "الذي خلق سبع سماوات طباقا ما ترى في خلق الرحمن من تفاوت فارجع البصر هل ترى من فطور",
+    "en": "[And] who created seven heavens in layers.<sup foot_note=230069>1</sup> You do not see in the creation of the Most Merciful any inconsistency. So return [your] vision [to the sky]; do you see any breaks?"
+   },
+   {
+    "ayah": "67:4",
+    "text": "ثُمَّ ٱرْجِعِ ٱلْبَصَرَ كَرَّتَيْنِ يَنقَلِبْ إِلَيْكَ ٱلْبَصَرُ خَاسِئًا وَهُوَ حَسِيرٌ",
+    "search_text": "ثم ارجع البصر كرتين ينقلب إليك البصر خاسئا وهو حسير",
+    "en": "Then return [your] vision twice again.<sup foot_note=230070>1</sup> [Your] vision will return to you humbled while it is fatigued."
+   },
+   {
+    "ayah": "67:5",
+    "text": "وَلَقَدْ زَيَّنَّا ٱلسَّمَآءَ ٱلدُّنْيَا بِمَصَٰبِيحَ وَجَعَلْنَٰهَا رُجُومًا لِّلشَّيَٰطِينِ ۖ وَأَعْتَدْنَا لَهُمْ عَذَابَ ٱلسَّعِيرِ",
+    "search_text": "ولقد زينا السماء الدنيا بمصابيح وجعلناها رجوما للشياطين وأعتدنا لهم عذاب السعير",
+    "en": "And We have certainly beautified the nearest heaven with lamps [i.e., stars] and have made [from] them what is thrown at the devils<sup foot_note=230071>1</sup> and have prepared for them the punishment of the Blaze."
+   },
+   {
+    "ayah": "67:6",
+    "text": "وَلِلَّذِينَ كَفَرُوا۟ بِرَبِّهِمْ عَذَابُ جَهَنَّمَ ۖ وَبِئْسَ ٱلْمَصِيرُ",
+    "search_text": "وللذين كفروا بربهم عذاب جهنم وبئس المصير",
+    "en": "And for those who disbelieved in their Lord is the punishment of Hell, and wretched is the destination."
+   },
+   {
+    "ayah": "67:7",
+    "text": "إِذَآ أُلْقُوا۟ فِيهَا سَمِعُوا۟ لَهَا شَهِيقًا وَهِىَ تَفُورُ",
+    "search_text": "إذا ألقوا فيها سمعوا لها شهيقا وهي تفور",
+    "en": "When they are thrown into it, they hear from it a [dreadful] inhaling while it boils up."
+   },
+   {
+    "ayah": "67:8",
+    "text": "تَكَادُ تَمَيَّزُ مِنَ ٱلْغَيْظِ ۖ كُلَّمَآ أُلْقِىَ فِيهَا فَوْجٌ سَأَلَهُمْ خَزَنَتُهَآ أَلَمْ يَأْتِكُمْ نَذِيرٌ",
+    "search_text": "تكاد تميز من الغيظ كلما ألقي فيها فوج سألهم خزنتها ألم يأتكم نذير",
+    "en": "It almost bursts with rage. Every time a company is thrown into it, its keepers ask them, \"Did there not come to you a warner?\""
+   },
+   {
+    "ayah": "67:9",
+    "text": "قَالُوا۟ بَلَىٰ قَدْ جَآءَنَا نَذِيرٌ فَكَذَّبْنَا وَقُلْنَا مَا نَزَّلَ ٱللَّهُ مِن شَىْءٍ إِنْ أَنتُمْ إِلَّا فِى ضَلَٰلٍ كَبِيرٍ",
+    "search_text": "قالوا بلى قد جاءنا نذير فكذبنا وقلنا ما نزل الله من شيء إن أنتم إلا في ضلال كبير",
+    "en": "They will say, \"Yes, a warner had come to us, but we denied and said, 'Allāh has not sent down anything. You are not but in great error.'\""
+   },
+   {
+    "ayah": "67:10",
+    "text": "وَقَالُوا۟ لَوْ كُنَّا نَسْمَعُ أَوْ نَعْقِلُ مَا كُنَّا فِىٓ أَصْحَٰبِ ٱلسَّعِيرِ",
+    "search_text": "وقالوا لو كنا نسمع أو نعقل ما كنا في أصحاب السعير",
+    "en": "And they will say, \"If only we had been listening or reasoning, we would not be among the companions of the Blaze.\""
+   },
+   {
+    "ayah": "67:11",
+    "text": "فَٱعْتَرَفُوا۟ بِذَنۢبِهِمْ فَسُحْقًا لِّأَصْحَٰبِ ٱلسَّعِيرِ",
+    "search_text": "فاعترفوا بذنبهم فسحقا لأصحاب السعير",
+    "en": "And they will admit their sin, so [it is] alienation<sup foot_note=230074>1</sup> for the companions of the Blaze."
+   },
+   {
+    "ayah": "67:12",
+    "text": "إِنَّ ٱلَّذِينَ يَخْشَوْنَ رَبَّهُم بِٱلْغَيْبِ لَهُم مَّغْفِرَةٌ وَأَجْرٌ كَبِيرٌ",
+    "search_text": "إن الذين يخشون ربهم بالغيب لهم مغفرة وأجر كبير",
+    "en": "Indeed, those who fear their Lord unseen will have forgiveness and great reward."
+   },
+   {
+    "ayah": "67:13",
+    "text": "وَأَسِرُّوا۟ قَوْلَكُمْ أَوِ ٱجْهَرُوا۟ بِهِۦٓ ۖ إِنَّهُۥ عَلِيمٌۢ بِذَاتِ ٱلصُّدُورِ",
+    "search_text": "وأسروا قولكم أو اجهروا به إنه عليم بذات الصدور",
+    "en": "And conceal your speech or publicize it; indeed, He is Knowing of that within the breasts."
+   },
+   {
+    "ayah": "67:14",
+    "text": "أَلَا يَعْلَمُ مَنْ خَلَقَ وَهُوَ ٱللَّطِيفُ ٱلْخَبِيرُ",
+    "search_text": "ألا يعلم من خلق وهو اللطيف الخبير",
+    "en": "Does He who created not know,<sup foot_note=230075>1</sup> while He is the Subtle, the Aware?"
+   },
+   {
+    "ayah": "67:15",
+    "text": "هُوَ ٱلَّذِى جَعَلَ لَكُمُ ٱلْأَرْضَ ذَلُولًا فَٱمْشُوا۟ فِى مَنَاكِبِهَا وَكُلُوا۟ مِن رِّزْقِهِۦ ۖ وَإِلَيْهِ ٱلنُّشُورُ",
+    "search_text": "هو الذي جعل لكم الأرض ذلولا فامشوا في مناكبها وكلوا من رزقه وإليه النشور",
+    "en": "It is He who made the earth tame<sup foot_note=230076>1</sup> for you - so walk among its slopes and eat of His provision - and to Him is the resurrection."
+   },
+   {
+    "ayah": "67:16",
+    "text": "ءَأَمِنتُم مَّن فِى ٱلسَّمَآءِ أَن يَخْسِفَ بِكُمُ ٱلْأَرْضَ فَإِذَا هِىَ تَمُورُ",
+    "search_text": "أأمنتم من في السماء أن يخسف بكم الأرض فإذا هي تمور",
+    "en": "Do you feel secure that He who is above<sup foot_note=230077>1</sup> would not cause the earth to swallow you and suddenly it would sway?<sup foot_note=230078>2</sup>"
+   },
+   {
+    "ayah": "67:17",
+    "text": "أَمْ أَمِنتُم مَّن فِى ٱلسَّمَآءِ أَن يُرْسِلَ عَلَيْكُمْ حَاصِبًا ۖ فَسَتَعْلَمُونَ كَيْفَ نَذِيرِ",
+    "search_text": "أم أمنتم من في السماء أن يرسل عليكم حاصبا فستعلمون كيف نذير",
+    "en": "Or do you feel secure that He who is above would not send against you a storm of stones? Then you would know how [severe] was My warning."
+   },
+   {
+    "ayah": "67:18",
+    "text": "وَلَقَدْ كَذَّبَ ٱلَّذِينَ مِن قَبْلِهِمْ فَكَيْفَ كَانَ نَكِيرِ",
+    "search_text": "ولقد كذب الذين من قبلهم فكيف كان نكير",
+    "en": "And already had those before them denied, and how [terrible] was My reproach."
+   },
+   {
+    "ayah": "67:19",
+    "text": "أَوَلَمْ يَرَوْا۟ إِلَى ٱلطَّيْرِ فَوْقَهُمْ صَٰٓفَّٰتٍ وَيَقْبِضْنَ ۚ مَا يُمْسِكُهُنَّ إِلَّا ٱلرَّحْمَٰنُ ۚ إِنَّهُۥ بِكُلِّ شَىْءٍۭ بَصِيرٌ",
+    "search_text": "أولم يروا إلى الطير فوقهم صافات ويقبضن ما يمسكهن إلا الرحمن إنه بكل شيء بصير",
+    "en": "Do they not see the birds above them with wings outspread and [sometimes] folded in? None holds them [aloft] except the Most Merciful. Indeed He is, of all things, Seeing."
+   },
+   {
+    "ayah": "67:20",
+    "text": "أَمَّنْ هَٰذَا ٱلَّذِى هُوَ جُندٌ لَّكُمْ يَنصُرُكُم مِّن دُونِ ٱلرَّحْمَٰنِ ۚ إِنِ ٱلْكَٰفِرُونَ إِلَّا فِى غُرُورٍ",
+    "search_text": "أمن هذا الذي هو جند لكم ينصركم من دون الرحمن إن الكافرون إلا في غرور",
+    "en": "Or who is it that could be an army for you to aid you other than the Most Merciful? The disbelievers are not but in delusion."
+   },
+   {
+    "ayah": "67:21",
+    "text": "أَمَّنْ هَٰذَا ٱلَّذِى يَرْزُقُكُمْ إِنْ أَمْسَكَ رِزْقَهُۥ ۚ بَل لَّجُّوا۟ فِى عُتُوٍّ وَنُفُورٍ",
+    "search_text": "أمن هذا الذي يرزقكم إن أمسك رزقه بل لجوا في عتوّ ونفور",
+    "en": "Or who is it that could provide for you if He withheld His provision? But they have persisted in insolence and aversion."
+   },
+   {
+    "ayah": "67:22",
+    "text": "أَفَمَن يَمْشِى مُكِبًّا عَلَىٰ وَجْهِهِۦٓ أَهْدَىٰٓ أَمَّن يَمْشِى سَوِيًّا عَلَىٰ صِرَٰطٍ مُّسْتَقِيمٍ",
+    "search_text": "أفمن يمشي مكبّا على وجهه أهدى أمن يمشي سويّا على صراط مستقيم",
+    "en": "Then is one who walks fallen on his face better guided or one who walks erect on a straight path?"
+   },
+   {
+    "ayah": "67:23",
+    "text": "قُلْ هُوَ ٱلَّذِىٓ أَنشَأَكُمْ وَجَعَلَ لَكُمُ ٱلسَّمْعَ وَٱلْأَبْصَٰرَ وَٱلْأَفْـِٔدَةَ ۖ قَلِيلًا مَّا تَشْكُرُونَ",
+    "search_text": "قل هو الذي أنشأكم وجعل لكم السمع والأبصار والأفئدة قليلا ما تشكرون",
+    "en": "Say, \"It is He who has produced you and made for you hearing and vision and hearts [i.e., intellect]; little are you grateful.\""
+   },
+   {
+    "ayah": "67:24",
+    "text": "قُلْ هُوَ ٱلَّذِى ذَرَأَكُمْ فِى ٱلْأَرْضِ وَإِلَيْهِ تُحْشَرُونَ",
+    "search_text": "قل هو الذي ذرأكم في الأرض وإليه تحشرون",
+    "en": "Say, \"It is He who has multiplied you throughout the earth, and to Him you will be gathered.\""
+   },
+   {
+    "ayah": "67:25",
+    "text": "وَيَقُولُونَ مَتَىٰ هَٰذَا ٱلْوَعْدُ إِن كُنتُمْ صَٰدِقِينَ",
+    "search_text": "ويقولون متى هذا الوعد إن كنتم صادقين",
+    "en": "And they say, \"When is this promise, if you should be truthful?\""
+   },
+   {
+    "ayah": "67:26",
+    "text": "قُلْ إِنَّمَا ٱلْعِلْمُ عِندَ ٱللَّهِ وَإِنَّمَآ أَنَا۠ نَذِيرٌ مُّبِينٌ",
+    "search_text": "قل إنما العلم عند الله وإنما أنا نذير مبين",
+    "en": "Say, \"The knowledge is only with Allāh, and I am only a clear warner.\""
+   },
+   {
+    "ayah": "67:27",
+    "text": "فَلَمَّا رَأَوْهُ زُلْفَةً سِيٓـَٔتْ وُجُوهُ ٱلَّذِينَ كَفَرُوا۟ وَقِيلَ هَٰذَا ٱلَّذِى كُنتُم بِهِۦ تَدَّعُونَ",
+    "search_text": "فلما رأوه زلفة سيئت وجوه الذين كفروا وقيل هذا الذي كنتم به تدعون",
+    "en": "But when they see it<sup foot_note=230079>1</sup> approaching, the faces of those who disbelieve will be distressed, and it will be said, \"This is that for which you used to call.\"<sup foot_note=230080>2</sup>"
+   },
+   {
+    "ayah": "67:28",
+    "text": "قُلْ أَرَءَيْتُمْ إِنْ أَهْلَكَنِىَ ٱللَّهُ وَمَن مَّعِىَ أَوْ رَحِمَنَا فَمَن يُجِيرُ ٱلْكَٰفِرِينَ مِنْ عَذَابٍ أَلِيمٍ",
+    "search_text": "قل أرأيتم إن أهلكني الله ومن معي أو رحمنا فمن يجير الكافرين من عذاب أليم",
+    "en": "Say, [O Muḥammad], \"Have you considered:<sup foot_note=230081>1</sup> whether Allāh should cause my death and those with me or have mercy upon us, who can protect the disbelievers from a painful punishment?\""
+   },
+   {
+    "ayah": "67:29",
+    "text": "قُلْ هُوَ ٱلرَّحْمَٰنُ ءَامَنَّا بِهِۦ وَعَلَيْهِ تَوَكَّلْنَا ۖ فَسَتَعْلَمُونَ مَنْ هُوَ فِى ضَلَٰلٍ مُّبِينٍ",
+    "search_text": "قل هو الرحمن آمنا به وعليه توكلنا فستعلمون من هو في ضلال مبين",
+    "en": "Say, \"He is the Most Merciful; we have believed in Him, and upon Him we have relied. And you will [come to] know who it is that is in clear error.\""
+   },
+   {
+    "ayah": "67:30",
+    "text": "قُلْ أَرَءَيْتُمْ إِنْ أَصْبَحَ مَآؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَآءٍ مَّعِينٍۭ",
+    "search_text": "قل أرأيتم إن أصبح ماؤكم غورا فمن يأتيكم بماء معين",
+    "en": "Say, \"Have you considered: if your water was to become sunken [into the earth], then who could bring you flowing water?\""
+   }
+  ]
+ },
+ {
+  "key": "kafirun",
+  "name_ar": "الكافرون",
+  "reference": "109:1-6",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "109:1",
+    "text": "قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ",
+    "search_text": "قل يا أيها الكافرون",
+    "en": "Say, \"O disbelievers,"
+   },
+   {
+    "ayah": "109:2",
+    "text": "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
+    "search_text": "لا أعبد ما تعبدون",
+    "en": "I do not worship what you worship."
+   },
+   {
+    "ayah": "109:3",
+    "text": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+    "search_text": "ولا أنتم عابدون ما أعبد",
+    "en": "Nor are you worshippers of what I worship."
+   },
+   {
+    "ayah": "109:4",
+    "text": "وَلَآ أَنَا۠ عَابِدٌ مَّا عَبَدتُّمْ",
+    "search_text": "ولا أنا عابد ما عبدتم",
+    "en": "Nor will I be a worshipper of what you worship."
+   },
+   {
+    "ayah": "109:5",
+    "text": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+    "search_text": "ولا أنتم عابدون ما أعبد",
+    "en": "Nor will you be worshippers of what I worship."
+   },
+   {
+    "ayah": "109:6",
+    "text": "لَكُمْ دِينُكُمْ وَلِىَ دِينِ",
+    "search_text": "لكم دينكم ولي دين",
+    "en": "For you is your religion, and for me is my religion.\""
+   }
+  ]
+ },
+ {
+  "key": "ikhlas",
+  "name_ar": "الإخلاص",
+  "reference": "112:1-4",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "112:1",
+    "text": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+    "search_text": "قل هو الله أحد",
+    "en": "Say, \"He is Allāh, [who is] One,<sup foot_note=230513>1</sup>"
+   },
+   {
+    "ayah": "112:2",
+    "text": "ٱللَّهُ ٱلصَّمَدُ",
+    "search_text": "الله الصمد",
+    "en": "Allāh, the Eternal Refuge.<sup foot_note=230515>1</sup>"
+   },
+   {
+    "ayah": "112:3",
+    "text": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+    "search_text": "لم يلد ولم يولد",
+    "en": "He neither begets nor is born,"
+   },
+   {
+    "ayah": "112:4",
+    "text": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+    "search_text": "ولم يكن له كفوا أحد",
+    "en": "Nor is there to Him any equivalent.\""
+   }
+  ]
+ },
+ {
+  "key": "falaq",
+  "name_ar": "الفلق",
+  "reference": "113:1-5",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "113:1",
+    "text": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
+    "search_text": "قل أعوذ برب الفلق",
+    "en": "Say, \"I seek refuge in the Lord of daybreak"
+   },
+   {
+    "ayah": "113:2",
+    "text": "مِن شَرِّ مَا خَلَقَ",
+    "search_text": "من شر ما خلق",
+    "en": "From the evil of that which He created"
+   },
+   {
+    "ayah": "113:3",
+    "text": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+    "search_text": "ومن شر غاسق إذا وقب",
+    "en": "And from the evil of darkness when it settles"
+   },
+   {
+    "ayah": "113:4",
+    "text": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ",
+    "search_text": "ومن شر النفاثات في العقد",
+    "en": "And from the evil of the blowers in knots<sup foot_note=230517>1</sup>"
+   },
+   {
+    "ayah": "113:5",
+    "text": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+    "search_text": "ومن شر حاسد إذا حسد",
+    "en": "And from the evil of an envier when he envies.\""
+   }
+  ]
+ },
+ {
+  "key": "nas",
+  "name_ar": "الناس",
+  "reference": "114:1-6",
+  "source": {
+   "server": "quran.ai MCP",
+   "upstream": "quran.com",
+   "editions": [
+    "ar-uthmani-minimal",
+    "ar-uthmani",
+    "en-sahih-international"
+   ]
+  },
+  "ayahs": [
+   {
+    "ayah": "114:1",
+    "text": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+    "search_text": "قل أعوذ برب الناس",
+    "en": "Say, \"I seek refuge in the Lord of mankind,"
+   },
+   {
+    "ayah": "114:2",
+    "text": "مَلِكِ ٱلنَّاسِ",
+    "search_text": "ملك الناس",
+    "en": "The Sovereign of mankind,"
+   },
+   {
+    "ayah": "114:3",
+    "text": "إِلَٰهِ ٱلنَّاسِ",
+    "search_text": "إله الناس",
+    "en": "The God of mankind,"
+   },
+   {
+    "ayah": "114:4",
+    "text": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+    "search_text": "من شر الوسواس الخناس",
+    "en": "From the evil of the retreating whisperer<sup foot_note=230518>1</sup> -"
+   },
+   {
+    "ayah": "114:5",
+    "text": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+    "search_text": "الذي يوسوس في صدور الناس",
+    "en": "Who whispers [evil] into the breasts of mankind -"
+   },
+   {
+    "ayah": "114:6",
+    "text": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+    "search_text": "من الجنة والناس",
+    "en": "From among the jinn and mankind.\"<sup foot_note=230519>1</sup>"
+   }
+  ]
+ }
+]

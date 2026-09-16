@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+		Lets a prayer-time notification break through Focus and Do Not Disturb —
+		the «عاجلة» badge on the lock screen.
+
+		Claimed for the prayer channel alone (see `_urgencyOf` in
+		`lib/core/notifications.dart`). A prayer time is the one thing this app
+		sends that is worthless a few minutes late; an adhkar reminder is not,
+		and a reader who silenced their phone on purpose should not be
+		interrupted for one.
+
+		Without this entitlement iOS quietly downgrades the level to `active`:
+		the notification still arrives, it simply respects Focus. So a build that
+		has not yet been signed with it is degraded, never broken.
+	-->
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
+</dict>
+</plist>

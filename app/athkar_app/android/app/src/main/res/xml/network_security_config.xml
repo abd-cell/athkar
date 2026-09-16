@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android blocks plain http:// from API 28 onwards. The development API is
+    plain http on the LAN, so without this the app installs, launches, and then
+    silently fails every call — which looks exactly like a broken backend.
+
+    The exceptions are listed by host rather than switched on globally with
+    `usesCleartextTraffic`: that flag would allow cleartext to *anywhere*,
+    including in a release build, and this app's whole posture is that it sends
+    as little as possible to as few places as possible.
+
+    `cleartextTrafficPermitted` defaults to false everywhere else, so a
+    production build talking to https needs no change here — and if the LAN
+    address moves, this file and `lib/core/environment.dart` move together.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- The development machine on the LAN, reachable from a real phone. -->
+        <domain includeSubdomains="false">192.168.1.43</domain>
+
+        <!-- The Android emulator's alias for the host. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+
+        <!-- The host itself, for a browser or a desktop build. -->
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+    </domain-config>
+</network-security-config>

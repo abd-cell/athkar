@@ -1,0 +1,499 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'push.title' | translate }}</h1>
+    <span class="spacer"></span>
+
+    <button type="button" class="btn btn--primary" (click)="compose()">
+      {{ 'push.send' | translate }}
+    </button>
+
+    <!--
+      What makes the "overdue" figure actionable. The screen could already say
+      the sender looked stopped; this is the only thing on it that could then do
+      anything about that.
+    -->
+    <button
+      type="button"
+      class="btn"
+      style="margin-inline-start: 8px"
+      [disabled]="running()"
+      (click)="runNow()"
+    >
+      {{ (running() ? 'common.loading' : 'push.runNow') | translate }}
+    </button>
+
+    <div class="tabs" style="margin-inline-start: 12px">
+      @for (days of windows; track days) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip--on]="windowDays() === days"
+          (click)="setWindow(days)"
+        >
+          {{ 'push.window.' + days | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (sent(); as id) {
+    <div class="notice notice--info">{{ 'push.queued' | translate: { id: id } }}</div>
+  }
+
+  @if (ranSummary(); as ran) {
+    <div class="notice notice--info">
+      {{
+        'push.runDone'
+          | translate
+            : {
+                materialised: ran.materialised,
+                broadcasts: ran.broadcastsStarted,
+                attempted: ran.attempted,
+              }
+      }}
+    </div>
+  }
+
+  @if (logError(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  @if (loading()) {
+    <div class="empty">{{ 'common.loading' | translate }}</div>
+  } @else if (overview(); as o) {
+    <!--
+      Read first, because when Firebase is not configured every other figure on
+      this page has one explanation and no amount of studying the queue reveals
+      it. The pipeline is *working* in this state — inbox rows are written and
+      the delivery records are kept — so it is a notice, not an error.
+    -->
+    @if (!o.isFcmConfigured) {
+      <div class="notice notice--warn">{{ 'push.noCredentials' | translate }}</div>
+    }
+
+    @if (isStalled()) {
+      <div class="notice notice--error">
+        {{ 'push.stalled' | translate: { count: o.queue.overdueDispatches } }}
+      </div>
+    }
+
+    <!-- ─────────────────────────────── reach ─────────────────────────────── -->
+
+    <h3 class="section-head">{{ 'push.reach' | translate }}</h3>
+    <div class="notice notice--info">{{ 'push.reachHint' | translate }}</div>
+
+    <div class="grid cols-4">
+      <div class="card">
+        <div class="card__label">{{ 'push.reachable' | translate }}</div>
+        <div class="card__value">{{ o.reach.reachable }}</div>
+        @if (reachPercent(); as percent) {
+          <div class="card__hint">
+            {{ 'push.ofInstalls' | translate: { percent: percent, total: o.reach.totalDevices } }}
+          </div>
+        }
+      </div>
+
+      <!--
+        The three shortfalls are shown apart rather than summed: a muted reader
+        made a choice, a tokenless install may never have been asked, and a
+        silent one is most likely uninstalled. Only the middle one is an
+        opportunity.
+      -->
+      <div class="card">
+        <div class="card__label">{{ 'push.tokenless' | translate }}</div>
+        <div class="card__value">{{ o.reach.tokenless }}</div>
+        <div class="card__hint">{{ 'push.tokenlessHint' | translate }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.muted' | translate }}</div>
+        <div class="card__value">{{ o.reach.muted }}</div>
+        <div class="card__hint">{{ 'push.mutedHint' | translate }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.stale' | translate }}</div>
+        <div class="card__value">{{ o.reach.stale }}</div>
+        <div class="card__hint">{{ 'push.staleHint' | translate }}</div>
+      </div>
+    </div>
+
+    @if (entries(o.reach.reachableByPlatform).length) {
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="card">
+          <div class="card__label">{{ 'push.byPlatform' | translate }}</div>
+          <div class="bars">
+            @for (entry of entries(o.reach.reachableByPlatform); track entry.key) {
+              <div class="bar">
+                <span class="bar__name">{{ entry.key }}</span>
+                <span class="bar__value">{{ entry.value }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__label">{{ 'push.byLanguage' | translate }}</div>
+          <div class="bars">
+            @for (entry of entries(o.reach.reachableByLanguage); track entry.key) {
+              <div class="bar">
+                <span class="bar__name">{{ entry.key }}</span>
+                <span class="bar__value">{{ entry.value }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ─────────────────────────────── queue ─────────────────────────────── -->
+
+    <h3 class="section-head">{{ 'push.queue' | translate }}</h3>
+
+    <div class="grid cols-4">
+      <div class="card">
+        <div class="card__label">{{ 'push.pending' | translate }}</div>
+        <div class="card__value">{{ o.queue.pendingDispatches }}</div>
+        @if (o.queue.nextDispatchAtUtc) {
+          <div class="card__hint">
+            {{ 'push.nextAt' | translate }}: {{ o.queue.nextDispatchAtUtc | appDate }}
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.overdue' | translate }}</div>
+        <div class="card__value" [class.is-warning]="o.queue.overdueDispatches > 0">
+          {{ o.queue.overdueDispatches }}
+        </div>
+        <div class="card__hint">{{ 'push.overdueHint' | translate }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.scheduledBroadcasts' | translate }}</div>
+        <div class="card__value">{{ o.queue.scheduledBroadcasts }}</div>
+        @if (o.queue.nextBroadcastAtUtc) {
+          <div class="card__hint">
+            {{ 'push.nextAt' | translate }}: {{ o.queue.nextBroadcastAtUtc | appDate }}
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.activeCampaigns' | translate }}</div>
+        <div class="card__value">{{ o.queue.activePushCampaigns }}</div>
+        <div class="card__hint">{{ 'push.activeCampaignsHint' | translate }}</div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────── outcomes ───────────────────────────── -->
+
+    <h3 class="section-head">{{ 'push.outcomes' | translate }}</h3>
+
+    <div class="grid cols-4">
+      <div class="card">
+        <div class="card__label">{{ 'push.deliveryRate' | translate }}</div>
+        <!--
+          Null when nothing was attempted. «٠٪» would read as total failure,
+          which is the opposite of what an empty window means.
+        -->
+        <div class="card__value">
+          {{ deliveryPercent() === null ? '—' : deliveryPercent() + '%' }}
+        </div>
+        <div class="card__hint">{{ 'push.deliveryRateHint' | translate }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.sent' | translate }}</div>
+        <div class="card__value">{{ o.outcomes.sent }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.failed' | translate }}</div>
+        <div class="card__value" [class.is-warning]="o.outcomes.failed > 0">
+          {{ o.outcomes.failed }}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'push.skipped' | translate }}</div>
+        <div class="card__value">{{ o.outcomes.skipped }}</div>
+        <div class="card__hint">{{ 'push.skippedHint' | translate }}</div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────── failures ───────────────────────────── -->
+
+    <h3 class="section-head">{{ 'push.recentFailures' | translate }}</h3>
+
+    @if (!o.recentFailures.length) {
+      <div class="empty">{{ 'push.noFailures' | translate }}</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{ 'push.when' | translate }}</th>
+              <th>{{ 'push.source' | translate }}</th>
+              <th>{{ 'push.device' | translate }}</th>
+              <th>{{ 'broadcasts.status' | translate }}</th>
+              <th>{{ 'push.attempts' | translate }}</th>
+              <th>{{ 'push.error' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of o.recentFailures; track row.id) {
+              <tr>
+                <td>{{ row.scheduledAtUtc | appDate }}</td>
+                <td>{{ row.source }}</td>
+                <td>{{ row.platform }} · {{ row.languageCode }}</td>
+                <td>
+                  <!--
+                    An expired token is not a failure to fix — the device row was
+                    already cleaned up when it happened. It is shown here only so
+                    a drop in reach has a visible cause.
+                  -->
+                  <span
+                    class="badge"
+                    [class.badge--warn]="row.status === 'TokenExpired'"
+                    [class.badge--danger]="row.status === 'Failed'"
+                  >
+                    {{ 'push.status.' + row.status | translate }}
+                  </span>
+                </td>
+                <td>{{ row.attempts }}</td>
+                <td class="cell-wrap">{{ row.error || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <div class="empty">{{ 'common.noData' | translate }}</div>
+  }
+</div>
+
+
+  <!-- ───────────────────────────── delivery log ───────────────────────────── -->
+
+  <div class="page-head" style="margin-top: 26px">
+    <h2>{{ 'push.log.title' | translate }}</h2>
+    <span class="spacer"></span>
+    <span class="field__hint">{{ logTotal() }}</span>
+  </div>
+
+  <div class="row" style="flex-wrap: wrap; margin-bottom: 14px">
+    @for (option of logFilters; track option.key) {
+      <button
+        type="button"
+        class="chip"
+        [class.chip--on]="logStatus() === option.value"
+        (click)="filterLog(option.value)"
+      >
+        {{ option.key | translate }}
+      </button>
+    }
+  </div>
+
+  <div class="card card--flush">
+    @if (loadingLog()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (log().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'audit.when' | translate }}</th>
+            <th>{{ 'push.log.source' | translate }}</th>
+            <th>{{ 'push.log.headline' | translate }}</th>
+            <th>{{ 'sessions.install' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th>{{ 'push.log.attempts' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of log(); track row.id) {
+            <tr>
+              <td>
+                {{ row.scheduledAtUtc | appDate }}
+                @if (row.sentAtUtc) {
+                  <div class="field__hint">{{ row.sentAtUtc | appDate }}</div>
+                }
+              </td>
+
+              <td><code style="font-size: 11px" dir="ltr">{{ row.source }}</code></td>
+
+              <td style="max-width: 220px">
+                {{ row.title ?? '—' }}
+                @if (row.error) {
+                  <!-- What Firebase actually said, which is the whole reason to look. -->
+                  <div class="field__hint" dir="ltr">{{ row.error }}</div>
+                }
+              </td>
+
+              <td>
+                <code style="font-size: 10.5px" dir="ltr">{{ row.deviceKey.slice(0, 8) }}…</code>
+                <div class="field__hint">{{ row.languageCode }}</div>
+              </td>
+
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--ok]="row.status === Status.Sent"
+                  [class.badge--danger]="row.status === Status.Failed"
+                  [class.badge--warn]="row.status === Status.TokenExpired"
+                  [class.badge--draft]="row.status === Status.Skipped || row.status === Status.Pending"
+                >
+                  {{ statusKey(row.status) | translate }}
+                </span>
+              </td>
+
+              <td>{{ row.attempts }}</td>
+
+              <td>
+                <div class="row">
+                  <!--
+                    Both flags are decided on the server. A screen that worked
+                    the rule out for itself would be a second copy of it, and the
+                    copy is what drifts — a retry offered on a delivered message
+                    would notify the reader twice.
+                  -->
+                  @if (row.canRetry) {
+                    <button type="button" class="btn btn--sm" (click)="retry(row)">
+                      {{ 'push.log.retry' | translate }}
+                    </button>
+                  }
+                  @if (row.canCancel) {
+                    <button
+                      type="button"
+                      class="btn btn--sm btn--danger"
+                      (click)="cancelDispatch(row)"
+                    >
+                      {{ 'push.log.cancel' | translate }}
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+@if (composing()) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="send()">
+      <div class="dialog__head">
+        <h2>{{ 'push.send' | translate }}</h2>
+      </div>
+
+      <div class="notice notice--info">{{ 'push.sendHint' | translate }}</div>
+
+      @if (sendError(); as message) {
+        <div class="notice notice--error">{{ message | translate }}</div>
+      }
+
+      <div class="field">
+        <label>{{ 'reminders.audience' | translate }}</label>
+        <select name="audience" [(ngModel)]="draft().audience">
+          @for (option of audiences; track option.value) {
+            <option [ngValue]="option.value">{{ option.key | translate }}</option>
+          }
+        </select>
+        <!--
+          The default is one device on purpose: somebody checking that push
+          works at all should reach their own phone, not every install.
+        -->
+        <span class="field__hint">{{ 'push.audienceHint' | translate }}</span>
+      </div>
+
+      @if (draft().audience === Audience.Device) {
+        <div class="field">
+          <label>{{ 'push.deviceKey' | translate }}</label>
+          <input type="text" name="targetDeviceKey" [(ngModel)]="draft().targetDeviceKey" />
+          <span class="field__hint">{{ 'push.deviceKeyHint' | translate }}</span>
+        </div>
+      }
+
+      @if (draft().audience === Audience.Language) {
+        <div class="field">
+          <label>{{ 'nav.languages' | translate }}</label>
+          <select name="targetLanguageCode" [(ngModel)]="draft().targetLanguageCode">
+            @for (language of languages(); track language.code) {
+              <option [ngValue]="language.code">{{ language.nativeName }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (draft().audience === Audience.Platform) {
+        <div class="field">
+          <label>{{ 'push.byPlatform' | translate }}</label>
+          <select name="targetPlatform" [(ngModel)]="draft().targetPlatform">
+            @for (option of platforms; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="field">
+        <label>{{ 'broadcasts.headline' | translate }}</label>
+        <input type="text" name="title" [(ngModel)]="draft().translations[0].title" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'feedback.message' | translate }}</label>
+        <textarea rows="4" name="body" [(ngModel)]="draft().translations[0].body"></textarea>
+      </div>
+
+      <div class="field">
+        <label>{{ 'broadcasts.route' | translate }}</label>
+        <input type="text" name="route" [(ngModel)]="draft().route" placeholder="category/3" />
+      </div>
+
+      <!--
+        What the reader will actually see.
+
+        A notification is two short lines on a lock screen, and the composer's
+        two full-width inputs make everything look like it fits. It does not:
+        Android shows roughly one line of body text collapsed, and a headline
+        written to fill the field is cut mid-word on the phone. This is the only
+        place that difference is visible before sending.
+      -->
+      <div class="field">
+        <label>{{ 'push.preview' | translate }}</label>
+
+        <div class="preview">
+          <div class="preview__app">
+            <span class="preview__mark">ذ</span>
+            <span>{{ 'app.name' | translate }}</span>
+            <span class="preview__now">{{ 'push.previewNow' | translate }}</span>
+          </div>
+
+          <div class="preview__title">
+            {{ draft().translations[0].title || ('push.previewTitle' | translate) }}
+          </div>
+          <div class="preview__body">
+            {{ draft().translations[0].body || ('push.previewBody' | translate) }}
+          </div>
+        </div>
+
+        <span class="field__hint">{{ 'push.previewHint' | translate }}</span>
+      </div>
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="sending()">
+          {{ 'push.sendNow' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

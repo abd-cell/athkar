@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    `updatePeriodMillis` is 30 minutes because that is Android's floor — anything
+    smaller is silently rounded up, so asking for less only misleads whoever
+    reads this file. The app pushes fresh values whenever it is opened or a
+    reminder fires, which is what actually keeps the widget current; this period
+    is the backstop for a phone nobody has touched.
+
+    ## Why `keyguard` is in the category list
+
+    Android's lock screen has had three different answers to third-party widgets
+    and this file has to satisfy all of them at once:
+
+    * **API 17–20** offered them through `android:widgetCategory="keyguard"`
+      plus `initialKeyguardLayout`. Removed in Lollipop.
+    * **API 21–35** had none at all. Nothing declared here changes that.
+    * **Android 16 QPR1 and later** brought them back, and made them
+      **opt-out**: a widget is eligible unless it declares `not_keyguard`. The
+      panel is rolling out by device — Pixel Tablet first — so a phone on
+      Android 16 may still not offer it.
+
+    Declaring `home_screen|keyguard` therefore costs nothing and covers every
+    one of those: the home-screen flag is untouched, the modern platform ignores
+    the keyguard flag because it does not need it, and an implementation that
+    filters on the flag — an OEM lock screen, or the legacy API — finds it.
+
+    What it cannot do is conjure the feature onto a phone whose system has no
+    lock-screen widget panel, which is most phones. The app's own help screen
+    says so rather than leaving the reader hunting for a list that is not there.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="80dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/athkar_widget"
+    android:initialKeyguardLayout="@layout/athkar_widget"
+    android:previewLayout="@layout/athkar_widget"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen|keyguard" />

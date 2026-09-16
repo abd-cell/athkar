@@ -1,0 +1,122 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'staff.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'staff.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'staff.fullName' | translate }}</th>
+            <th>{{ 'staff.email' | translate }}</th>
+            <th>{{ 'staff.roles' | translate }}</th>
+            <th>{{ 'staff.active' | translate }}</th>
+            <th>{{ 'staff.lastLogin' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.fullName }}</td>
+              <td dir="ltr">{{ row.email }}</td>
+              <td>
+                @for (role of row.roles; track role) {
+                  <span class="badge badge--ok" style="margin-inline-end: 4px">
+                    {{ roleKey(role) | translate }}
+                  </span>
+                }
+              </td>
+              <td>{{ (row.isActive ? 'common.yes' : 'common.no') | translate }}</td>
+              <td>{{ row.lastLoginAt | appDate }}</td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'staff.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'staff.fullName' | translate }}</label>
+          <input type="text" name="fullName" [(ngModel)]="form.fullName" />
+        </div>
+        <div class="field">
+          <label>{{ 'staff.email' | translate }}</label>
+          <input type="email" dir="ltr" name="email" [(ngModel)]="form.email" />
+        </div>
+        <div class="field">
+          <label>{{ 'staff.password' | translate }}</label>
+          <input type="password" dir="ltr" name="password" autocomplete="new-password" [(ngModel)]="form.password" />
+          <span class="field__hint">{{ 'staff.passwordHint' | translate }}</span>
+        </div>
+        <div class="field">
+          <label>{{ 'nav.languages' | translate }}</label>
+          <select name="languageCode" [(ngModel)]="form.languageCode">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'staff.roles' | translate }}</label>
+        <div class="row">
+          @for (option of allRoles; track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--on]="hasRole(form.roles, option.value)"
+              (click)="toggleRole(option.value)"
+            >
+              {{ option.key | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+        {{ 'staff.active' | translate }}
+      </label>
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,0 +1,113 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'dashboard.title' | translate }}</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="empty">{{ 'common.loading' | translate }}</div>
+  } @else if (data(); as d) {
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.devicesTotal' | translate }}</div>
+        <div class="card__value">{{ d.totalDevices }}</div>
+      </div>
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.devicesActive' | translate }}</div>
+        <div class="card__value">{{ d.activeDevices }}</div>
+      </div>
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.devicesReachable' | translate }}</div>
+        <div class="card__value">{{ d.reachableDevices }}</div>
+      </div>
+    </div>
+
+    <div class="grid cols-4" style="margin-top: 14px">
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.publishedCategories' | translate }}</div>
+        <div class="card__value">{{ d.publishedCategories }}</div>
+      </div>
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.publishedAdhkar' | translate }}</div>
+        <div class="card__value">{{ d.publishedAdhkar }}</div>
+      </div>
+
+      <!--
+        The one figure on this page that is a to-do rather than a statistic, so
+        it is a link and it explains itself.
+      -->
+      <a class="card card--action" [routerLink]="['/', global.languageCode(), 'adhkar']">
+        <div class="card__label">{{ 'dashboard.unsourcedDrafts' | translate }}</div>
+        <div class="card__value" [class.is-warning]="d.unsourcedDrafts > 0">
+          {{ d.unsourcedDrafts }}
+        </div>
+        <div class="card__hint">{{ 'dashboard.unsourcedHint' | translate }}</div>
+      </a>
+
+      <a class="card card--action" [routerLink]="['/', global.languageCode(), 'feedback']">
+        <div class="card__label">{{ 'dashboard.openFeedback' | translate }}</div>
+        <div class="card__value">{{ d.openFeedback }}</div>
+      </a>
+    </div>
+
+    <div class="grid cols-2" style="margin-top: 14px">
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.installs' | translate }}</div>
+        <svg class="spark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <polyline [attr.points]="points()" />
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.pushLastDay' | translate }}</div>
+        <div class="bars">
+          @for (entry of entries(d.pushLastDay); track entry[0]) {
+            <div class="bar">
+              <span class="bar__name">{{ entry[0] }}</span>
+              <span class="bar__track">
+                <span
+                  class="bar__fill"
+                  [style.width.%]="share(entry[1], d.pushLastDay)"
+                ></span>
+              </span>
+              <span class="bar__value">{{ entry[1] }}</span>
+            </div>
+          } @empty {
+            <div class="empty">{{ 'common.empty' | translate }}</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top: 14px">
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.byPlatform' | translate }}</div>
+        <div class="bars">
+          @for (entry of entries(d.devicesByPlatform); track entry[0]) {
+            <div class="bar">
+              <span class="bar__name">{{ entry[0] }}</span>
+              <span class="bar__track">
+                <span class="bar__fill" [style.width.%]="share(entry[1], d.devicesByPlatform)"></span>
+              </span>
+              <span class="bar__value">{{ entry[1] }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__label">{{ 'dashboard.byLanguage' | translate }}</div>
+        <div class="bars">
+          @for (entry of entries(d.devicesByLanguage); track entry[0]) {
+            <div class="bar">
+              <span class="bar__name">{{ entry[0] }}</span>
+              <span class="bar__track">
+                <span class="bar__fill" [style.width.%]="share(entry[1], d.devicesByLanguage)"></span>
+              </span>
+              <span class="bar__value">{{ entry[1] }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

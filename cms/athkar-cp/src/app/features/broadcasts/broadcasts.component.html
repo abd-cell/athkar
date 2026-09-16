@@ -1,0 +1,150 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'broadcasts.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'broadcasts.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'broadcasts.headline' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th>{{ 'broadcasts.scheduledAt' | translate }}</th>
+            <th>{{ 'broadcasts.recipients' | translate }}</th>
+            <th>{{ 'broadcasts.sent' | translate }}</th>
+            <th>{{ 'broadcasts.skipped' | translate }}</th>
+            <th>{{ 'broadcasts.failed' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ titleOf(row) }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--ok]="row.status === Status.Sent"
+                  [class.badge--warn]="row.status === Status.Scheduled || row.status === Status.Sending"
+                  [class.badge--danger]="row.status === Status.Failed"
+                  [class.badge--draft]="row.status === Status.Draft || row.status === Status.Cancelled"
+                >
+                  {{ statusKey(row.status) | translate }}
+                </span>
+              </td>
+              <td>{{ row.scheduledAtUtc | appDate }}</td>
+              <td>{{ row.recipientCount }}</td>
+              <td>{{ row.sentCount }}</td>
+              <td [title]="'broadcasts.skippedHint' | translate">{{ row.skippedCount }}</td>
+              <td>{{ row.failedCount }}</td>
+              <td>
+                <div class="row">
+                  @if (isEditable(row)) {
+                    <button type="button" class="btn btn--sm" (click)="edit(row)">
+                      {{ 'common.edit' | translate }}
+                    </button>
+                  }
+                  @if (row.status === Status.Draft || row.status === Status.Cancelled) {
+                    <button type="button" class="btn btn--sm btn--primary" (click)="send(row)">
+                      {{ 'broadcasts.send' | translate }}
+                    </button>
+                  }
+                  @if (row.status === Status.Scheduled) {
+                    <button type="button" class="btn btn--sm" (click)="cancelSending(row)">
+                      {{ 'broadcasts.cancel' | translate }}
+                    </button>
+                  }
+                  @if (row.status !== Status.Sending) {
+                    <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                      {{ 'common.delete' | translate }}
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'broadcasts.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'reminders.audience' | translate }}</label>
+          <select name="audience" [(ngModel)]="form.audience">
+            @for (option of audiences; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>{{ 'broadcasts.scheduledAt' | translate }}</label>
+          <input type="datetime-local" name="scheduledAtUtc" [(ngModel)]="form.scheduledAtUtc" />
+          <span class="field__hint">{{ 'broadcasts.scheduledHint' | translate }}</span>
+        </div>
+
+        <div class="field">
+          <label>{{ 'broadcasts.route' | translate }}</label>
+          <input type="text" name="route" dir="ltr" [(ngModel)]="form.route" />
+          <span class="field__hint">{{ 'broadcasts.routeHint' | translate }}</span>
+        </div>
+
+        @if (form.audience === 3) {
+          <div class="field">
+            <label>{{ 'logs.device' | translate }}</label>
+            <input type="text" name="targetDeviceKey" dir="ltr" [(ngModel)]="form.targetDeviceKey" />
+          </div>
+        }
+
+        @if (form.audience === 1) {
+          <div class="field">
+            <label>{{ 'nav.languages' | translate }}</label>
+            <select name="targetLanguageCode" [(ngModel)]="form.targetLanguageCode">
+              @for (language of languages(); track language.code) {
+                <option [ngValue]="language.code">{{ language.nativeName }}</option>
+              }
+            </select>
+          </div>
+        }
+      </div>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="broadcasts.headline"
+        bodyLabel="feedback.message"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

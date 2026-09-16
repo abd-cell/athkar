@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A scrim, not full transparency: text on a bare wallpaper is unreadable half
+    the time, and a widget that cannot be read is not a design choice.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/widget_paper_scrim" />
+    <corners android:radius="18dp" />
+</shape>

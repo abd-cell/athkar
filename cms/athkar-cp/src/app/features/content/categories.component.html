@@ -1,0 +1,387 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'categories.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'categories.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <!--
+    Importing حصن المسلم's أبواب. Two steps: the check reports, and only a report
+    with something in it offers the button that writes. Every dhikr it brings in
+    is a draft, because the source carries no takhrij.
+  -->
+  <div class="card" style="margin-bottom: 16px">
+    <h3 style="margin-bottom: 6px">{{ 'categories.import.title' | translate }}</h3>
+    <div class="field__hint" style="margin-bottom: 14px">
+      {{ 'categories.import.hint' | translate }}
+    </div>
+
+    @if (importError(); as message) {
+      <div class="notice notice--error">{{ message | translate }}</div>
+    }
+
+    <div class="row" style="margin-bottom: 14px">
+      <button type="button" class="btn" [disabled]="importing()" (click)="previewImport()">
+        {{ 'categories.import.check' | translate }}
+      </button>
+
+      @if (hasPendingImport()) {
+        <button type="button" class="btn btn--primary" [disabled]="importing()" (click)="applyImport()">
+          {{ 'categories.import.apply' | translate }}
+        </button>
+      }
+    </div>
+
+    @if (importing()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (importReport(); as report) {
+      <div class="notice notice--info">
+        @if (report.applied) {
+          {{ 'categories.import.applied' | translate }} ·
+          {{ 'categories.import.contentVersion' | translate }} {{ report.contentVersion }}
+        } @else {
+          {{ 'categories.import.previewed' | translate }}
+        }
+        · {{ 'categories.import.checked' | translate }} {{ report.chaptersChecked }}
+        · {{ 'categories.import.chaptersAdded' | translate }} {{ report.chaptersAdded }}
+        · {{ 'categories.import.adhkarAdded' | translate }} {{ report.adhkarAdded }}
+        · {{ 'categories.import.present' | translate }} {{ report.adhkarAlreadyPresent }}
+        · {{ 'categories.import.skipped' | translate }} {{ report.chaptersSkipped }}
+
+        @if (report.draftsAwaitingSource > 0) {
+          <div style="margin-top: 6px">
+            <strong>{{ 'categories.import.drafts' | translate }} {{ report.draftsAwaitingSource }}</strong>
+            — {{ 'categories.import.draftsHint' | translate }}
+          </div>
+        }
+
+        <div style="margin-top: 4px">
+          <code style="font-size: 10.5px; color: var(--faint)" dir="ltr">{{ report.source }}</code>
+        </div>
+      </div>
+
+      @if (importRows().length > 0) {
+        <div style="max-height: 320px; overflow-y: auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'categories.name' | translate }}</th>
+                <th>{{ 'broadcasts.status' | translate }}</th>
+                <th>{{ 'categories.import.adding' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of importRows(); track row.key) {
+                <tr>
+                  <td>
+                    <div>{{ row.title }}</div>
+                    <code style="font-size: 10.5px; color: var(--faint)">{{ row.key }}</code>
+                  </td>
+                  <td>
+                    @switch (row.action) {
+                      @case (importAction.Added) {
+                        <span class="badge badge--ok">{{ 'categories.import.action.added' | translate }}</span>
+                      }
+                      @case (importAction.Extended) {
+                        <span class="badge badge--draft">{{ 'categories.import.action.extended' | translate }}</span>
+                      }
+                      @case (importAction.Skipped) {
+                        <span class="badge">{{ 'categories.import.action.skipped' | translate }}</span>
+                      }
+                    }
+                  </td>
+                  <td>
+                    @if (row.action === importAction.Skipped) {
+                      <span class="field__hint">{{ 'categories.import.skippedHint' | translate }}</span>
+                    } @else {
+                      {{ row.adding }}
+                      @if (row.present > 0) {
+                        <span class="field__hint"> ({{ 'categories.import.present' | translate }} {{ row.present }})</span>
+                      }
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+
+  <!--
+    Attributing those drafts from حصن المسلم's own footnotes. Same two steps —
+    and the report leads with what it will NOT do, because the one thing worth
+    being unmistakable here is that nothing reaches a reader without an editor
+    reading it first.
+  -->
+  <div class="card" style="margin-bottom: 16px">
+    <h3 style="margin-bottom: 6px">{{ 'categories.takhrij.title' | translate }}</h3>
+    <div class="field__hint" style="margin-bottom: 14px">
+      {{ 'categories.takhrij.hint' | translate }}
+    </div>
+
+    @if (takhrijError(); as message) {
+      <div class="notice notice--error">{{ message | translate }}</div>
+    }
+
+    <div class="row" style="margin-bottom: 14px">
+      <button type="button" class="btn" [disabled]="takhrijRunning()" (click)="previewTakhrij()">
+        {{ 'categories.takhrij.check' | translate }}
+      </button>
+
+      @if (hasPendingTakhrij()) {
+        <button
+          type="button"
+          class="btn btn--primary"
+          [disabled]="takhrijRunning() || chosenCount() === 0"
+          (click)="applyTakhrij()"
+        >
+          {{ 'categories.takhrij.apply' | translate }}
+          @if (chosenCount() > 0) {
+            ({{ chosenCount() }})
+          }
+        </button>
+      }
+    </div>
+
+    @if (takhrijRunning()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (takhrijReport(); as report) {
+      <div class="notice notice--info">
+        @if (report.applied) {
+          {{ 'categories.takhrij.applied' | translate }}
+          · {{ 'categories.takhrij.filled' | translate }} {{ report.filled }}
+        } @else {
+          {{ 'categories.takhrij.previewed' | translate }}
+        }
+        · {{ 'categories.takhrij.missingSource' | translate }} {{ report.draftsMissingSource }}
+        · {{ 'categories.takhrij.matched' | translate }} {{ report.matched }}
+        · {{ 'categories.takhrij.publishable' | translate }} {{ report.publishable }}
+        · {{ 'categories.takhrij.graded' | translate }} {{ report.graded }}
+        · {{ 'categories.takhrij.unmatched' | translate }} {{ report.unmatched }}
+
+        <div style="margin-top: 6px">
+          <strong>{{ 'categories.takhrij.noPublish' | translate }}</strong>
+        </div>
+
+        @if (report.disagreements > 0) {
+          <div style="margin-top: 6px">
+            {{ 'categories.takhrij.disagreements' | translate }} {{ report.disagreements }}
+            — {{ 'categories.takhrij.disagreementsHint' | translate }}
+          </div>
+        }
+
+        <div style="margin-top: 4px">
+          <code style="font-size: 10.5px; color: var(--faint)" dir="ltr">{{ report.source }}</code>
+        </div>
+      </div>
+
+      @if (takhrijRows(report).length > 0) {
+        @if (!report.applied && takhrijOffered(report).length > 0) {
+          <div class="row" style="margin-bottom: 8px">
+            <label class="field__hint" style="cursor: pointer">
+              <input
+                type="checkbox"
+                [checked]="allChosen(report)"
+                (change)="toggleAllChosen(report)"
+              />
+              {{ 'categories.takhrij.chooseAll' | translate }}
+            </label>
+          </div>
+        }
+
+        <div style="max-height: 320px; overflow-y: auto">
+          <table class="table">
+            <thead>
+              <tr>
+                @if (!report.applied) {
+                  <th style="width: 32px"></th>
+                }
+                <th>{{ 'adhkar.text' | translate }}</th>
+                <th>{{ 'adhkar.source' | translate }}</th>
+                <th>{{ 'broadcasts.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of takhrijRows(report); track row.dhikrId) {
+                <tr>
+                  @if (!report.applied) {
+                    <td>
+                      @if (row.status === takhrijStatus.Filled || row.status === takhrijStatus.BookOnly) {
+                        <input
+                          type="checkbox"
+                          [checked]="isChosen(row)"
+                          (change)="toggleChosen(row)"
+                          [attr.aria-label]="'categories.takhrij.choose' | translate"
+                        />
+                      }
+                    </td>
+                  }
+                  <td>
+                    <div>{{ row.excerpt }}</div>
+                    <code style="font-size: 10.5px; color: var(--faint)">{{ row.categoryKey }}</code>
+                  </td>
+                  <td>
+                    @if (row.book) {
+                      <div>{{ row.book }} {{ row.reference }}</div>
+                      @if (row.note) {
+                        <span class="field__hint">{{ row.note }}</span>
+                      }
+                    } @else {
+                      <span class="field__hint">—</span>
+                    }
+                  </td>
+                  <td>
+                    @switch (row.status) {
+                      @case (takhrijStatus.Filled) {
+                        <span class="badge badge--ok">{{ 'categories.takhrij.status.filled' | translate }}</span>
+                      }
+                      @case (takhrijStatus.BookOnly) {
+                        <span class="badge badge--draft">{{ 'categories.takhrij.status.bookOnly' | translate }}</span>
+                      }
+                      @case (takhrijStatus.Disagreement) {
+                        <span class="badge badge--draft">{{ 'categories.takhrij.status.disagreement' | translate }}</span>
+                      }
+                      @default {
+                        <span class="badge">{{ 'categories.takhrij.status.unmatched' | translate }}</span>
+                      }
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'categories.order' | translate }}</th>
+            <th>{{ 'categories.name' | translate }}</th>
+            <th>{{ 'categories.key' | translate }}</th>
+            <th>{{ 'categories.anchor' | translate }}</th>
+            <th>{{ 'categories.count' | translate }}</th>
+            <th>{{ 'nav.languages' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.sortOrder }}</td>
+              <td>{{ nameOf(row) }}</td>
+              <td><code>{{ row.key }}</code></td>
+              <td>{{ 'anchor.' + anchors[row.anchor].key.split('.')[1] | translate }}</td>
+              <td>{{ row.publishedDhikrCount }} / {{ row.dhikrCount }}</td>
+              <td>
+                <!--
+                  Which languages are done, as chips. The gap is the question an
+                  editor has, and it is visible without opening a row.
+                -->
+                @for (code of row.translatedLanguages; track code) {
+                  <span class="badge badge--ok" style="margin-inline-end: 4px">{{ code }}</span>
+                }
+              </td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isPublished" [class.badge--draft]="!row.isPublished">
+                  {{ (row.isPublished ? 'common.published' : 'common.draft') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'categories.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'categories.key' | translate }}</label>
+          <input type="text" name="key" [(ngModel)]="form.key" dir="ltr" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.icon' | translate }}</label>
+          <input type="text" name="icon" [(ngModel)]="form.icon" dir="ltr" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.order' | translate }}</label>
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.rhythm' | translate }}</label>
+          <select name="rhythm" [(ngModel)]="form.rhythm">
+            @for (option of rhythms; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>{{ 'categories.anchor' | translate }}</label>
+          <select name="anchor" [(ngModel)]="form.anchor">
+            @for (option of anchors; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <label class="checkbox">
+            <input type="checkbox" name="isPublished" [(ngModel)]="form.isPublished" />
+            {{ 'common.published' | translate }}
+          </label>
+        </div>
+      </div>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="categories.name"
+        bodyLabel="faq.answer"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

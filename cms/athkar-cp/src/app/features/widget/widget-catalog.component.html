@@ -1,0 +1,241 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'widget.catalog.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'widget.catalog.new' | translate }}
+    </button>
+  </div>
+
+  <div class="notice notice--info">{{ 'widget.catalog.intro' | translate }}</div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  @if (loading()) {
+    <div class="card"><div class="empty">{{ 'common.loading' | translate }}</div></div>
+  } @else {
+    @for (group of groups(); track group.surface) {
+      <h3 style="margin: 22px 0 10px">{{ group.key | translate }}</h3>
+
+      <div class="card card--flush">
+        @if (group.rows.length === 0) {
+          <div class="empty">{{ 'common.empty' | translate }}</div>
+        } @else {
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'widget.catalog.name' | translate }}</th>
+                <th>{{ 'widget.catalog.key' | translate }}</th>
+                <th>{{ 'widget.catalog.family' | translate }}</th>
+                <th>{{ 'widget.catalog.designs' | translate }}</th>
+                <th>{{ 'nav.languages' | translate }}</th>
+                <th>{{ 'broadcasts.status' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of group.rows; track row.id) {
+                <tr>
+                  <td>
+                    {{ nameOf(row) }}
+                    @if (row.isExclusive) {
+                      <span class="badge" style="margin-inline-start: 6px">
+                        {{ 'widget.catalog.exclusive' | translate }}
+                      </span>
+                    }
+                    @if (row.isNew) {
+                      <span class="badge badge--ok" style="margin-inline-start: 6px">
+                        {{ 'widget.catalog.badgeNew' | translate }}
+                      </span>
+                    }
+                    @if (row.key === defaultKey()) {
+                      <span class="badge badge--ok" style="margin-inline-start: 6px">
+                        {{ 'widget.catalog.isDefault' | translate }}
+                      </span>
+                    }
+                  </td>
+                  <td><code>{{ row.key }}</code></td>
+                  <td>{{ familyKey(row.family) | translate }}</td>
+                  <td>{{ row.designCount }}</td>
+                  <td>
+                    @for (translation of row.translations; track translation.languageCode) {
+                      <span class="badge badge--draft" style="margin-inline-end: 4px">
+                        {{ translation.languageCode }}
+                      </span>
+                    }
+                  </td>
+                  <td>
+                    <span
+                      class="badge"
+                      [class.badge--ok]="row.isEnabled"
+                      [class.badge--draft]="!row.isEnabled"
+                    >
+                      {{ (row.isEnabled ? 'widget.catalog.shown' : 'widget.catalog.hidden') | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="row">
+                      <button
+                        type="button"
+                        class="btn btn--sm"
+                        [disabled]="reordering() || $first"
+                        (click)="move(row, -1)"
+                        [attr.title]="'widget.catalog.moveUp' | translate"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn--sm"
+                        [disabled]="reordering() || $last"
+                        (click)="move(row, 1)"
+                        [attr.title]="'widget.catalog.moveDown' | translate"
+                      >
+                        ↓
+                      </button>
+                      <button type="button" class="btn btn--sm" (click)="preview(row)">
+                        {{ 'widget.preview.action' | translate }}
+                      </button>
+                      <button type="button" class="btn btn--sm" (click)="edit(row)">
+                        {{ 'common.edit' | translate }}
+                      </button>
+                      <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                        {{ 'common.delete' | translate }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    }
+  }
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>
+          {{ (editingId() === null ? 'widget.catalog.new' : 'common.edit') | translate }}
+        </h2>
+      </div>
+
+      <!--
+        The preview sits above the form, not below it, because it answers the
+        question the admin is actually holding while they type: what will a
+        reader see. It follows the key and the surface as they change.
+      -->
+      <div style="margin-bottom: 18px">
+        <app-widget-phone-preview [key]="form.key" [surface]="form.surface" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'widget.catalog.key' | translate }}</label>
+        <input
+          type="text"
+          name="key"
+          [(ngModel)]="form.key"
+          [disabled]="editingId() !== null"
+          placeholder="prayer_times"
+        />
+        <span class="field__hint">
+          {{
+            (editingId() === null ? 'widget.catalog.keyHint' : 'widget.catalog.keyLocked') | translate
+          }}
+        </span>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'widget.catalog.surface' | translate }}</label>
+          <select name="surface" [(ngModel)]="form.surface">
+            @for (option of surfaces; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>{{ 'widget.catalog.family' | translate }}</label>
+          <select name="family" [(ngModel)]="form.family">
+            @for (option of families; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>{{ 'widget.catalog.designs' | translate }}</label>
+          <input type="number" name="designCount" min="1" max="40" [(ngModel)]="form.designCount" />
+          <span class="field__hint">{{ 'widget.catalog.designsHint' | translate }}</span>
+        </div>
+
+        <div class="field">
+          <label>{{ 'widget.catalog.defaultDesign' | translate }}</label>
+          <input
+            type="number"
+            name="defaultDesign"
+            min="0"
+            max="39"
+            [(ngModel)]="form.defaultDesign"
+          />
+          <span class="field__hint">{{ 'widget.catalog.defaultDesignHint' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="row" style="gap: 20px; flex-wrap: wrap; margin-bottom: 16px">
+        <label class="checkbox">
+          <input type="checkbox" name="isEnabled" [(ngModel)]="form.isEnabled" />
+          {{ 'widget.catalog.shown' | translate }}
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="isExclusive" [(ngModel)]="form.isExclusive" />
+          {{ 'widget.catalog.exclusive' | translate }}
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="isNew" [(ngModel)]="form.isNew" />
+          {{ 'widget.catalog.badgeNew' | translate }}
+        </label>
+      </div>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="widget.catalog.name"
+        bodyLabel="widget.catalog.subtitle"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (previewing(); as row) {
+  <div class="overlay" (click)="closePreview()">
+    <div class="dialog" (click)="$event.stopPropagation()" style="max-width: 360px">
+      <div class="dialog__head">
+        <h2>{{ nameOf(row) }}</h2>
+      </div>
+
+      <app-widget-phone-preview [key]="row.key" [surface]="row.surface" />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="closePreview()">
+          {{ 'common.close' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

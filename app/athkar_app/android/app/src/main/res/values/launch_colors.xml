@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The two colours Android needs before Dart runs: the launch window's
+    parchment and the launcher icon's tile. Both mirror `lib/core/theme.dart`,
+    which cannot be read from a resource file.
+-->
+<resources>
+    <color name="launch_background">#F4ECE0</color>
+
+    <!-- The tile behind the adaptive launcher icon: AthkarColors.brand. It does
+         not follow the night palette — a launcher icon that changed colour with
+         the system theme would be a different icon on the home screen. -->
+    <color name="ic_launcher_background">#2F5838</color>
+</resources>

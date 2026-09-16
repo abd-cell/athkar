@@ -1,0 +1,167 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'languages.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'languages.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'languages.code' | translate }}</th>
+            <th>{{ 'languages.nativeName' | translate }}</th>
+            <th>{{ 'languages.englishName' | translate }}</th>
+            <th>{{ 'languages.rtl' | translate }}</th>
+            <th>{{ 'languages.enabled' | translate }}</th>
+            <th>{{ 'languages.strings' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>
+                <code>{{ row.code }}</code>
+                @if (row.isDefault) {
+                  <span class="badge badge--ok" style="margin-inline-start: 6px">
+                    {{ 'languages.default' | translate }}
+                  </span>
+                }
+              </td>
+              <td>{{ row.nativeName }}</td>
+              <td>{{ row.englishName }}</td>
+              <td>{{ (row.isRtl ? 'common.yes' : 'common.no') | translate }}</td>
+              <td>{{ (row.isEnabled ? 'common.yes' : 'common.no') | translate }}</td>
+              <td>{{ 'languages.stringCount' | translate: { count: row.stringCount } }}</td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="openStrings(row)">
+                    {{ 'languages.strings' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  @if (!row.isDefault) {
+                    <button type="button" class="btn btn--sm" (click)="setDefault(row)">
+                      {{ 'languages.setDefault' | translate }}
+                    </button>
+                    <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                      {{ 'common.delete' | translate }}
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'languages.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'languages.code' | translate }}</label>
+          <input type="text" name="code" dir="ltr" [(ngModel)]="form.code" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.order' | translate }}</label>
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </div>
+        <div class="field">
+          <label>{{ 'languages.nativeName' | translate }}</label>
+          <input type="text" name="nativeName" [(ngModel)]="form.nativeName" />
+        </div>
+        <div class="field">
+          <label>{{ 'languages.englishName' | translate }}</label>
+          <input type="text" name="englishName" dir="ltr" [(ngModel)]="form.englishName" />
+        </div>
+      </div>
+
+      <div class="row" style="gap: 20px">
+        <label class="checkbox">
+          <input type="checkbox" name="isRtl" [(ngModel)]="form.isRtl" />
+          {{ 'languages.rtl' | translate }}
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="isEnabled" [(ngModel)]="form.isEnabled" />
+          {{ 'languages.enabled' | translate }}
+        </label>
+      </div>
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (stringsFor(); as code) {
+  <div class="overlay" (click)="closeStrings()">
+    <div class="dialog" (click)="$event.stopPropagation()" style="width: min(860px, 100%)">
+      <div class="dialog__head">
+        <h2>{{ 'languages.strings' | translate }} · {{ code }}</h2>
+      </div>
+
+      <div class="notice notice--info">{{ 'languages.stringsHint' | translate }}</div>
+
+      @if (strings(); as list) {
+        @for (entry of list; track entry.key) {
+          <div class="row" style="margin-bottom: 8px">
+            <code style="width: 240px; font-size: 12px">{{ entry.key }}</code>
+            <input type="text" [(ngModel)]="entry.value" [name]="entry.key" />
+            <button type="button" class="btn btn--sm btn--danger" (click)="removeString(entry.key)">
+              ×
+            </button>
+          </div>
+        } @empty {
+          <div class="empty">{{ 'common.empty' | translate }}</div>
+        }
+
+        <div class="row" style="margin-top: 14px">
+          <input
+            type="text"
+            dir="ltr"
+            [(ngModel)]="newKey"
+            name="newKey"
+            placeholder="home.greeting.morning"
+          />
+          <button type="button" class="btn" (click)="addString()">+</button>
+        </div>
+      } @else {
+        <div class="empty">{{ 'common.loading' | translate }}</div>
+      }
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="closeStrings()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn--primary" [disabled]="saving()" (click)="saveStrings()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

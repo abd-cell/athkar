@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The adaptive icon, for Android 8 and up: the launcher applies its own mask
+    (circle, squircle, teardrop) to these two layers. The foreground therefore
+    carries the mark alone, small enough to survive every mask, and the tile is
+    a flat brand background rather than part of the image.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_fore" />
+    <monochrome android:drawable="@mipmap/ic_launcher_fore" />
+</adaptive-icon>

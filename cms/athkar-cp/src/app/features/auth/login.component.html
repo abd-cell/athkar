@@ -1,0 +1,33 @@
+<div class="login">
+  <form class="card login__card" (ngSubmit)="submit()">
+    <div class="login__brand">
+      <span class="mark">ذ</span>
+      <h1>{{ 'login.title' | translate }}</h1>
+      <p>{{ 'login.subtitle' | translate }}</p>
+    </div>
+
+    @if (error(); as message) {
+      <div class="notice notice--error">{{ message | translate }}</div>
+    }
+
+    <div class="field">
+      <label for="email">{{ 'login.email' | translate }}</label>
+      <input id="email" name="email" type="email" autocomplete="username" [(ngModel)]="email" />
+    </div>
+
+    <div class="field">
+      <label for="password">{{ 'login.password' | translate }}</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        [(ngModel)]="password"
+      />
+    </div>
+
+    <button type="submit" class="btn btn--primary login__submit" [disabled]="busy()">
+      {{ 'login.submit' | translate }}
+    </button>
+  </form>
+</div>

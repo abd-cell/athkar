@@ -1,0 +1,69 @@
+# ── secrets ──
+# The Firebase service-account key. It can push to every install of the app, so
+# it never belongs in the repository; the backend treats its absence as "push is
+# off" rather than as an error.
+athkar-notifications.json
+**/google-services.json
+**/GoogleService-Info.plist
+appsettings.Production.json
+appsettings.Local.json
+*.env
+
+# ── uploads ──
+# Qur'an packages are hundreds of megabytes and are deployment data, not source.
+backend/Athkar/App_Data/
+
+# ── .NET ──
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+*.trx
+
+# ── Node / Angular ──
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+.vite/
+
+# ── Flutter / Dart ──
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+.idea/
+app/athkar_app/android/.gradle/
+app/athkar_app/android/local.properties
+app/athkar_app/android/key.properties
+app/athkar_app/ios/Pods/
+app/athkar_app/ios/Flutter/Flutter.podspec
+app/athkar_app/ios/Flutter/Generated.xcconfig
+app/athkar_app/ios/Flutter/flutter_export_environment.sh
+*.jks
+*.keystore
+
+# ── editors and OS ──
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ── generated / re-fetchable ──
+# The graphify knowledge graph is rebuilt from the tree on demand; its cache
+# alone is 18 MB of hashed AST dumps.
+graphify-out/
+
+# 95 MB of QCF page fonts, one woff2 per mushaf page, pulled from a CDN by
+# tools/quran-package/fetch_mushaf_assets.py --script qcf. Re-fetch, don't store.
+tools/quran-mcp/data/fonts/
+
+# runtime output
+*.log
+api.out
+__pycache__/
+*.pyc

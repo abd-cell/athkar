@@ -1,0 +1,107 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'faq.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'faq.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'faq.category' | translate }}</th>
+            <th>{{ 'faq.question' | translate }}</th>
+            <th>{{ 'nav.languages' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ categoryKey(row.category) | translate }}</td>
+              <td>{{ questionOf(row) }}</td>
+              <td>
+                @for (code of row.translatedLanguages; track code) {
+                  <span class="badge badge--draft" style="margin-inline-end: 4px">{{ code }}</span>
+                }
+              </td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isPublished" [class.badge--draft]="!row.isPublished">
+                  {{ (row.isPublished ? 'common.published' : 'common.draft') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'faq.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'faq.category' | translate }}</label>
+          <select name="category" [(ngModel)]="form.category">
+            @for (option of categories; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>{{ 'categories.order' | translate }}</label>
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </div>
+      </div>
+
+      <label class="checkbox" style="margin-bottom: 16px">
+        <input type="checkbox" name="isPublished" [(ngModel)]="form.isPublished" />
+        {{ 'common.published' | translate }}
+      </label>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="faq.question"
+        bodyLabel="faq.answer"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

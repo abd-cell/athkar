@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The launch window: flat parchment, no image. The mark is drawn and animated
+    by `SplashScreen`, and a static copy here would jump the moment Flutter's
+    first frame replaced it.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/launch_background" />
+</layer-list>

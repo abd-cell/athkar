@@ -1,0 +1,360 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'quran.title' | translate }}</h1>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card" style="margin-bottom: 16px">
+    <h3 style="margin-bottom: 14px">{{ 'quran.upload' | translate }}</h3>
+
+    <div class="grid cols-3">
+      <div class="field">
+        <label>{{ 'quran.edition' | translate }}</label>
+        <input
+          type="text"
+          dir="ltr"
+          name="edition"
+          [(ngModel)]="edition"
+          (blur)="bumpVersion()"
+        />
+        <span class="field__hint">{{ 'quran.editionHint' | translate }}</span>
+
+        <!--
+          The slugs already in use, one click each. Typed fields are how one
+          mushaf ends up on the shelf twice under two spellings, and a reader
+          following the misspelt one never sees another update.
+        -->
+        @if (editions().length > 0) {
+          <div class="row" style="flex-wrap: wrap; margin-top: 6px">
+            @for (slug of editions(); track slug) {
+              <button type="button" class="btn btn--sm btn--ghost" (click)="useEdition(slug)">
+                {{ slug }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="field">
+        <label>{{ 'quran.name' | translate }}</label>
+        <input type="text" name="name" [(ngModel)]="name" />
+        <span class="field__hint">{{ 'quran.nameHint' | translate }}</span>
+      </div>
+
+      <div class="field">
+        <label>{{ 'quran.version' | translate }}</label>
+        <input type="number" min="1" name="version" [(ngModel)]="version" />
+        <span class="field__hint">{{ 'quran.versionHint' | translate }}</span>
+      </div>
+
+      <div class="field">
+        <label>{{ 'quran.script' | translate }}</label>
+        <select name="script" [(ngModel)]="script">
+          @for (option of scripts; track option.value) {
+            <option [ngValue]="option.value">{{ option.key | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label>{{ 'quran.file' | translate }}</label>
+        <input type="file" accept=".db,.sqlite,.sqlite3,.zip" (change)="onFile($event)" />
+        <span class="field__hint">{{ 'quran.fileHint' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>{{ 'quran.releaseNotes' | translate }}</label>
+      <textarea rows="2" name="releaseNotes" [(ngModel)]="releaseNotes"></textarea>
+    </div>
+
+    <div class="field">
+      <label>{{ 'quran.checksum' | translate }}</label>
+      <input type="text" dir="ltr" name="expectedSha256" [(ngModel)]="expectedSha256" />
+    </div>
+
+    <label class="checkbox" style="margin-bottom: 14px">
+      <input type="checkbox" name="hasWaqf" [(ngModel)]="hasWaqfAnnotations" />
+      {{ 'quran.waqf' | translate }}
+    </label>
+    <div class="field__hint" style="margin-bottom: 14px">{{ 'quran.waqfHint' | translate }}</div>
+
+    <button
+      type="button"
+      class="btn btn--primary"
+      [disabled]="!file || !edition.trim() || !name.trim() || uploading()"
+      (click)="upload()"
+    >
+      {{ 'quran.upload' | translate }}
+    </button>
+  </div>
+
+  <!--
+    The Qur'anic adhkar, read back from the canonical source. Two steps on
+    purpose: the check reports, and only a report with something in it offers
+    the button that rewrites rows.
+  -->
+  <div class="card" style="margin-bottom: 16px">
+    <h3 style="margin-bottom: 6px">{{ 'quran.sync.title' | translate }}</h3>
+    <div class="field__hint" style="margin-bottom: 14px">{{ 'quran.sync.hint' | translate }}</div>
+
+    @if (syncError(); as message) {
+      <div class="notice notice--error">{{ message | translate }}</div>
+    }
+
+    <div class="row" style="margin-bottom: 14px">
+      <button type="button" class="btn" [disabled]="syncing()" (click)="previewSync()">
+        {{ 'quran.sync.check' | translate }}
+      </button>
+
+      @if (hasPendingSync()) {
+        <button type="button" class="btn btn--primary" [disabled]="syncing()" (click)="applySync()">
+          {{ 'quran.sync.apply' | translate }}
+        </button>
+      }
+    </div>
+
+    @if (syncing()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (sync(); as report) {
+      <div class="notice notice--info">
+        @if (report.applied) {
+          {{ 'quran.sync.applied' | translate }} · {{ 'quran.sync.contentVersion' | translate }}
+          {{ report.contentVersion }}
+        } @else {
+          {{ 'quran.sync.previewed' | translate }}
+        }
+        · {{ 'quran.sync.checked' | translate }} {{ report.checked }} ·
+        {{ 'quran.sync.added' | translate }} {{ report.added }} ·
+        {{ 'quran.sync.changed' | translate }} {{ report.changed }} ·
+        {{ 'quran.sync.skipped' | translate }} {{ report.skipped }}
+        <div style="margin-top: 4px"><code style="font-size: 10.5px; color: var(--faint)" dir="ltr">{{ report.source }}</code></div>
+      </div>
+
+      @if (report.changes.length > 0) {
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{ 'adhkar.source' | translate }}</th>
+              <th>{{ 'broadcasts.status' | translate }}</th>
+              <th>{{ 'quran.sync.difference' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (change of report.changes; track change.key) {
+              <tr>
+                <td>
+                  <div>{{ change.name }}</div>
+                  <code style="font-size: 10.5px; color: var(--faint)">{{ change.reference }}</code>
+                </td>
+                <td>
+                  @switch (change.action) {
+                    @case (syncAction.Added) {
+                      <span class="badge badge--ok">{{ 'quran.sync.action.added' | translate }}</span>
+                    }
+                    @case (syncAction.Changed) {
+                      <span class="badge badge--draft">{{ 'quran.sync.action.changed' | translate }}</span>
+                    }
+                    @case (syncAction.Skipped) {
+                      <span class="badge">{{ 'quran.sync.action.skipped' | translate }}</span>
+                    }
+                  }
+                </td>
+                <td>
+                  @if (change.action === syncAction.Skipped) {
+                    <span class="field__hint">{{ 'quran.sync.skippedHint' | translate }}</span>
+                  } @else if (change.storedArabic && change.canonicalArabic) {
+                    <div class="field__hint">{{ 'quran.sync.stored' | translate }}</div>
+                    <div>{{ change.storedArabic }}</div>
+                    <div class="field__hint" style="margin-top: 6px">{{ 'quran.sync.canonical' | translate }}</div>
+                    <div>{{ change.canonicalArabic }}</div>
+                  } @else if (change.canonicalArabic) {
+                    <div>{{ change.canonicalArabic }}</div>
+                  } @else {
+                    <span class="field__hint">{{ change.fields.join(', ') }}</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </div>
+
+  <div class="notice notice--info">{{ 'quran.publishHint' | translate }}</div>
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'quran.edition' | translate }}</th>
+            <th>{{ 'quran.version' | translate }}</th>
+            <th>{{ 'quran.file' | translate }}</th>
+            <th>{{ 'quran.script' | translate }}</th>
+            <th>{{ 'quran.size' | translate }}</th>
+            <th>{{ 'quran.waqf' | translate }}</th>
+            <th>{{ 'quran.notes' | translate }}</th>
+            <th>{{ 'quran.downloads' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>
+                <div>{{ row.name }}</div>
+                <code style="font-size: 10.5px; color: var(--faint)" dir="ltr">{{ row.edition }}</code>
+                @if (row.isDefault) {
+                  <div><span class="badge badge--ok">{{ 'quran.default' | translate }}</span></div>
+                }
+              </td>
+              <td>{{ row.version }}</td>
+              <td>
+                <div>{{ row.fileName }}</div>
+                <code style="font-size: 10.5px; color: var(--faint)">{{ row.sha256.slice(0, 16) }}…</code>
+              </td>
+              <td>{{ scriptKey(row.script) | translate }}</td>
+              <td>{{ megabytes(row.sizeBytes) }}</td>
+              <td>{{ (row.hasWaqfAnnotations ? 'common.yes' : 'common.no') | translate }}</td>
+              <td style="max-width: 220px">
+                @if (row.releaseNotes) {
+                  <span class="field__hint">{{ row.releaseNotes }}</span>
+                } @else {
+                  <span class="field__hint">—</span>
+                }
+              </td>
+              <td>{{ row.downloadCount }}</td>
+              <td>
+                @if (row.isPublished) {
+                  <span class="badge badge--ok">
+                    {{ 'quran.published' | translate }}
+                    @if (row.publishedAt) {
+                      · {{ row.publishedAt | appDate: 'date' }}
+                    }
+                  </span>
+                } @else {
+                  <span class="badge badge--draft">{{ 'common.draft' | translate }}</span>
+                }
+              </td>
+              <td>
+                <div class="row" style="flex-wrap: wrap">
+                  @if (row.isPublished) {
+                    <!--
+                      Withdrawing is the only way a published package ever
+                      leaves: delete refuses one, so without this it could be
+                      replaced but never removed.
+                    -->
+                    <button type="button" class="btn btn--sm" (click)="unpublish(row)">
+                      {{ 'quran.unpublish' | translate }}
+                    </button>
+                  } @else {
+                    <button type="button" class="btn btn--sm btn--primary" (click)="publish(row)">
+                      {{ 'quran.publish' | translate }}
+                    </button>
+                  }
+
+                  <!--
+                    Offered only on a published package that is not already it:
+                    a default nobody can download leaves every fresh install
+                    with no mushaf and no error to show for it.
+                  -->
+                  @if (row.isPublished && !row.isDefault) {
+                    <button type="button" class="btn btn--sm" (click)="setDefault(row)">
+                      {{ 'quran.makeDefault' | translate }}
+                    </button>
+                  }
+
+                  <button type="button" class="btn btn--sm btn--ghost" (click)="startEdit(row)">
+                    {{ 'quran.edit' | translate }}
+                  </button>
+
+                  <button type="button" class="btn btn--sm btn--ghost" (click)="download(row)">
+                    {{ 'quran.download' | translate }}
+                  </button>
+
+                  @if (!row.isPublished) {
+                    <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                      {{ 'common.delete' | translate }}
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- ───────────────────── correcting what a package says ──────────────────── -->
+
+  @if (editing(); as row) {
+    <div class="overlay" (click)="cancelEdit()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog__head">
+          <h2>{{ 'quran.edit' | translate }}</h2>
+        </div>
+
+        <div class="notice notice--info">{{ 'quran.editHint' | translate }}</div>
+
+        <div class="field">
+          <label>{{ 'quran.version' | translate }}</label>
+          <div>
+            <strong>{{ row.version }}</strong>
+            · <code style="font-size: 11px" dir="ltr">{{ row.edition }}</code>
+            · <code style="font-size: 11px" dir="ltr">{{ row.fileName }}</code>
+          </div>
+          <span class="field__hint">{{ 'quran.editionLocked' | translate }}</span>
+        </div>
+
+        <div class="field">
+          <label>{{ 'quran.name' | translate }}</label>
+          <input type="text" name="editName" [(ngModel)]="edit.name" />
+        </div>
+
+        <div class="field">
+          <label>{{ 'quran.script' | translate }}</label>
+          <select name="editScript" [(ngModel)]="edit.script">
+            @for (option of scripts; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <label class="checkbox" style="margin-bottom: 14px">
+          <input type="checkbox" name="editWaqf" [(ngModel)]="edit.hasWaqfAnnotations" />
+          {{ 'quran.waqf' | translate }}
+        </label>
+
+        <div class="field">
+          <label>{{ 'quran.releaseNotes' | translate }}</label>
+          <textarea rows="3" name="editNotes" [(ngModel)]="edit.releaseNotes"></textarea>
+        </div>
+
+        <div class="dialog__actions">
+          <button type="button" class="btn btn--ghost" (click)="cancelEdit()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn--primary"
+            [disabled]="saving()"
+            (click)="saveEdit()"
+          >
+            {{ 'common.save' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

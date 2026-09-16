@@ -1,0 +1,127 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'feedback.title' | translate }}</h1>
+  </div>
+
+  <div class="row" style="flex-wrap: wrap; margin-bottom: 16px">
+    @for (option of statuses; track option.key) {
+      <button
+        type="button"
+        class="chip"
+        [class.chip--on]="filter() === option.value"
+        (click)="filterBy(option.value)"
+      >
+        {{ option.key | translate }}
+      </button>
+    }
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="notice notice--info">{{ 'feedback.correctionFirst' | translate }}</div>
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'feedback.kind' | translate }}</th>
+            <th>{{ 'feedback.message' | translate }}</th>
+            <th>{{ 'feedback.about' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th>{{ 'audit.when' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--warn]="row.kind === Kind.Correction"
+                  [class.badge--draft]="row.kind !== Kind.Correction"
+                >
+                  {{ kindKey(row.kind) | translate }}
+                </span>
+              </td>
+              <td style="max-width: 420px">{{ row.message }}</td>
+              <td class="arabic" style="max-width: 240px">{{ row.dhikrText }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--ok]="row.status === Status.Answered || row.status === Status.Closed"
+                  [class.badge--draft]="row.status === Status.New || row.status === Status.InProgress"
+                >
+                  {{ statusKey(row.status) | translate }}
+                </span>
+              </td>
+              <td>{{ row.createdAt | appDate }}</td>
+              <td>
+                <button type="button" class="btn btn--sm" (click)="openReply(row)">
+                  {{ 'feedback.reply' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (replyingTo(); as row) {
+  <div class="overlay" (click)="close()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="send()">
+      <div class="dialog__head">
+        <h2>{{ 'feedback.reply' | translate }}</h2>
+      </div>
+
+      <div class="card" style="margin-bottom: 16px">
+        <div class="card__label">{{ 'feedback.message' | translate }}</div>
+        <p style="margin: 6px 0 0">{{ row.message }}</p>
+
+        @if (row.dhikrText) {
+          <div class="card__label" style="margin-top: 12px">{{ 'feedback.about' | translate }}</div>
+          <p class="arabic" style="margin: 6px 0 0; font-family: var(--serif); font-size: 18px">
+            {{ row.dhikrText }}
+          </p>
+        }
+
+        @if (row.contactEmail) {
+          <div class="card__hint" style="margin-top: 10px">{{ row.contactEmail }}</div>
+        }
+      </div>
+
+      <div class="field">
+        <label>{{ 'feedback.reply' | translate }}</label>
+        <textarea rows="5" name="reply" [(ngModel)]="reply"></textarea>
+        <span class="field__hint">{{ 'feedback.replyHint' | translate }}</span>
+      </div>
+
+      <div class="field">
+        <label>{{ 'broadcasts.status' | translate }}</label>
+        <select name="replyStatus" [(ngModel)]="replyStatus">
+          <option [ngValue]="Status.InProgress">{{ 'feedback.status.inProgress' | translate }}</option>
+          <option [ngValue]="Status.Answered">{{ 'feedback.status.answered' | translate }}</option>
+          <option [ngValue]="Status.Closed">{{ 'feedback.status.closed' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="close()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'feedback.send' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,0 +1,198 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Athkar;
+using Athkar.Areas.Domain.Staff;
+using Athkar.Areas.Services.Notifications;
+using Athkar.Areas.Services.Quran;
+using Athkar.DataAccess;
+using Athkar.DataAccess.Repositories;
+using Athkar.DataAccess.Seeders;
+using Athkar.Shareds.Attributes;
+using Athkar.Shareds.Extensions;
+using Athkar.Shareds.Json;
+using Athkar.Shareds.Middlewares;
+using Athkar.Shareds.Models.Config;
+using Athkar.Shareds.Security;
+using Athkar.Shareds.Security.Token;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// ── Structured logging (Serilog) ──
+builder.Host.UseSerilog((context, config) => config
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console());
+
+// ── Configuration models ──
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<FcmSettings>(builder.Configuration.GetSection("Fcm"));
+builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection("Storage"));
+builder.Services.Configure<QuranMcpSettings>(builder.Configuration.GetSection("QuranMcp"));
+var jwt = builder.Configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
+
+// ── Framework ──
+builder.Services.AddControllers(options => options.Filters.Add<ValidateModelAttribute>())
+    // Inbound DateTimes are normalised to UTC — see UtcDateTimeConverter for why.
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+        o.JsonSerializerOptions.Converters.Add(new NullableUtcDateTimeConverter());
+    });
+
+// Our ValidateModel filter owns invalid-model responses, so every failure —
+// validation included — leaves as the same envelope.
+builder.Services.Configure<ApiBehaviorOptions>(o => o.SuppressModelStateInvalidFilter = true);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c => c.CustomSchemaIds(SwaggerSchemaIds.For));
+
+// ── CORS (the CMS, and the app when it runs on the web) ──
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+// ── Database ──
+builder.Services.AddDbContext<DatabaseService>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// ── Data access + convention-based DI ──
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.RegisterTypes();
+
+// The canonical Qur'an source. Named so the timeout lives beside the setting
+// that sets it; the service itself refuses to call out when QuranMcp:Enabled is
+// false, so a deployment that never configured this makes no outbound request.
+builder.Services.AddHttpClient(QuranMcpClient.HttpClientName, (provider, client) =>
+{
+    var quran = provider.GetRequiredService<IOptions<QuranMcpSettings>>().Value;
+    client.Timeout = TimeSpan.FromSeconds(Math.Clamp(quran.TimeoutSeconds, 5, 120));
+});
+
+// ── Background work ──
+// Convention-based DI covers service interfaces only, so the hosted services
+// that run off a timer are registered here.
+builder.Services.AddHostedService<ReminderMaterialiserWorker>();
+builder.Services.AddHostedService<PushSenderWorker>();
+builder.Services.AddHostedService<BroadcastWorker>();
+
+// ── Authentication (JWT; session validated against UserLogin) ──
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwt.Issuer,
+            ValidAudience = jwt.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret)),
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+            // Default is five minutes of grace, which would quietly stretch every
+            // access token past its stated expiry — and with it the window in
+            // which a revoked session keeps working. The same server issues and
+            // validates these, so there are no clocks to reconcile.
+            ClockSkew = TimeSpan.Zero,
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async ctx =>
+            {
+                var sessionKey = ctx.Principal?.FindFirst(AppClaims.SessionKey)?.Value;
+                if (string.IsNullOrEmpty(sessionKey)) { ctx.Fail("no session"); return; }
+
+                var db = ctx.HttpContext.RequestServices.GetRequiredService<DatabaseService>();
+                var exists = await db.Set<UserLogin>()
+                    .AnyAsync(l => l.SessionKey == sessionKey && !l.IsDeleted);
+                if (!exists) ctx.Fail("session revoked");
+            },
+            // Without these the framework answers 401/403 with an empty body and
+            // the client has nothing to show the person in front of it.
+            OnChallenge = async ctx =>
+            {
+                ctx.HandleResponse();
+                await AuthResponseWriter.WriteUnauthorizedAsync(ctx.HttpContext);
+            },
+            OnForbidden = ctx => AuthResponseWriter.WriteForbiddenAsync(ctx.HttpContext),
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+AppHttpContext.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
+
+// ── Pipeline ──
+app.UseSerilogRequestLogging();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors();
+
+// Records one row per /api/ request. Ahead of auth so rejected (401/403) calls
+// are captured too; the acting user is read after the pipeline unwinds.
+app.UseMiddleware<ApiLoggerMiddleware>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Athkar v1"));
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+// Migrations and seed on startup, so a fresh clone is one `dotnet run` from a
+// working system.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DatabaseService>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    if (db.Database.GetPendingMigrations().Any())
+        db.Database.Migrate();
+
+    await DataSeeder.SeedAsync(db, logger);
+}
+
+app.Run();
+
+/// <summary>
+/// Builds unique, readable Swagger schema ids. Generic types render as
+/// "WrapperOfArg" (recursively); non-generic types are qualified by the trailing
+/// namespace segment so identically named DTOs in different features do not clash.
+/// </summary>
+internal static class SwaggerSchemaIds
+{
+    public static string For(Type type)
+    {
+        if (type.IsGenericType)
+        {
+            var baseName = type.Name[..type.Name.IndexOf('`')];
+            var args = string.Join("And", type.GetGenericArguments().Select(For));
+            return $"{baseName}Of{args}";
+        }
+
+        var ns = type.Namespace;
+        var lastSegment = ns?[(ns.LastIndexOf('.') + 1)..];
+
+        // "Models" is the shared leaf folder for most DTOs — step up one level so
+        // the id carries the feature name (Content, Reminders, …) instead.
+        if (lastSegment == "Models" && ns!.LastIndexOf('.') is var i and > 0)
+        {
+            var parent = ns[..i];
+            lastSegment = parent[(parent.LastIndexOf('.') + 1)..];
+        }
+
+        return string.IsNullOrEmpty(lastSegment) ? type.Name : $"{lastSegment}{type.Name}";
+    }
+}
+
+/// <summary>Named so the test project can reference the host. Never instantiated.</summary>
+public partial class Program;

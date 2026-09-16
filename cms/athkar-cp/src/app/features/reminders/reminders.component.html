@@ -1,0 +1,200 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'reminders.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'reminders.new' | translate }}
+    </button>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'reminders.key' | translate }}</th>
+            <th>{{ 'categories.name' | translate }}</th>
+            <th>{{ 'reminders.kind' | translate }}</th>
+            <th>{{ 'reminders.delivery' | translate }}</th>
+            <th>{{ 'reminders.anchor' | translate }}</th>
+            <th>{{ 'reminders.enabled' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td><code>{{ row.key }}</code></td>
+              <td>{{ titleOf(row) }}</td>
+              <td>
+                {{ (row.kind === Kind.FixedTime ? 'reminders.kind.fixedTime' : 'reminders.kind.prayerAnchored') | translate }}
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--ok]="row.delivery === Delivery.DeviceLocal"
+                  [class.badge--draft]="row.delivery === Delivery.ServerPush"
+                >
+                  {{ (row.delivery === Delivery.DeviceLocal ? 'reminders.delivery.deviceLocal' : 'reminders.delivery.serverPush') | translate }}
+                </span>
+              </td>
+              <td>{{ scheduleOf(row) }}</td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isEnabled" [class.badge--draft]="!row.isEnabled">
+                  {{ (row.isEnabled ? 'common.yes' : 'common.no') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'reminders.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'reminders.key' | translate }}</label>
+          <input type="text" name="key" dir="ltr" [(ngModel)]="form.key" />
+        </div>
+        <div class="field">
+          <label>{{ 'adhkar.category' | translate }}</label>
+          <select name="categoryId" [(ngModel)]="form.categoryId">
+            <option [ngValue]="null">{{ 'common.none' | translate }}</option>
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">{{ category.key }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>{{ 'reminders.kind' | translate }}</label>
+          <select name="kind" [(ngModel)]="form.kind" (ngModelChange)="onKindChange()">
+            <option [ngValue]="Kind.PrayerAnchored">
+              {{ 'reminders.kind.prayerAnchored' | translate }}
+            </option>
+            <option [ngValue]="Kind.FixedTime">{{ 'reminders.kind.fixedTime' | translate }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>{{ 'reminders.delivery' | translate }}</label>
+          <select name="delivery" [disabled]="deliveryLocked()" [(ngModel)]="form.delivery">
+            <option [ngValue]="Delivery.DeviceLocal">
+              {{ 'reminders.delivery.deviceLocal' | translate }}
+            </option>
+            <option [ngValue]="Delivery.ServerPush">
+              {{ 'reminders.delivery.serverPush' | translate }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      @if (deliveryLocked()) {
+        <!--
+          Not a warning: it is the design, stated where the admin would
+          otherwise wonder why the control is locked.
+        -->
+        <div class="notice notice--info">{{ 'reminders.deliveryForced' | translate }}</div>
+      }
+
+      <div class="grid cols-3">
+        @if (form.kind === Kind.FixedTime) {
+          <div class="field">
+            <label>{{ 'reminders.localTime' | translate }}</label>
+            <input type="time" name="localTime" [(ngModel)]="form.localTime" />
+          </div>
+        } @else {
+          <div class="field">
+            <label>{{ 'reminders.anchor' | translate }}</label>
+            <select name="anchor" [(ngModel)]="form.anchor">
+              @for (option of anchors; track option.value) {
+                <option [ngValue]="option.value">{{ option.key | translate }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>{{ 'reminders.offset' | translate }}</label>
+            <input type="number" name="offsetMinutes" [(ngModel)]="form.offsetMinutes" />
+            <span class="field__hint">{{ 'reminders.offsetHint' | translate }}</span>
+          </div>
+        }
+
+        <div class="field">
+          <label>{{ 'reminders.audience' | translate }}</label>
+          <select name="audience" [(ngModel)]="form.audience">
+            @for (option of audiences; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'reminders.days' | translate }}</label>
+        <div class="row" style="flex-wrap: wrap">
+          @for (day of weekdays; track day.bit) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--on]="hasDay(form.days, day.bit)"
+              (click)="toggleDay(day.bit)"
+            >
+              {{ day.key | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="row" style="gap: 20px; margin-bottom: 16px">
+        <label class="checkbox">
+          <input type="checkbox" name="isEnabled" [(ngModel)]="form.isEnabled" />
+          {{ 'reminders.enabled' | translate }}
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="isUserAdjustable" [(ngModel)]="form.isUserAdjustable" />
+          {{ 'reminders.userAdjustable' | translate }}
+        </label>
+      </div>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="faq.question"
+        bodyLabel="feedback.message"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

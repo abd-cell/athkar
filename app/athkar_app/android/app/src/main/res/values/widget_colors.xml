@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The design tokens, duplicated here because a widget cannot read the app's
+    Dart theme. Kept in step with `lib/core/theme.dart` by hand — there are six
+    of them and they have not changed since the design was set.
+-->
+<resources>
+    <!-- light: parchment -->
+    <color name="widget_paper_light">#FBF6EE</color>
+    <color name="widget_ink_light">#241D16</color>
+    <color name="widget_muted_light">#6F6153</color>
+    <color name="widget_brand_light">#2F5838</color>
+
+    <!-- dark -->
+    <color name="widget_paper_dark">#232019</color>
+    <color name="widget_ink_dark">#ECE4D6</color>
+    <color name="widget_muted_dark">#9A8F7F</color>
+    <color name="widget_brand_dark">#8EC899</color>
+
+    <!-- A wash rather than a panel, for the transparent theme. -->
+    <color name="widget_paper_scrim">#66241D16</color>
+    <color name="widget_hairline_light">#29241D16</color>
+    <color name="widget_hairline_dark">#2EECE4D6</color>
+</resources>

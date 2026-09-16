@@ -1,0 +1,218 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'adhkar.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <input
+      type="text"
+      [(ngModel)]="search"
+      (keyup.enter)="load()"
+      [placeholder]="'common.search' | translate"
+      style="width: 220px"
+    />
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'adhkar.new' | translate }}
+    </button>
+  </div>
+
+  <div class="row" style="flex-wrap: wrap; margin-bottom: 16px">
+    <button
+      type="button"
+      class="chip"
+      [class.chip--on]="categoryFilter() === null"
+      (click)="filterBy(null)"
+    >
+      {{ 'common.all' | translate }}
+    </button>
+    @for (category of categories(); track category.id) {
+      <button
+        type="button"
+        class="chip"
+        [class.chip--on]="categoryFilter() === category.id"
+        (click)="filterBy(category.id)"
+      >
+        {{ categoryName(category.id) }}
+      </button>
+    }
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'adhkar.text' | translate }}</th>
+            <th>{{ 'adhkar.category' | translate }}</th>
+            <th>{{ 'adhkar.repeat' | translate }}</th>
+            <th>{{ 'adhkar.source' | translate }}</th>
+            <th>{{ 'nav.languages' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td class="arabic">{{ row.arabicText }}</td>
+              <td>{{ categoryName(row.categoryId) }}</td>
+              <td>{{ row.repeatCount }}</td>
+              <td>
+                @if (row.isPublishable) {
+                  <div>{{ row.sourceBook }} {{ row.sourceReference }}</div>
+                  @if (row.grade !== null) {
+                    <span class="badge badge--ok">{{ gradeKey(row.grade) | translate }}</span>
+                  }
+                } @else {
+                  <!--
+                    Marked in the grid, not discovered on save: an editor should
+                    see the whole backlog at a glance.
+                  -->
+                  <span class="badge badge--warn">{{ 'common.none' | translate }}</span>
+                }
+              </td>
+              <td>
+                @for (code of row.translatedLanguages; track code) {
+                  <span class="badge badge--draft" style="margin-inline-end: 4px">{{ code }}</span>
+                }
+              </td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isPublished" [class.badge--draft]="!row.isPublished">
+                  {{ (row.isPublished ? 'common.published' : 'common.draft') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn--sm"
+                    [disabled]="!row.isPublished && !row.isPublishable"
+                    [title]="row.isPublishable ? '' : ('adhkar.sourceRequired' | translate)"
+                    (click)="togglePublished(row)"
+                  >
+                    {{ (row.isPublished ? 'common.unpublish' : 'common.publish') | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'adhkar.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="field">
+        <label>{{ 'adhkar.text' | translate }}</label>
+        <textarea class="arabic" rows="4" name="arabicText" dir="rtl" [(ngModel)]="form.arabicText"></textarea>
+        <span class="field__hint">{{ 'adhkar.textHint' | translate }}</span>
+      </div>
+
+      <div class="grid cols-3">
+        <div class="field">
+          <label>{{ 'adhkar.category' | translate }}</label>
+          <select name="categoryId" [(ngModel)]="form.categoryId">
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">{{ categoryName(category.id) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>{{ 'adhkar.repeat' | translate }}</label>
+          <input type="number" name="repeatCount" min="1" [(ngModel)]="form.repeatCount" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.order' | translate }}</label>
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </div>
+      </div>
+
+      <!--
+        The attribution, boxed and beside the text rather than at the bottom of
+        the form. Publishing is refused without it, so the form says so before
+        the server has to.
+      -->
+      <div class="card" style="margin-bottom: 16px">
+        <h3 style="margin-bottom: 12px">{{ 'adhkar.source' | translate }}</h3>
+
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'adhkar.sourceBook' | translate }}</label>
+            <input type="text" name="sourceBook" [(ngModel)]="form.sourceBook" />
+          </div>
+          <div class="field">
+            <label>{{ 'adhkar.sourceReference' | translate }}</label>
+            <input type="text" name="sourceReference" [(ngModel)]="form.sourceReference" />
+          </div>
+          <div class="field">
+            <label>{{ 'adhkar.grade' | translate }}</label>
+            <select name="grade" [(ngModel)]="form.grade">
+              <option [ngValue]="null">{{ 'common.none' | translate }}</option>
+              @for (option of grades; track option.value) {
+                <option [ngValue]="option.value">{{ option.key | translate }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>{{ 'adhkar.gradedBy' | translate }}</label>
+            <input type="text" name="gradedBy" [(ngModel)]="form.gradedBy" />
+          </div>
+        </div>
+
+        @if (missingSource()) {
+          <div class="notice notice--error" style="margin: 0">
+            {{ 'adhkar.sourceRequired' | translate }}
+          </div>
+        }
+      </div>
+
+      <label class="checkbox" style="margin-bottom: 16px">
+        <input
+          type="checkbox"
+          name="isPublished"
+          [disabled]="missingSource()"
+          [(ngModel)]="form.isPublished"
+        />
+        {{ 'common.published' | translate }}
+      </label>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="adhkar.translation"
+        secondaryLabel="adhkar.transliteration"
+        virtueLabel="adhkar.virtue"
+        virtueHint="adhkar.virtueHint"
+        [multilineTitle]="true"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
