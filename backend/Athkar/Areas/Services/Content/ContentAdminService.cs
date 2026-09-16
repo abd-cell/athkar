@@ -131,6 +131,7 @@ public class ContentAdminService : IContentAdminService
             SortOrder = input.SortOrder,
             Rhythm = input.Rhythm,
             Anchor = input.Anchor,
+            Section = input.Section,
             IsPublished = input.IsPublished,
             CreatedBy = securityManager.UserId,
         };
@@ -177,6 +178,7 @@ public class ContentAdminService : IContentAdminService
         category.SortOrder = input.SortOrder;
         category.Rhythm = input.Rhythm;
         category.Anchor = input.Anchor;
+        category.Section = input.Section;
         category.IsPublished = input.IsPublished;
         category.ModifiedBy = securityManager.UserId;
         categories.Update(category);
@@ -542,6 +544,7 @@ public class ContentAdminService : IContentAdminService
             SortOrder = category.SortOrder,
             Rhythm = category.Rhythm,
             Anchor = category.Anchor,
+            Section = category.Section,
             IsPublished = category.IsPublished,
             TranslatedLanguages = [.. live.Select(t => t.LanguageCode).Order()],
             Translations =

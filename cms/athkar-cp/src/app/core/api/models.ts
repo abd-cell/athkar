@@ -57,6 +57,18 @@ export enum CategoryRhythm {
   Monthly = 2,
 }
 
+/**
+ * Which of the three sections of the reader's أذكار tab a chapter sits in.
+ * `None` is a chapter nobody has filed yet — the app still shows it, under its
+ * own heading, so the omission is visible rather than silent.
+ */
+export enum CategorySection {
+  None = 0,
+  Adhkar = 1,
+  Duas = 2,
+  Virtues = 3,
+}
+
 export enum PrayerAnchor {
   None = 0,
   Fajr = 1,
@@ -251,6 +263,7 @@ export interface AdminCategoryOutput {
   sortOrder: number;
   rhythm: CategoryRhythm;
   anchor: PrayerAnchor;
+  section: CategorySection;
   isPublished: boolean;
   dhikrCount: number;
   publishedDhikrCount: number;
@@ -264,7 +277,31 @@ export interface CategoryInput {
   sortOrder: number;
   rhythm: CategoryRhythm;
   anchor: PrayerAnchor;
+  section: CategorySection;
   isPublished: boolean;
+  translations: TranslationInput[];
+}
+
+// ──────────────────────────────── radio ────────────────────────────────
+
+export interface AdminRadioStationOutput {
+  id: number;
+  key: string;
+  streamUrl: string;
+  logoUrl: string | null;
+  sortOrder: number;
+  isPublished: boolean;
+  translatedLanguages: string[];
+  translations: TranslationInput[];
+}
+
+export interface RadioStationInput {
+  key: string;
+  streamUrl: string;
+  logoUrl?: string | null;
+  sortOrder: number;
+  isPublished: boolean;
+  /** Title is the station's name, body its broadcaster. */
   translations: TranslationInput[];
 }
 

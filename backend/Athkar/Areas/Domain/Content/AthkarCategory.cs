@@ -29,6 +29,14 @@ public class AthkarCategory : AuditableEntity
     public CategoryRhythm Rhythm { get; set; } = CategoryRhythm.None;
 
     /// <summary>
+    /// Which section of the reader's index this chapter sits in. Set by an
+    /// editor rather than derived: nothing in a chapter's data distinguishes
+    /// «أذكار السفر» from «دعاء السفر», and the app used to guess from a list of
+    /// keys compiled into it.
+    /// </summary>
+    public CategorySection Section { get; set; } = CategorySection.None;
+
+    /// <summary>
     /// When in the day this chapter belongs, or <see cref="PrayerAnchor.None"/>
     /// for one that belongs to no particular moment. Used by the home screen to
     /// decide which chapter to put in front of the reader right now, without

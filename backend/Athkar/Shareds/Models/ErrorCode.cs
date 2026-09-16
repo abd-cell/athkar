@@ -88,6 +88,16 @@ public enum ErrorCode
     /// </summary>
     TakhrijCatalogMissing = 307,
 
+    /// <summary>No such radio station, or it has been removed.</summary>
+    RadioStationNotFound = 308,
+
+    /// <summary>
+    /// The stream is not an https:// URL. Cleartext audio is blocked by iOS's
+    /// ATS and by Android's default network policy, so a station saved with one
+    /// would be silent on every phone rather than on some.
+    /// </summary>
+    InsecureStreamUrl = 309,
+
     // ── Languages and UI strings ──
     LanguageNotFound = 400,
 

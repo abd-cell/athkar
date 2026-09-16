@@ -10,6 +10,7 @@ import {
   AdminCategoryOutput,
   AdminDhikrOutput,
   AdminFaqOutput,
+  AdminRadioStationOutput,
   AdminWidgetCatalogOutput,
   ApiLogOutput,
   AppConfigurationInput,
@@ -51,6 +52,7 @@ import {
   WidgetCatalogInput,
   WidgetSettingsInput,
   WidgetSettingsOutput,
+  RadioStationInput,
 } from './models';
 
 /**
@@ -123,6 +125,27 @@ export class ApiService {
 
   deleteCategory(id: number): Observable<BaseResponse> {
     return this.delete(`admin/content/categories/${id}`);
+  }
+
+  // ──────────────────────────────── radio ────────────────────────────────
+
+  radioStations(input: PageInput = {}): Observable<BaseResponse<PageOutput<AdminRadioStationOutput>>> {
+    return this.get('admin/radio/stations', input);
+  }
+
+  createRadioStation(input: RadioStationInput): Observable<BaseResponse<AdminRadioStationOutput>> {
+    return this.post('admin/radio/stations', input);
+  }
+
+  updateRadioStation(
+    id: number,
+    input: RadioStationInput,
+  ): Observable<BaseResponse<AdminRadioStationOutput>> {
+    return this.put(`admin/radio/stations/${id}`, input);
+  }
+
+  deleteRadioStation(id: number): Observable<BaseResponse> {
+    return this.delete(`admin/radio/stations/${id}`);
   }
 
   adhkar(
@@ -610,6 +633,10 @@ export function errorKey(code: number): string {
       return 'categories.import.missing';
     case 307:
       return 'categories.takhrij.missing';
+    case 308:
+      return 'radio.notFound';
+    case 309:
+      return 'radio.insecureStream';
     case 402:
       return 'error.defaultLanguage';
     case 403:

@@ -7,6 +7,7 @@ export const en: Record<string, string> = {
   'nav.content': 'Content',
   'nav.categories': 'Chapters',
   'nav.adhkar': 'Adhkar',
+  'nav.radio': 'Radio',
   'nav.reminders': 'Reminders',
   'nav.broadcasts': 'Messages',
   'nav.languages': 'Languages',
@@ -52,6 +53,18 @@ export const en: Record<string, string> = {
   // ── categories ──
   'categories.title': 'Chapters',
   'categories.new': 'New chapter',
+  // ── audio radio ──
+  'radio.title': 'Audio radio',
+  'radio.new': 'New station',
+  'radio.hint': 'The live stations the reader sees on the home screen. They travel with the catalogue, so an edit here reaches phones at the next sync.',
+  'radio.name': 'Station name',
+  'radio.provider': 'Broadcaster',
+  'radio.stream': 'Stream URL',
+  'radio.streamHint': 'Must be https — and a URL that redirects to http on the way is refused by the phone too, which the server cannot see. Try a station on a device before publishing it.',
+  'radio.logo': 'Logo URL',
+  'radio.logoHint': 'Optional, and https as well. A station without one gets the app’s own glyph.',
+  'radio.notFound': 'No such station.',
+  'radio.insecureStream': 'The stream URL must be https.',
 
   // Importing حصن المسلم's chapters. The source carries no takhrij and no
   // grading, so every dhikr arrives as an unpublished draft — that is the
@@ -112,6 +125,12 @@ export const en: Record<string, string> = {
   'categories.rhythm.daily': 'Daily',
   'categories.rhythm.monthly': 'Monthly',
   'categories.anchor': 'Time of day',
+  'categories.section': 'Section',
+  'categories.sectionHint': 'Where the chapter appears in the reader’s adhkar tab.',
+  'categories.section.adhkar': 'Adhkar',
+  'categories.section.duas': 'Duas',
+  'categories.section.virtues': 'Virtues',
+  'categories.section.none': 'Unfiled',
   'categories.count': 'Adhkar',
   'categories.notEmpty': 'The chapter still holds adhkar — move or remove them first',
 

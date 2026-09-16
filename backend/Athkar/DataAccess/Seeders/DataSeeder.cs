@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Athkar.Areas.Domain.Configuration;
 using Athkar.Areas.Domain.Content;
 using Athkar.Areas.Domain.Localization;
+using Athkar.Areas.Domain.Radio;
 using Athkar.Areas.Domain.Reminders;
 using Athkar.Areas.Domain.Staff;
 using Athkar.Areas.Domain.Support;
@@ -43,6 +44,7 @@ public static class DataSeeder
         await SeedAdmin(db, logger);
         await SeedContent(db);
         await QuranicAthkarSeeder.SeedAsync(db, logger);
+        await SeedRadio(db);
         await SeedReminders(db);
         await SeedFaq(db);
     }
@@ -470,6 +472,62 @@ public static class DataSeeder
     /// both anchored — which is the arrangement the whole design turns on, so
     /// the seeder demonstrates it rather than leaving the CMS to discover it.
     /// </summary>
+    /// <summary>
+    /// One station to start with: «إذاعة القرآن الكريم», the recitation stream
+    /// <c>mp3quran.net</c> publishes.
+    ///
+    /// Seeded rather than compiled into the app for the reason the whole slice
+    /// exists — when the URL moves, an editor replaces it in the console and
+    /// every phone has the new one at the next sync. Seeded rather than left
+    /// empty so a fresh install has something under the heading.
+    ///
+    /// The Saudi broadcaster's own feed is deliberately <b>not</b> the one here.
+    /// Its published URL is https and then 302s to an http node, and a phone
+    /// refuses to follow that — Android by network policy, iOS by ATS — so the
+    /// card would sit there saying it could not play. https has to hold for the
+    /// whole redirect chain, which is the one thing the server's own check
+    /// cannot see.
+    /// </summary>
+    private static async Task SeedRadio(DatabaseService db)
+    {
+        if (await db.RadioStations.AnyAsync()) return;
+
+        var station = new RadioStation
+        {
+            Key = "quran-radio",
+            StreamUrl = "https://backup.qurango.net/radio/mix",
+            SortOrder = 0,
+            IsPublished = true,
+        };
+
+        station.Translations.Add(new RadioStationTranslation
+        {
+            LanguageCode = "ar",
+            Name = "إذاعة القرآن الكريم",
+            Provider = "MP3Quran",
+        });
+        station.Translations.Add(new RadioStationTranslation
+        {
+            LanguageCode = "en",
+            Name = "Holy Qur'an Radio",
+            Provider = "MP3Quran",
+        });
+
+        db.RadioStations.Add(station);
+        await db.SaveChangesAsync();
+
+        // The bump the console would have done. A seeder runs against a
+        // database that already has phones synced to it — an existing install
+        // holds the current version, is told "nothing has changed", and would
+        // never see this station at all. Seeding content is content changing.
+        var configuration = await db.AppConfigurations.OrderBy(c => c.Id).FirstOrDefaultAsync();
+        if (configuration is not null)
+        {
+            configuration.ContentVersion++;
+            await db.SaveChangesAsync();
+        }
+    }
+
     private static async Task SeedReminders(DatabaseService db)
     {
         if (await db.ReminderCampaigns.AnyAsync()) return;

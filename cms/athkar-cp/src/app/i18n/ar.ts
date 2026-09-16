@@ -11,6 +11,7 @@ export const ar: Record<string, string> = {
   'nav.content': 'المحتوى',
   'nav.categories': 'الأبواب',
   'nav.adhkar': 'الأذكار',
+  'nav.radio': 'الإذاعات',
   'nav.reminders': 'التذكيرات',
   'nav.broadcasts': 'الرسائل',
   'nav.languages': 'اللغات',
@@ -56,6 +57,18 @@ export const ar: Record<string, string> = {
   // ── categories ──
   'categories.title': 'الأبواب',
   'categories.new': 'باب جديد',
+  // ── الإذاعات الصوتية ──
+  'radio.title': 'الإذاعات الصوتية',
+  'radio.new': 'إذاعة جديدة',
+  'radio.hint': 'محطات البث المباشر التي تظهر للقارئ في الصفحة الرئيسية. تصل إلى الأجهزة مع الفهرس نفسه، فأي تعديل هنا يبلغ الهواتف عند المزامنة التالية.',
+  'radio.name': 'اسم الإذاعة',
+  'radio.provider': 'الجهة المذيعة',
+  'radio.stream': 'رابط البث',
+  'radio.streamHint': 'يجب أن يبدأ بـ https — والرابط الذي يُحوّل إلى http أثناء التشغيل يُرفَض على الهاتف أيضًا، وهذا ما لا يستطيع الخادم كشفه. جرّب البث على جهاز قبل نشره.',
+  'radio.logo': 'شعار الإذاعة',
+  'radio.logoHint': 'اختياري، ورابط https كذلك. الإذاعة بلا شعار تأخذ أيقونة التطبيق.',
+  'radio.notFound': 'لم تُعثر هذه الإذاعة.',
+  'radio.insecureStream': 'رابط البث يجب أن يكون https.',
 
   // استيراد أبواب حصن المسلم. المصدر لا يحمل تخريجًا ولا درجة، فكل ذكر يدخل
   // مسودة غير منشورة — بوابة «لا نشر بلا مصدر» هي التي تقرر ذلك، لا هذه الشاشة.
@@ -114,6 +127,12 @@ export const ar: Record<string, string> = {
   'categories.rhythm.daily': 'يومي',
   'categories.rhythm.monthly': 'شهري',
   'categories.anchor': 'الوقت',
+  'categories.section': 'القسم',
+  'categories.sectionHint': 'أين يظهر الباب في تبويب الأذكار عند القارئ.',
+  'categories.section.adhkar': 'الأذكار',
+  'categories.section.duas': 'الأدعية',
+  'categories.section.virtues': 'الفضائل',
+  'categories.section.none': 'غير مصنّف',
   'categories.count': 'الأذكار',
   'categories.notEmpty': 'الباب يحتوي أذكاراً، انقلها أو احذفها أولاً',
 

@@ -10,35 +10,29 @@ import '../widgets/athkar_ui.dart';
 import 'category_screen.dart';
 import 'search_screen.dart';
 
-/// Every chapter of adhkar, grouped by kind.
+/// The three sections of the index: الأذكار, الأدعية, الفضائل.
 ///
-/// «Kind» is not a field the API carries, so it is derived here, and the two
-/// halves of the derivation are not equally sound:
+/// Which section a chapter belongs to is [AthkarCategory.section] — a field an
+/// editor sets. This screen used to derive the grouping from a list of category
+/// keys held in this file, and said so itself: a content decision compiled into
+/// the app, where a chapter published on a Tuesday could not be grouped until
+/// the next release. Nothing here decides any more; it draws what it is told.
 ///
-/// - **Time-bound** is read straight off the data: a chapter with a
-///   [PrayerAnchor] other than [PrayerAnchor.none] is one the reader has at a
-///   moment of the day, which is exactly what an anchor means. Nothing is
-///   hardcoded and a new anchored chapter joins the group by itself.
-/// - **Occasion** and **unbounded** rest on the key lists below, because
-///   nothing in the catalogue distinguishes «أذكار السفر» from «الاستغفار».
-///   That is a constant holding a content decision, which this project puts in
-///   the CMS rather than in the app. Until `AthkarCategory` carries a type of
-///   its own, a chapter whose key is in neither list falls into the closing
-///   «عامّة» group, so nothing can be published into invisibility.
-///
-/// Grouping on the anchor alone was tried first and is wrong: «أذكار المساء»
-/// anchors to Asr, which is right for scheduling and puts it under a «النهار»
-/// heading, and the ten chapters with no anchor all collapse into one bucket.
+/// A chapter nobody has filed is drawn too, in a closing section of its own.
+/// Dropping it would make a published chapter invisible, and an editor who
+/// forgot the field would have no way to notice.
 class AdhkarScreen extends StatelessWidget {
   const AdhkarScreen({super.key});
 
-  /// Chapters tied to a circumstance rather than to a clock.
-  static const _occasionKeys = {
-    'after-prayer', 'food', 'clothing', 'khala', 'mosque', 'travel', 'distress',
-  };
-
-  /// Chapters with neither a time nor an occasion — said whenever.
-  static const _unboundedKeys = {'istighfar', 'salat-nabi'};
+  /// The sections in the order the reader meets them. [CategorySection.none]
+  /// is deliberately last: it is the tray of what has not been filed, not a
+  /// section of the book.
+  static const _order = [
+    (CategorySection.adhkar, 'adhkar.section.adhkar', 'adhkar.section.adhkar.hint'),
+    (CategorySection.duas, 'adhkar.section.duas', 'adhkar.section.duas.hint'),
+    (CategorySection.virtues, 'adhkar.section.virtues', 'adhkar.section.virtues.hint'),
+    (CategorySection.none, 'adhkar.section.none', 'adhkar.section.none.hint'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,35 +41,13 @@ class AdhkarScreen extends StatelessWidget {
 
     final categories = state.content.categories;
 
-    bool unanchored(AthkarCategory c) => c.anchor == PrayerAnchor.none;
-
-    final timed = [for (final c in categories) if (!unanchored(c)) c];
-    final occasion = [
-      for (final c in categories)
-        if (unanchored(c) && _occasionKeys.contains(c.key)) c,
-    ];
-    final unbounded = [
-      for (final c in categories)
-        if (unanchored(c) && _unboundedKeys.contains(c.key)) c,
-    ];
-    final rest = [
-      for (final c in categories)
-        if (unanchored(c) &&
-            !_occasionKeys.contains(c.key) &&
-            !_unboundedKeys.contains(c.key))
-          c,
-    ];
-
-    // An empty heading says the app is broken when it only means the CMS has
-    // published nothing there yet, so a group with no chapters is not drawn.
-    final grouped = <(String, List<AthkarCategory>)>[
-      for (final (key, members) in [
-        ('adhkar.group.timed', timed),
-        ('adhkar.group.occasion', occasion),
-        ('adhkar.group.unbounded', unbounded),
-        ('adhkar.group.general', rest),
-      ])
-        if (members.isNotEmpty) (key, members),
+    // An empty section says the app is broken when it only means nothing has
+    // been published there yet, so a section with no chapters is not drawn.
+    final sections = [
+      for (final (section, title, hint) in _order)
+        if ([for (final c in categories) if (c.section == section) c] case final members
+            when members.isNotEmpty)
+          (section, title, hint, members),
     ];
 
     return Scaffold(
@@ -108,14 +80,22 @@ class AdhkarScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  for (final (key, members) in grouped) ...[
-                    const SizedBox(height: 6),
-                    AthkarSectionHeader(title: context.tr(key)),
+                  const SizedBox(height: 6),
+                  for (final (section, title, hint, members) in sections) ...[
+                    _SectionCard(
+                      title: context.tr(title),
+                      subtitle: context.tr(hint),
+                      count: members.length,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => SectionScreen(
+                            section: section,
+                            title: context.tr(title),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
-                    for (final category in members) ...[
-                      _CategoryRow(category: category),
-                      const SizedBox(height: 10),
-                    ],
                   ],
                 ],
               ),
@@ -124,7 +104,106 @@ class AdhkarScreen extends StatelessWidget {
   }
 }
 
-/// One chapter, as the index draws it: name, count, and a quiet tick when the
+/// The chapters of one section.
+///
+/// It reads the section out of the state rather than being handed a list, so a
+/// sync that arrives while the reader is looking at it redraws with the new
+/// chapters instead of showing the ones that existed when it opened.
+class SectionScreen extends StatelessWidget {
+  const SectionScreen({super.key, required this.section, required this.title});
+
+  final CategorySection section;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = AthkarTokens.of(context);
+    final state = AppStateScope.of(context);
+
+    final members = [
+      for (final category in state.content.categories)
+        if (category.section == section) category,
+    ];
+
+    return Scaffold(
+      backgroundColor: tokens.paper,
+      appBar: AppBar(backgroundColor: tokens.paper, title: Text(title)),
+      body: SafeArea(
+        top: false,
+        child: members.isEmpty
+            ? AthkarEmptyState(
+                title: context.tr('categories.empty'),
+                body: context.tr('categories.emptyHint'),
+                icon: Icons.menu_book_outlined,
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.fromLTRB(
+                  AthkarSpacing.page, 14, AthkarSpacing.page, 30),
+                itemCount: members.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) => _CategoryRow(category: members[index]),
+              ),
+      ),
+    );
+  }
+}
+
+/// One section, as the index opens on it.
+class _SectionCard extends StatelessWidget {
+  const _SectionCard({
+    required this.title,
+    required this.subtitle,
+    required this.count,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = AthkarTokens.of(context);
+    final settings = SettingsScope.of(context);
+
+    return AthkarCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AthkarType.amiri(
+                    size: 19, color: tokens.ink, weight: FontWeight.w700),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: AthkarType.sans(size: 12, color: tokens.muted, height: 1.6),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  context.tr('adhkar.section.count', {
+                    'count': Numerals.format(count, arabicIndic: settings.arabicNumerals),
+                  }),
+                  style: AthkarType.sans(size: 11.5, color: tokens.brandInk),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_left, size: 20, color: tokens.faint),
+        ],
+      ),
+    );
+  }
+}
+
+/// One chapter, as a section draws it: name, count, and a quiet tick when the
 /// reader has finished it today.
 class _CategoryRow extends StatelessWidget {
   const _CategoryRow({required this.category});

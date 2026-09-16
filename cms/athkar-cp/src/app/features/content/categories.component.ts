@@ -12,6 +12,7 @@ import {
   AdminCategoryOutput,
   CategoryInput,
   CategoryRhythm,
+  CategorySection,
   LanguageOutput,
   PrayerAnchor,
 } from '../../core/api/models';
@@ -39,6 +40,15 @@ export class CategoriesComponent {
     { value: CategoryRhythm.None, key: 'categories.rhythm.none' },
     { value: CategoryRhythm.Daily, key: 'categories.rhythm.daily' },
     { value: CategoryRhythm.Monthly, key: 'categories.rhythm.monthly' },
+  ];
+
+  /// The three sections of the reader's index, plus the unfiled state. Offered
+  /// in the order they are drawn, so the list reads like the screen it makes.
+  protected readonly sections = [
+    { value: CategorySection.Adhkar, key: 'categories.section.adhkar' },
+    { value: CategorySection.Duas, key: 'categories.section.duas' },
+    { value: CategorySection.Virtues, key: 'categories.section.virtues' },
+    { value: CategorySection.None, key: 'categories.section.none' },
   ];
 
   protected readonly anchors = [
@@ -249,6 +259,14 @@ export class CategoriesComponent {
     });
   }
 
+  /// The section's own slug, for the table cell. Read from the option list
+  /// rather than indexed by value: `CategorySection.None` is 0 and an array
+  /// lookup would put the unfiled state first in a list ordered for the screen.
+  protected sectionKey(section: CategorySection): string {
+    const found = this.sections.find((option) => option.value === section);
+    return (found?.key ?? 'categories.section.none').split('.').pop()!;
+  }
+
   protected create(): void {
     this.editingId.set(null);
     this.editing.set({
@@ -259,6 +277,7 @@ export class CategoriesComponent {
       sortOrder: this.rows().length,
       rhythm: CategoryRhythm.None,
       anchor: PrayerAnchor.None,
+      section: CategorySection.Adhkar,
       isPublished: false,
       translations: [],
     });
@@ -272,6 +291,7 @@ export class CategoriesComponent {
       sortOrder: row.sortOrder,
       rhythm: row.rhythm,
       anchor: row.anchor,
+      section: row.section,
       isPublished: row.isPublished,
       // Cloned, so cancelling an edit really does cancel it.
       translations: row.translations.map((t) => ({ ...t })),

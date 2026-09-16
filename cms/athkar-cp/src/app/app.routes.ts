@@ -44,6 +44,11 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'radio',
+            loadComponent: () =>
+              import('./features/content/radio.component').then((m) => m.RadioComponent),
+          },
+          {
             path: 'adhkar',
             loadComponent: () =>
               import('./features/content/adhkar.component').then((m) => m.AdhkarComponent),

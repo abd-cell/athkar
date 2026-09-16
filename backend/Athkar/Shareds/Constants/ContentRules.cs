@@ -33,6 +33,13 @@ public static class ContentRules
     public const int MaxReferenceLength = 200;
 
     /// <summary>
+    /// How long a URL an editor may paste — a stream, a station logo. Long
+    /// enough for the query strings a CDN signs a stream with, short enough that
+    /// the column is not a free-text field.
+    /// </summary>
+    public const int MaxUrlLength = 500;
+
+    /// <summary>
     /// How many open submissions one device may have with the support desk at a
     /// time. Anonymous devices cannot be blocked by account, so the limit is the
     /// only brake there is.

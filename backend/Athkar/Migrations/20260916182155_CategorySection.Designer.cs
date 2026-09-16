@@ -4,6 +4,7 @@ using Athkar.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Athkar.Migrations
 {
     [DbContext(typeof(DatabaseService))]
-    partial class DatabaseServiceModelSnapshot : ModelSnapshot
+    [Migration("20260916182155_CategorySection")]
+    partial class CategorySection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -904,109 +907,6 @@ namespace Athkar.Migrations
                     b.ToTable("QuranPackages");
                 });
 
-            modelBuilder.Entity("Athkar.Areas.Domain.Radio.RadioStation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("LogoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StreamUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Key")
-                        .IsUnique()
-                        .HasFilter("[IsDeleted] = 0");
-
-                    b.HasIndex("SortOrder");
-
-                    b.ToTable("RadioStations", (string)null);
-                });
-
-            modelBuilder.Entity("Athkar.Areas.Domain.Radio.RadioStationTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Provider")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("StationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StationId", "LanguageCode")
-                        .IsUnique()
-                        .HasFilter("[IsDeleted] = 0");
-
-                    b.ToTable("RadioStationTranslations");
-                });
-
             modelBuilder.Entity("Athkar.Areas.Domain.Reminders.PushDispatch", b =>
                 {
                     b.Property<int>("Id")
@@ -1792,17 +1692,6 @@ namespace Athkar.Migrations
                     b.Navigation("Broadcast");
                 });
 
-            modelBuilder.Entity("Athkar.Areas.Domain.Radio.RadioStationTranslation", b =>
-                {
-                    b.HasOne("Athkar.Areas.Domain.Radio.RadioStation", "Station")
-                        .WithMany("Translations")
-                        .HasForeignKey("StationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Station");
-                });
-
             modelBuilder.Entity("Athkar.Areas.Domain.Reminders.PushDispatch", b =>
                 {
                     b.HasOne("Athkar.Areas.Domain.Notifications.Broadcast", "Broadcast")
@@ -1934,11 +1823,6 @@ namespace Athkar.Migrations
                 });
 
             modelBuilder.Entity("Athkar.Areas.Domain.Notifications.Broadcast", b =>
-                {
-                    b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("Athkar.Areas.Domain.Radio.RadioStation", b =>
                 {
                     b.Navigation("Translations");
                 });

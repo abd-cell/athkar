@@ -46,6 +46,7 @@ export class MainLayoutComponent {
       items: [
         { path: 'categories', key: 'nav.categories' },
         { path: 'adhkar', key: 'nav.adhkar' },
+        { path: 'radio', key: 'nav.radio' },
         { path: 'languages', key: 'nav.languages', adminOnly: true },
         { path: 'quran', key: 'nav.quran', adminOnly: true },
       ],

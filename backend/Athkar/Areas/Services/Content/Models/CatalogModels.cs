@@ -1,3 +1,4 @@
+using Athkar.Areas.Services.Radio.Models;
 using Athkar.Shareds.Enums;
 
 namespace Athkar.Areas.Services.Content.Models;
@@ -28,6 +29,15 @@ public class CatalogOutput
     public bool IsUpToDate { get; set; }
 
     public List<CategoryOutput> Categories { get; set; } = [];
+
+    /// <summary>
+    /// The live stations, ordered as the console ordered them. They ride the
+    /// catalogue rather than an endpoint of their own: a station is published
+    /// content, it changes when content changes, and this payload is already
+    /// the thing the app caches and reads offline. The reader sees the list
+    /// with no network; only pressing play needs one.
+    /// </summary>
+    public List<RadioStationOutput> Radios { get; set; } = [];
 }
 
 public class CategoryOutput
@@ -40,6 +50,9 @@ public class CategoryOutput
     public int SortOrder { get; set; }
     public CategoryRhythm Rhythm { get; set; }
     public PrayerAnchor Anchor { get; set; }
+
+    /// <summary>Which section of the index the app draws this chapter under.</summary>
+    public CategorySection Section { get; set; }
 
     /// <summary>Populated in the catalogue; empty in the admin list, which pages its adhkar separately.</summary>
     public List<DhikrOutput> Adhkar { get; set; } = [];

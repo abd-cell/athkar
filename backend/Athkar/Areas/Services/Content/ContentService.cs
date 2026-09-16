@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Athkar.Areas.Domain.Configuration;
 using Athkar.Areas.Domain.Content;
+using Athkar.Areas.Domain.Radio;
 using Athkar.Areas.Services.Content.Models;
 using Athkar.Areas.Services.Localization;
+using Athkar.Areas.Services.Radio.Models;
 using Athkar.DataAccess.Repositories;
 using Athkar.Shareds.Constants;
 using Athkar.Shareds.Extensions;
@@ -15,17 +17,20 @@ public class ContentService : IContentService
 {
     private readonly IRepository<AthkarCategory> categories;
     private readonly IRepository<Dhikr> adhkar;
+    private readonly IRepository<RadioStation> stations;
     private readonly IRepository<AppConfiguration> configurations;
     private readonly ILanguageResolver languages;
 
     public ContentService(
         IRepository<AthkarCategory> categories,
         IRepository<Dhikr> adhkar,
+        IRepository<RadioStation> stations,
         IRepository<AppConfiguration> configurations,
         ILanguageResolver languages)
     {
         this.categories = categories;
         this.adhkar = adhkar;
+        this.stations = stations;
         this.configurations = configurations;
         this.languages = languages;
     }
@@ -67,6 +72,17 @@ public class ContentService : IContentService
             })
             .ToListAsync();
 
+        var radios = await stations.Query()
+            .Where(s => s.IsPublished)
+            .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
+            .Select(s => new
+            {
+                Station = s,
+                Translation = s.Translations.FirstOrDefault(t =>
+                    !t.IsDeleted && t.LanguageCode == language),
+            })
+            .ToListAsync();
+
         var catalog = new CatalogOutput
         {
             Version = version,
@@ -87,11 +103,25 @@ public class ContentService : IContentService
                     SortOrder = row.Category.SortOrder,
                     Rhythm = row.Category.Rhythm,
                     Anchor = row.Category.Anchor,
+                    Section = row.Category.Section,
                     Adhkar =
                     [
                         .. row.Adhkar.Select(entry =>
                             Describe(entry.Dhikr, entry.Translation, language)),
                     ],
+                }),
+            ],
+            Radios =
+            [
+                .. radios.Select(row => new RadioStationOutput
+                {
+                    Id = row.Station.Id,
+                    Key = row.Station.Key,
+                    Name = row.Translation?.Name ?? row.Station.Key,
+                    Provider = row.Translation?.Provider,
+                    StreamUrl = row.Station.StreamUrl,
+                    LogoUrl = row.Station.LogoUrl,
+                    SortOrder = row.Station.SortOrder,
                 }),
             ],
         };

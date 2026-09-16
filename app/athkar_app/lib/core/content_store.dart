@@ -20,6 +20,7 @@ class ContentStore {
   final SharedPreferences _prefs;
 
   static const _kCatalog = 'content.catalog';
+  static const _kRadios = 'content.radios';
   static const _kVersion = 'content.version';
   static const _kLanguage = 'content.language';
 
@@ -55,10 +56,33 @@ class ContentStore {
     }
   }
 
+  /// The live stations, as last synced. Cached so the list is on the home
+  /// screen at launch with no network; only pressing play needs one.
+  List<RadioStation> get radios {
+    final raw = _prefs.getString(_kRadios);
+    if (raw == null) return const [];
+
+    try {
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      return [
+        for (final entry in decoded) RadioStation.fromJson(entry as Map<String, dynamic>),
+      ];
+    } on FormatException {
+      _prefs.remove(_kRadios);
+      return const [];
+    }
+  }
+
   Future<void> save(Catalog catalog) async {
     await _prefs.setString(
       _kCatalog,
       jsonEncode([for (final category in catalog.categories) category.toJson()]),
+    );
+    // Written even when empty: an admin withdrawing the last station must take
+    // the section off the home screen, not leave yesterday's cache on it.
+    await _prefs.setString(
+      _kRadios,
+      jsonEncode([for (final station in catalog.radios) station.toJson()]),
     );
     await _prefs.setInt(_kVersion, catalog.version);
     await _prefs.setString(_kLanguage, catalog.languageCode);

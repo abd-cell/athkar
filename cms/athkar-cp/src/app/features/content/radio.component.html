@@ -1,0 +1,127 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'radio.title' | translate }}</h1>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--primary" (click)="create()">
+      {{ 'radio.new' | translate }}
+    </button>
+  </div>
+
+  <div class="field__hint" style="margin-bottom: 14px">{{ 'radio.hint' | translate }}</div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'common.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'categories.order' | translate }}</th>
+            <th>{{ 'radio.name' | translate }}</th>
+            <th>{{ 'categories.key' | translate }}</th>
+            <th>{{ 'radio.stream' | translate }}</th>
+            <th>{{ 'nav.languages' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.sortOrder }}</td>
+              <td>{{ nameOf(row) }}</td>
+              <td><code>{{ row.key }}</code></td>
+              <!--
+                Shown, not hidden behind an edit: when a station has gone silent
+                the URL is the first thing anybody wants to look at.
+              -->
+              <td>
+                <code dir="ltr" style="font-size: 10.5px; color: var(--faint)">{{ row.streamUrl }}</code>
+              </td>
+              <td>
+                @for (code of row.translatedLanguages; track code) {
+                  <span class="badge badge--ok" style="margin-inline-end: 4px">{{ code }}</span>
+                }
+              </td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isPublished" [class.badge--draft]="!row.isPublished">
+                  {{ (row.isPublished ? 'common.published' : 'common.draft') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">
+                    {{ 'common.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editing(); as form) {
+  <div class="overlay" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()">
+      <div class="dialog__head">
+        <h2>{{ (editingId() === null ? 'radio.new' : 'common.edit') | translate }}</h2>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="field">
+          <label>{{ 'categories.key' | translate }}</label>
+          <input type="text" name="key" [(ngModel)]="form.key" dir="ltr" />
+        </div>
+        <div class="field">
+          <label>{{ 'categories.order' | translate }}</label>
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </div>
+        <div class="field" style="grid-column: 1 / -1">
+          <label>{{ 'radio.stream' | translate }}</label>
+          <input type="url" name="streamUrl" [(ngModel)]="form.streamUrl" dir="ltr" />
+          <div class="field__hint">{{ 'radio.streamHint' | translate }}</div>
+        </div>
+        <div class="field" style="grid-column: 1 / -1">
+          <label>{{ 'radio.logo' | translate }}</label>
+          <input type="url" name="logoUrl" [(ngModel)]="form.logoUrl" dir="ltr" />
+          <div class="field__hint">{{ 'radio.logoHint' | translate }}</div>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <label class="checkbox">
+            <input type="checkbox" name="isPublished" [(ngModel)]="form.isPublished" />
+            {{ 'common.published' | translate }}
+          </label>
+        </div>
+      </div>
+
+      <app-translations-editor
+        [languages]="languages()"
+        [(translations)]="form.translations"
+        titleLabel="radio.name"
+        bodyLabel="radio.provider"
+      />
+
+      <div class="dialog__actions">
+        <button type="button" class="btn" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

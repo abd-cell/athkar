@@ -10,6 +10,7 @@ import '../main.dart';
 import '../models/models.dart';
 import '../widgets/athkar_ui.dart';
 import '../widgets/prayer_strip.dart';
+import '../widgets/radio_card.dart';
 import 'category_screen.dart';
 import 'dhikr_sheet.dart';
 import 'location_screen.dart';
@@ -65,6 +66,12 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 if (primary != null) _RightNowCard(category: primary),
                 const SizedBox(height: 20),
+                // Above today's reading rather than below it: a broadcast is
+                // something to put on while doing something else, and a reader
+                // who wants it wants it now — not after scrolling past the
+                // three cards they came for.
+                RadioSection(stations: state.content.radios),
+                if (state.content.radios.isNotEmpty) const SizedBox(height: 20),
                 AthkarSectionHeader(
                   title: context.tr('home.readToday'),
                   note: context.tr('home.readToday.subtitle'),
@@ -356,6 +363,12 @@ class _TodayCardShell extends StatelessWidget {
     final tokens = AthkarTokens.of(context);
     final settings = SettingsScope.of(context);
 
+    // The three cards are one row of the same thing, so they are one size. The
+    // text block is sized in lines rather than pixels — a reader on a larger
+    // font scale gets a taller card, not four lines squeezed into three.
+    final fontSize = 21 * settings.fontScale;
+    final lineHeight = MediaQuery.textScalerOf(context).scale(fontSize) * 1.95;
+
     return AthkarCard(
       onTap: onTap,
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
@@ -380,23 +393,29 @@ class _TodayCardShell extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            text,
-            style: AthkarType.amiri(
-              size: 21 * settings.fontScale,
-              color: tokens.ink,
-              height: 1.95,
+          SizedBox(
+            width: double.infinity,
+            height: lineHeight * _todayCardLines,
+            child: Text(
+              text,
+              maxLines: _todayCardLines,
+              overflow: TextOverflow.ellipsis,
+              style: AthkarType.amiri(size: fontSize, color: tokens.ink, height: 1.95),
             ),
           ),
-          if (reference.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            AthkarSourceLine(text: reference),
-          ],
+          // Kept even when there is no takhrij line, so a card without one is
+          // the same height as its neighbours rather than a short one.
+          const SizedBox(height: 12),
+          AthkarSourceLine(text: reference),
         ],
       ),
     );
   }
 }
+
+/// How many lines of narrated text a card shows before it is cut off. The whole
+/// text is a tap away; the home screen is an invitation to read, not the read.
+const int _todayCardLines = 3;
 
 /// The rounded label at the head of a card: «حديث اليوم» and its icon.
 class _Pill extends StatelessWidget {

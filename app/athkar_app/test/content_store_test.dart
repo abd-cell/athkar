@@ -78,6 +78,7 @@ void main() {
         sortOrder: 0,
         rhythm: CategoryRhythm.none,
         anchor: PrayerAnchor.none,
+        section: CategorySection.adhkar,
         adhkar: [
           Dhikr(id: 1, categoryId: 1, sortOrder: 0, arabicText: 'سبحان الله', repeatCount: 33),
           Dhikr(id: 2, categoryId: 1, sortOrder: 1, arabicText: 'الحمد لله', repeatCount: 33),

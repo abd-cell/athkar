@@ -47,6 +47,14 @@ public class CategoryInput
     [EnumDataType(typeof(CategoryRhythm))]
     public CategoryRhythm Rhythm { get; set; } = CategoryRhythm.None;
 
+    /// <summary>
+    /// The section of the reader's index. Left at <see cref="CategorySection.None"/>
+    /// the chapter still appears — under its own heading — so an editor who
+    /// forgets sees a chapter waiting to be filed, not one that vanished.
+    /// </summary>
+    [EnumDataType(typeof(CategorySection))]
+    public CategorySection Section { get; set; } = CategorySection.None;
+
     [EnumDataType(typeof(PrayerAnchor))]
     public PrayerAnchor Anchor { get; set; } = PrayerAnchor.None;
 
@@ -95,6 +103,7 @@ public class AdminCategoryOutput
     public int SortOrder { get; set; }
     public CategoryRhythm Rhythm { get; set; }
     public PrayerAnchor Anchor { get; set; }
+    public CategorySection Section { get; set; }
     public bool IsPublished { get; set; }
 
     public int DhikrCount { get; set; }

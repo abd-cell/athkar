@@ -64,6 +64,11 @@ dependencies:
   # a WidgetKit extension, which is the outstanding work.
   # Verifying a downloaded Qur'an package against the checksum the server sent.
   crypto: ^3.0.6
+  # The live radio. A player, not a download: a stream is the one piece of
+  # content this app does not keep a copy of, and nothing else here needs audio
+  # decoding. Playback stops when the app is killed — a background audio service
+  # is a foreground-notification feature and its own piece of work.
+  just_audio: ^0.10.6
 
 dev_dependencies:
   flutter_test:

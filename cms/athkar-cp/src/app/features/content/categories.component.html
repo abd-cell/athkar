@@ -276,6 +276,7 @@
             <th>{{ 'categories.name' | translate }}</th>
             <th>{{ 'categories.key' | translate }}</th>
             <th>{{ 'categories.anchor' | translate }}</th>
+            <th>{{ 'categories.section' | translate }}</th>
             <th>{{ 'categories.count' | translate }}</th>
             <th>{{ 'nav.languages' | translate }}</th>
             <th>{{ 'broadcasts.status' | translate }}</th>
@@ -289,6 +290,7 @@
               <td>{{ nameOf(row) }}</td>
               <td><code>{{ row.key }}</code></td>
               <td>{{ 'anchor.' + anchors[row.anchor].key.split('.')[1] | translate }}</td>
+              <td>{{ 'categories.section.' + sectionKey(row.section) | translate }}</td>
               <td>{{ row.publishedDhikrCount }} / {{ row.dhikrCount }}</td>
               <td>
                 <!--
@@ -357,6 +359,15 @@
               <option [ngValue]="option.value">{{ option.key | translate }}</option>
             }
           </select>
+        </div>
+        <div class="field">
+          <label>{{ 'categories.section' | translate }}</label>
+          <select name="section" [(ngModel)]="form.section">
+            @for (option of sections; track option.value) {
+              <option [ngValue]="option.value">{{ option.key | translate }}</option>
+            }
+          </select>
+          <div class="field__hint">{{ 'categories.sectionHint' | translate }}</div>
         </div>
         <div class="field">
           <label>&nbsp;</label>

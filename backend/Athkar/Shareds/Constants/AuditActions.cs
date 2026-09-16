@@ -14,6 +14,11 @@ public static class AuditActions
     public const string CategoryDelete = "content.category.delete";
     public const string CategoryReorder = "content.category.reorder";
 
+    public const string RadioStationCreate = "content.radio.create";
+    public const string RadioStationUpdate = "content.radio.update";
+    public const string RadioStationDelete = "content.radio.delete";
+    public const string RadioStationReorder = "content.radio.reorder";
+
     public const string DhikrCreate = "content.dhikr.create";
     public const string DhikrUpdate = "content.dhikr.update";
     public const string DhikrDelete = "content.dhikr.delete";

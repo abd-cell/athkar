@@ -101,7 +101,37 @@ an empty payload. That comparison is the entire protocol.
 
 **Forgetting to bump it is not a cosmetic bug — it is an edit that never
 arrives.** Every mutating method on `IContentAdminService` calls
-`IAppConfigurationService.BumpContentVersion()`.
+`IAppConfigurationService.BumpContentVersion()` — and so does every mutating
+method on `IRadioAdminService`, because stations ride the same payload.
+
+### Audio radio — the one content the app keeps no copy of
+
+`RadioStation` is a name, a broadcaster, a logo and a stream URL, published from
+the console like anything else and carried in `CatalogOutput.Radios` rather than
+on an endpoint of its own. The list is cached and therefore on the home screen
+offline; only pressing play needs a network, and the card says so when it fails.
+
+Three rules:
+
+- **The stream must be https, and stay https.** The scheme is checked on the
+  server, for a draft as much as for a published row: a cleartext stream is
+  refused by iOS's ATS and by Android's default network policy, so an `http://`
+  station is not a station that plays badly — it is one that is silent on every
+  phone, and the refusal happens where nobody in the console can see it.
+
+  What the server's check *cannot* see is a redirect. `stream.radiojar.com`,
+  which is what mp3quran.net publishes for the Saudi broadcaster's own
+  «إذاعة القرآن الكريم», answers an https request with a 302 to an `http://`
+  node — and the phone refuses to follow it, as does ExoPlayer, which declines
+  cross-protocol redirects by default. That is why the seeded station is
+  mp3quran's own https-terminated stream and not the broadcaster's: the whole
+  chain has to hold, and only a device can tell you it does.
+- **It is a URL, not a file.** Which is the whole reason the row exists in the
+  database instead of in the app: a stream that moves is an edit an editor makes
+  and every phone has at the next sync.
+- **A live stream is stopped, never paused.** `core/radio_player.dart` re-opens
+  the URL on play, because a paused position in a broadcast is a position the
+  broadcast has already left.
 
 ---
 

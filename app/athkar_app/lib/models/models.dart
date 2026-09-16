@@ -49,6 +49,33 @@ enum CategoryRhythm {
 }
 
 /// Mirrors `Shareds/Enums/PrayerAnchor.cs`.
+/// Which of the three sections of the أذكار tab a chapter is filed under.
+///
+/// Set by an editor in the CMS, not derived here. The app used to group its
+/// index by a list of category keys compiled into it, which put a content
+/// decision in the app binary: a new chapter had to wait for a release to be
+/// grouped, and a chapter nobody listed fell into a catch-all.
+///
+/// The numbers are the contract with the server. [none] is what an unfiled
+/// chapter carries, and it is still drawn — under its own heading — because a
+/// chapter that is published and invisible is worse than one out of place.
+enum CategorySection {
+  none(0),
+  adhkar(1),
+  duas(2),
+  virtues(3);
+
+  const CategorySection(this.value);
+  final int value;
+
+  static CategorySection fromValue(int? value) {
+    for (final section in CategorySection.values) {
+      if (section.value == value) return section;
+    }
+    return CategorySection.none;
+  }
+}
+
 enum PrayerAnchor {
   none(0),
   fajr(1),
@@ -349,6 +376,7 @@ class AthkarCategory {
     required this.sortOrder,
     required this.rhythm,
     required this.anchor,
+    required this.section,
     required this.adhkar,
     this.description,
     this.icon,
@@ -368,6 +396,9 @@ class AthkarCategory {
   /// screen decides what to put in front of the reader without being told.
   final PrayerAnchor anchor;
 
+  /// Which section of the reader's index this chapter belongs to.
+  final CategorySection section;
+
   final List<Dhikr> adhkar;
 
   /// How many repetitions a full run of this chapter is — the denominator the
@@ -383,6 +414,7 @@ class AthkarCategory {
         sortOrder: json['sortOrder'] as int? ?? 0,
         rhythm: CategoryRhythm.fromValue(json['rhythm'] as int?),
         anchor: PrayerAnchor.fromValue(json['anchor'] as int?),
+        section: CategorySection.fromValue(json['section'] as int?),
         adhkar: [
           for (final entry in (json['adhkar'] as List<dynamic>? ?? []))
             Dhikr.fromJson(entry as Map<String, dynamic>),
@@ -398,7 +430,57 @@ class AthkarCategory {
         'sortOrder': sortOrder,
         'rhythm': rhythm.value,
         'anchor': anchor.value,
+        'section': section.value,
         'adhkar': [for (final dhikr in adhkar) dhikr.toJson()],
+      };
+}
+
+/// A live audio station — «إذاعة القرآن الكريم» and its like.
+///
+/// The one piece of published content the app holds no copy of: the row is
+/// cached like everything else, so the list is there offline, but pressing play
+/// needs a network and says so. Everything about it is editable in the console
+/// precisely because a stream URL is the part that rots.
+class RadioStation {
+  const RadioStation({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.streamUrl,
+    required this.sortOrder,
+    this.provider,
+    this.logoUrl,
+  });
+
+  final int id;
+  final String key;
+  final String name;
+
+  /// Who broadcasts it — «هيئة الإذاعة والتلفزيون». Absent when nobody named one.
+  final String? provider;
+
+  final String streamUrl;
+  final String? logoUrl;
+  final int sortOrder;
+
+  factory RadioStation.fromJson(Map<String, dynamic> json) => RadioStation(
+        id: json['id'] as int? ?? 0,
+        key: json['key'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        provider: json['provider'] as String?,
+        streamUrl: json['streamUrl'] as String? ?? '',
+        logoUrl: json['logoUrl'] as String?,
+        sortOrder: json['sortOrder'] as int? ?? 0,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'key': key,
+        'name': name,
+        'provider': provider,
+        'streamUrl': streamUrl,
+        'logoUrl': logoUrl,
+        'sortOrder': sortOrder,
       };
 }
 
@@ -409,6 +491,7 @@ class Catalog {
     required this.languageCode,
     required this.isUpToDate,
     required this.categories,
+    this.radios = const [],
   });
 
   final int version;
@@ -420,6 +503,10 @@ class Catalog {
 
   final List<AthkarCategory> categories;
 
+  /// The live stations, which ride the same payload. Empty is an ordinary
+  /// answer — an install whose admin has published none.
+  final List<RadioStation> radios;
+
   factory Catalog.fromJson(Map<String, dynamic> json) => Catalog(
         version: json['version'] as int? ?? 0,
         languageCode: json['languageCode'] as String? ?? 'ar',
@@ -428,6 +515,10 @@ class Catalog {
           for (final entry in (json['categories'] as List<dynamic>? ?? []))
             AthkarCategory.fromJson(entry as Map<String, dynamic>),
         ],
+        radios: [
+          for (final entry in (json['radios'] as List<dynamic>? ?? []))
+            RadioStation.fromJson(entry as Map<String, dynamic>),
+        ],
       );
 
   Map<String, dynamic> toJson() => {
@@ -435,6 +526,7 @@ class Catalog {
         'languageCode': languageCode,
         'isUpToDate': isUpToDate,
         'categories': [for (final category in categories) category.toJson()],
+        'radios': [for (final station in radios) station.toJson()],
       };
 }
 
