@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Athkar</RootNamespace>
+    <UserSecretsId>f927fed2-2653-4cea-b37c-c9336ade03a9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,9 +16,7 @@
       Fcm:CredentialsPath resolves against the content root, which is the output
       directory for a published app, hence the copy.
     -->
-    <None Update="athkar-notifications.json"
-          CopyToOutputDirectory="PreserveNewest"
-          Condition="Exists('athkar-notifications.json')" />
+    <None Update="athkar-notifications.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('athkar-notifications.json')" />
   </ItemGroup>
 
   <ItemGroup>

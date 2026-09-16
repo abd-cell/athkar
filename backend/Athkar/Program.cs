@@ -35,6 +35,18 @@ builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection("St
 builder.Services.Configure<QuranMcpSettings>(builder.Configuration.GetSection("QuranMcp"));
 var jwt = builder.Configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
 
+// The signing key is not in appsettings.json — that file is public. Fail here,
+// loudly, rather than let HMAC-SHA256 run on an empty or short key: a weak key
+// forges every token in the system, and nothing downstream would report it.
+// 32 bytes is the output size of SHA-256; below that the key adds no strength.
+if (Encoding.UTF8.GetByteCount(jwt.Secret) < 32)
+{
+    throw new InvalidOperationException(
+        "Jwt:Secret is missing or shorter than 32 bytes. Supply it out of band:\n" +
+        "  development  dotnet user-secrets set \"Jwt:Secret\" \"<32+ random bytes>\"\n" +
+        "  deployment   environment variable Jwt__Secret");
+}
+
 // ── Framework ──
 builder.Services.AddControllers(options => options.Filters.Add<ValidateModelAttribute>())
     // Inbound DateTimes are normalised to UTC — see UtcDateTimeConverter for why.

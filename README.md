@@ -24,6 +24,10 @@ gotchas worth knowing before you hit them.
 ## Running it
 
 ```bash
+# 0. the JWT signing key — once per clone. It is not in appsettings.json,
+#    and the API refuses to start without it.
+cd backend/Athkar && dotnet user-secrets set "Jwt:Secret" "$(openssl rand -base64 48)"
+
 # 1. API — applies migrations and seeds on first run
 cd backend && dotnet run --project Athkar --launch-profile Athkar
 
@@ -34,6 +38,10 @@ cd cms/athkar-cp && npm install && npm start
 cd app/athkar_app && C:/flutter/bin/flutter.bat run \
   --dart-define=API_BASE_URL=http://localhost:5000/api/v1/
 ```
+
+A deployment supplies the same key as `Jwt__Secret` in the environment rather
+than through user-secrets. Rotating it signs every console session out, which is
+the point of rotating it.
 
 The first run seeds one administrator — `admin@athkari.app` / `Athkari!2026` —
 fourteen chapters, a set of sourced adhkar, two languages and two reminder

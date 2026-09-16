@@ -48,6 +48,11 @@ whole notification design turns on. `docs/DESIGN.md` covers the visual system.
 - Database: SQL Server `DESKTOP-SBF2I7A`, database `Athkar` (see `appsettings.json`).
 - Dev login: `admin@athkari.app` / `Athkari!2026`, seeded on first run.
   **Change it in any real deployment** — the seeder logs a warning naming it.
+- **`Jwt:Secret` is not in `appsettings.json`** and the API throws on startup
+  without it — a fresh clone needs `dotnet user-secrets set "Jwt:Secret" "..."`
+  (32 bytes minimum) in `backend/Athkar`, or `Jwt__Secret` in the environment.
+  The guard is in `Program.cs` beside the `JwtSettings` bind: an empty key would
+  otherwise sign every token in the system and nothing downstream would notice.
 - The `.claude/skills/run-app` skill holds the verified, gotcha-annotated
   recipes for running each stack — on the web, on a real Android phone over the
   LAN, and the control panel. Use it rather than re-deriving the commands: it

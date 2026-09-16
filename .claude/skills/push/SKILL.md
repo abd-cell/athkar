@@ -46,12 +46,14 @@ Firebase service-account key, which can push to every install), the Google
 services files, `appsettings.Production.json`, `appsettings.Local.json`, `*.env`,
 `*.jks`, `*.keystore`. Trust the list, but check any *new* match by eye.
 
-**Already in the history, knowingly:** `backend/Athkar/appsettings.json` carries
-the dev `Jwt:Secret`, and `CLAUDE.md` names the seeded admin login
-(`admin@athkari.app` / `Athkari!2026`). Both are development values. If either is
-ever reused in a deployment, rotating them is a separate job — do not quietly
-re-commit a *new* real secret into that same file because "there's already one
-there".
+**Already in the history, knowingly:** commit `91e8bbe` carries a `Jwt:Secret`
+in `backend/Athkar/appsettings.json`, and `CLAUDE.md` names the seeded admin
+login (`admin@athkari.app` / `Athkari!2026`). That signing key has since been
+rotated and now lives in user-secrets, so the published one opens nothing — but
+it is still in the history, and history is the reason `Jwt:Secret` in
+`appsettings.json` must stay an empty string. Never re-fill it "just for local
+work": `dotnet user-secrets set` is the same amount of typing and does not
+publish.
 
 ---
 
