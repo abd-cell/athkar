@@ -4,5 +4,5 @@
 /// deployment shape and one value, and a build-time file swap would hide it
 /// from anybody reading the code.
 export const environment = {
-  apiBaseUrl: 'http://localhost:5010/api/v1/',
+  apiBaseUrl: 'https://athkar.technzone.com/api/api/v1/',
 };
