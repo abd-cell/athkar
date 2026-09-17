@@ -15,7 +15,7 @@ class Environment {
 
   static const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.1.43:5000/api/v1/',
+    defaultValue: 'https://athkar.technzone.com/api/api/v1/',
   );
 
   /// How long any one call may take before it is reported as a timeout.

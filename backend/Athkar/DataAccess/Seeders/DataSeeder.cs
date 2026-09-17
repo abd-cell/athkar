@@ -159,6 +159,15 @@ public static class DataSeeder
                 Rhythm = rhythm,
                 Anchor = anchor,
                 IsPublished = true,
+                // Every one of the fourteen below is daily/occasion remembrance,
+                // not a dua or a virtues entry (see CategorySection's own
+                // classification in the CategorySection migration) — set
+                // explicitly rather than left at the model's None default, so a
+                // fresh database seeds these into "الأذكار" instead of the
+                // unfiled tray. The migration's one-time UPDATE only classified
+                // rows that already existed in an already-seeded database; it
+                // does nothing for a category this seeder is about to insert.
+                Section = CategorySection.Adhkar,
             };
             category.Translations.Add(new CategoryTranslation { LanguageCode = "ar", Name = ar });
             category.Translations.Add(new CategoryTranslation { LanguageCode = "en", Name = en });

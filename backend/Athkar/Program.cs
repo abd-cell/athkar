@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Athkar;
 using Athkar.Areas.Domain.Staff;
 using Athkar.Areas.Services.Notifications;
@@ -33,6 +35,11 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"))
 builder.Services.Configure<FcmSettings>(builder.Configuration.GetSection("Fcm"));
 builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection("Storage"));
 builder.Services.Configure<QuranMcpSettings>(builder.Configuration.GetSection("QuranMcp"));
+builder.Services.Configure<SwaggerSettings>(builder.Configuration.GetSection("Swagger"));
+
+// Read once, up front, like jwt below — AddSwaggerGen runs before the DI
+// container exists to hand out an IOptions<SwaggerSettings>.
+var swagger = builder.Configuration.GetSection("Swagger").Get<SwaggerSettings>() ?? new SwaggerSettings();
 var jwt = builder.Configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
 
 // The signing key is not in appsettings.json — that file is public. Fail here,
@@ -61,7 +68,39 @@ builder.Services.AddControllers(options => options.Filters.Add<ValidateModelAttr
 builder.Services.Configure<ApiBehaviorOptions>(o => o.SuppressModelStateInvalidFilter = true);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => c.CustomSchemaIds(SwaggerSchemaIds.For));
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(SwaggerSchemaIds.For);
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = swagger.Title, Version = swagger.Version });
+
+    // Every admin endpoint sits behind [AppAuthorize], so without this a
+    // Swagger tester has no way to try one short of pasting a header by hand
+    // into every request. "Authorize" once here and it rides along on all of
+    // them. The requirement is built from the document Swashbuckle hands
+    // back, not from the scheme object above — that is what
+    // OpenApiSecuritySchemeReference needs to resolve "Bearer" against.
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT bearer token. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+    });
+    c.AddSecurityRequirement(doc =>
+    {
+        var requirement = new OpenApiSecurityRequirement();
+        requirement.Add(new OpenApiSecuritySchemeReference("Bearer", doc, null), []);
+        return requirement;
+    });
+
+    // The numbers are the contract across all three stacks (see CLAUDE.md) —
+    // this is what makes a reviewer reading /swagger see "1 = Editor,
+    // 2 = Admin, 3 = SuperAdmin" instead of a bare integer. A schema filter,
+    // not a document filter: it gets the CLR enum type straight from the
+    // context, so it still matches after CustomSchemaIds above renames the
+    // component key away from the bare type name.
+    c.SchemaFilter<SwaggerEnumDescriptions>();
+});
 
 // ── CORS (the CMS, and the app when it runs on the web) ──
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -150,10 +189,14 @@ app.UseCors();
 // are captured too; the acting user is read after the pipeline unwinds.
 app.UseMiddleware<ApiLoggerMiddleware>();
 
-if (app.Environment.IsDevelopment())
+// Config-driven, not an IsDevelopment() check — appsettings.json defaults
+// this off and appsettings.Development.json switches it on, so a deployment
+// decides the same way it decides push and the Qur'an sync, without a
+// recompile in either direction.
+if (swagger.Enabled)
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Athkar v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint(swagger.Path, $"{swagger.Title} {swagger.Version}"));
 }
 
 app.UseAuthentication();
@@ -203,6 +246,29 @@ internal static class SwaggerSchemaIds
         }
 
         return string.IsNullOrEmpty(lastSegment) ? type.Name : $"{lastSegment}{type.Name}";
+    }
+}
+
+/// <summary>
+/// Appends "1 = Editor, 2 = Admin, ..." to every enum schema's description, so
+/// a value on screen in Swagger is never a bare integer someone has to go
+/// cross-reference against the C# source. Every enum in this codebase crosses
+/// three stacks with the numbers as the contract (see CLAUDE.md) — this is
+/// the one place that fact is worth restating for whoever is reading, not
+/// writing, the code.
+/// </summary>
+internal sealed class SwaggerEnumDescriptions : ISchemaFilter
+{
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (!context.Type.IsEnum) return;
+
+        var members = Enum.GetValues(context.Type)
+            .Cast<object>()
+            .Select(value => $"{Convert.ToInt64(value)} = {value}");
+
+        var legend = string.Join(", ", members);
+        schema.Description = string.IsNullOrEmpty(schema.Description) ? legend : $"{schema.Description} ({legend})";
     }
 }
 

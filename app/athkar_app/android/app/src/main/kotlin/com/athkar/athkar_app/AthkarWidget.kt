@@ -99,9 +99,15 @@ class AthkarWidget : AppWidgetProvider() {
         // Three states, and the middle one matters: the widget can be placed
         // before the app has ever run, in which case there is nothing to show
         // and saying so is better than an empty rectangle.
+        // The placeholder itself is pushed by the app, so before the first
+        // launch there is not one either — hence the string resource under it.
+        val placeholder = prefs.getString(KEY_PLACEHOLDER, null)
+            ?.takeIf { it.isNotBlank() }
+            ?: context.getString(R.string.widget_not_ready)
+
         val body = when {
-            !enabled -> prefs.getString(KEY_PLACEHOLDER, "") ?: ""
-            title.isNullOrBlank() -> prefs.getString(KEY_PLACEHOLDER, "") ?: ""
+            !enabled -> placeholder
+            title.isNullOrBlank() -> placeholder
             else -> title
         }
 

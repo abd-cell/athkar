@@ -24,9 +24,26 @@
     the keyguard flag because it does not need it, and an implementation that
     filters on the flag — an OEM lock screen, or the legacy API — finds it.
 
-    What it cannot do is conjure the feature onto a phone whose system has no
-    lock-screen widget panel, which is most phones. The app's own help screen
-    says so rather than leaving the reader hunting for a list that is not there.
+    ## Why `0x800` is there as well
+
+    Samsung's One UI (7 and 8) *does* have a lock-screen widget panel, and it
+    does not key off `keyguard` at all. Decoding the provider XML of the widgets
+    that appear in it (`com.sec.android.app.clockpackage`'s TimerWidgetProvider,
+    Calendar, S Health, SmartThings, Weather) shows every one of them declaring
+    `android:widgetCategory=2048` — a flag with no name in the platform
+    attribute, which is why the value is assembled in
+    `res/values/widget_category.xml` and referenced here: aapt rejects a raw
+    number in a flags attribute but accepts a reference. `0x2000` (8192) is the
+    same manufacturer's category for the cover screen and is not claimed.
+
+    Declaring it is the only way to be *eligible* there; whether One UI's picker
+    then lists a third-party app is the manufacturer's decision and was not
+    documented anywhere we could find. It costs nothing on any other device.
+
+    What none of this can do is conjure the feature onto a phone whose system
+    has no lock-screen widget panel, which is most phones. The app's own help
+    screen says so rather than leaving the reader hunting for a list that is
+    not there.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="180dp"
@@ -38,4 +55,4 @@
     android:initialKeyguardLayout="@layout/athkar_widget"
     android:previewLayout="@layout/athkar_widget"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen|keyguard" />
+    android:widgetCategory="@integer/athkar_widget_category" />

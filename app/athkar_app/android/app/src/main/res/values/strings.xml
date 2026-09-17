@@ -2,4 +2,40 @@
 <resources>
     <!-- Shown in the launcher's widget picker, so it is in the app's own language. -->
     <string name="widget_label">أذكاري</string>
+
+    <!--
+        The sample the picker draws.
+
+        `previewLayout` inflates `layout/athkar_widget.xml` with no provider
+        running and no preferences to read, so whatever the layout itself says
+        is the whole of the preview. With no default text on any view that was
+        a blank parchment rectangle — the widget was listed, at the right size,
+        and illustrated nothing. A reader deciding whether to place it was being
+        shown an empty card.
+
+        These four are also what a widget placed *before the app has ever run*
+        falls back to, which is the same situation seen from the home screen.
+        They are overwritten the moment the app pushes real values, so they are
+        never stale: they are what "not filled in yet" looks like, not a cache.
+
+        The dhikr is a real one with its real source, because a preview that
+        showed «عنوان» and «المصدر» would be teaching the reader that this app's
+        one claim — that every line can be traced to a book and a number — is
+        decoration.
+    -->
+    <string name="widget_sample_date">الجمعة ٢٥ ربيع الأول</string>
+    <string name="widget_sample_headline">أذكار الصباح</string>
+    <string name="widget_sample_title">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ</string>
+    <string name="widget_sample_source">صحيح البخاري ٦٤٠٦</string>
+    <!--
+        What a widget says when it has been placed but the app has never run.
+
+        `render` already had the state — the comment beside it says an empty
+        rectangle is the wrong answer — but the sentence it reached for is
+        pushed *by the app*, so before the first launch it read the empty string
+        and drew the rectangle anyway. This is the floor under that: it is not
+        the preview sample, because a live widget must never show a date or a
+        source it invented.
+    -->
+    <string name="widget_not_ready">افتح أذكاري ليظهر الذكر هنا</string>
 </resources>

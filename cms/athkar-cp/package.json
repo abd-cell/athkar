@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:athkar-cp": "node dist/athkar-cp/server/server.mjs"
+    "serve:ssr:athkar-cp": "node dist/athkar-cp/server/server.mjs",
+    "build:static": "ng build --base-href /cms/ --configuration production && node scripts/finish-static-build.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

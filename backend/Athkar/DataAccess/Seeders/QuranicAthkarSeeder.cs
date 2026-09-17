@@ -81,6 +81,11 @@ public static class QuranicAthkarSeeder
                 Rhythm = CategoryRhythm.None,
                 Anchor = PrayerAnchor.None,
                 IsPublished = true,
+                // See the same note in DataSeeder.SeedContent: the model's None
+                // default is only ever backfilled by the CategorySection
+                // migration's one-time UPDATE, which cannot reach a category
+                // this seeder is about to create.
+                Section = CategorySection.Adhkar,
             };
             category.Translations.Add(new CategoryTranslation { LanguageCode = "ar", Name = "أذكار من القرآن" });
             category.Translations.Add(new CategoryTranslation { LanguageCode = "en", Name = "From the Qur'an" });

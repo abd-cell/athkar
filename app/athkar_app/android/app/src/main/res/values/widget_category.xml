@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    `widgetCategory` is a flags attribute, and aapt only accepts the names the
+    platform declares: home_screen, keyguard, searchbox, not_keyguard. Samsung's
+    lock-screen panel keys off 2048, which has no name — so the value is built
+    here as an integer and referenced from the provider XML, which aapt allows
+    for any typed attribute.
+
+        1  home_screen  — the launcher, the one that matters everywhere
+        2  keyguard     — the legacy API 17–20 lock screen, and any OEM that
+                          still filters on it
+     2048  (unnamed)    — One UI 7/8's lock-screen widget panel; every Samsung
+                          widget that appears there declares it
+
+    2048 is deliberately not written as a hex literal in the provider file: a
+    reader who meets a bare number there has nowhere to look it up.
+-->
+<resources>
+    <integer name="athkar_widget_category">2051</integer>
+</resources>
