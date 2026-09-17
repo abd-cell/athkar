@@ -479,7 +479,9 @@ class _QuranScreenState extends State<QuranScreen> {
   /// Reads a mushaf the device already has. No network and no download — which
   /// is the whole point of having paid for it once.
   Future<void> _switchTo(QuranEdition edition) async {
-    await AppStateScope.read(context).quran.select(edition.edition);
+    final state = AppStateScope.read(context);
+    await state.quran.select(edition.edition);
+    state.quranChanged();
 
     // Built from the previous mushaf, and its page numbers are that mushaf's.
     QuranLibrary.forgetCorpus();
@@ -532,6 +534,7 @@ class _QuranScreenState extends State<QuranScreen> {
     });
 
     if (response.success) {
+      state.quranChanged();
       await _load();
       if (mounted) AthkarAlerts.toast(context, context.tr('quran.saved'));
     } else {

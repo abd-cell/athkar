@@ -17,6 +17,12 @@ import { SKIP_AUTH_HANDLING } from './auth-context';
  * turned every deep link into a 302 to the login form — the page the user asked
  * for never rendered at all. On the server the failure is simply left to the
  * component, which renders its empty state and fetches again after hydration.
+ *
+ * **Only a 401 ends the session.** A 403 means the token is fine but the role
+ * is not high enough for this one call — an Editor's `admin/languages` read,
+ * say — and every screen that can 403 is expected to fall back to its own
+ * empty or restricted state. Signing an Editor out for opening a screen the
+ * nav itself offers them was a real defect, not a safety margin.
  */
 export const errorInterceptor: HttpInterceptorFn = (request, next) => {
   if (request.context.get(SKIP_AUTH_HANDLING)) return next(request);
@@ -27,11 +33,7 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
 
   return next(request).pipe(
     catchError((error: unknown) => {
-      if (
-        !isServer &&
-        error instanceof HttpErrorResponse &&
-        (error.status === 401 || error.status === 403)
-      ) {
+      if (!isServer && error instanceof HttpErrorResponse && error.status === 401) {
         global.signOut();
         void router.navigate(['/', global.languageCode(), 'login']);
       }

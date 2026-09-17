@@ -125,6 +125,10 @@
         </h2>
       </div>
 
+      @if (error(); as message) {
+        <div class="notice notice--error">{{ message | translate }}</div>
+      }
+
       <!--
         The preview sits above the form, not below it, because it answers the
         question the admin is actually holding while they type: what will a

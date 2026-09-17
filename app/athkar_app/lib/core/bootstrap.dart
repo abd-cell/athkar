@@ -340,6 +340,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Tells anything watching [AppStateScope] that the mushaf on this device
+  /// changed shape — downloaded, switched, or (via [forgetQuran]) removed.
+  ///
+  /// The home screen's «آية اليوم» card is the reason this exists: it loads
+  /// once and lives inside an `IndexedStack`, so nothing rebuilds it when the
+  /// reader downloads a mushaf from the Qur'an tab unless something notifies.
+  void quranChanged() => notifyListeners();
+
   /// Copy the widget needs, resolved without a `BuildContext`.
   ///
   /// The widget is pushed from background paths — a sync, a resume — where

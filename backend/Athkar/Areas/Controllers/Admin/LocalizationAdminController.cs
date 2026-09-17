@@ -15,6 +15,11 @@ public class LocalizationAdminController : BaseApiController
 
     public LocalizationAdminController(ILocalizationService service) => this.service = service;
 
+    // Every editor-open content screen (Categories, Adhkar, Radio, FAQ, the
+    // widget catalogue) reads the language list to build its tab strip, so it
+    // is opened to Editors the same way the strings endpoints below are — the
+    // mutating actions on this controller stay Admin-and-above.
+    [AppAuthorize(Roles.Editor, Roles.Admin, Roles.SuperAdmin)]
     [HttpGet]
     public Task<BaseResponse<List<LanguageOutput>>> List() => service.AllLanguages();
 

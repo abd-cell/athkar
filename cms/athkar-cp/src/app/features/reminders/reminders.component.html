@@ -153,6 +153,28 @@
         </div>
       </div>
 
+      @if (form.audience === Audience.Language) {
+        <div class="field">
+          <label>{{ 'nav.languages' | translate }}</label>
+          <select name="targetLanguageCode" [(ngModel)]="form.targetLanguageCode">
+            @for (language of languages(); track language.code) {
+              <option [ngValue]="language.code">{{ language.nativeName }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (form.audience === Audience.Platform) {
+        <div class="field">
+          <label>{{ 'push.byPlatform' | translate }}</label>
+          <select name="targetPlatform" [(ngModel)]="form.targetPlatform">
+            @for (option of platforms; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
       <div class="field">
         <label>{{ 'reminders.days' | translate }}</label>
         <div class="row" style="flex-wrap: wrap">

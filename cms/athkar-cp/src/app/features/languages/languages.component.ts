@@ -115,7 +115,16 @@ export class LanguagesComponent {
     this.strings.set(null);
 
     this.api.uiStrings(row.code).subscribe((response) => {
-      const map = response.data?.strings ?? {};
+      if (!response.success || !response.data) {
+        // A failed read must not offer an empty set to save: `saveStrings`
+        // sends the list as a complete replacement, and Save on an empty
+        // dialog would wipe every override this language actually has.
+        this.error.set(errorKey(response.errorCode));
+        this.stringsFor.set(null);
+        return;
+      }
+
+      const map = response.data.strings ?? {};
       this.strings.set(
         Object.entries(map)
           .sort(([a], [b]) => a.localeCompare(b))

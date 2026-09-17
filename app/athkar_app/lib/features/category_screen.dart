@@ -142,6 +142,20 @@ class _CategoryDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = AthkarTokens.of(context);
 
+    // A chapter published with no adhkar yet (QA_REPORT §3 records several).
+    // No reading-mode action and no «اقرأ وعدّ» button: both would open on an
+    // empty list, and the session screen in particular has no dhikr to show.
+    if (category.adhkar.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text(category.name)),
+        body: AthkarEmptyState(
+          title: context.tr('categories.empty'),
+          body: context.tr('categories.emptyHint'),
+          icon: Icons.menu_book_outlined,
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(category.name),

@@ -150,22 +150,26 @@ class _GalleryIntro extends StatelessWidget {
         children: [
           Text(
             context.tr('widgets.gallery.headline'),
-            style: AthkarType.amiri(size: 19, color: tokens.brandInk, weight: FontWeight.w700),
+            style: AthkarType.amiri(size: 19, color: tokens.onBrand, weight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
           Text(
             context.tr('widgets.gallery.body'),
-            style: AthkarType.sans(size: 12.5, color: tokens.brandInk, height: 1.9),
+            style: AthkarType.sans(size: 12.5, color: tokens.onBrand.withValues(alpha: 0.85), height: 1.9),
           ),
           const SizedBox(height: 10),
           Row(
             children: [
-              Icon(Icons.add_circle_outline, size: 16, color: tokens.brandInk),
+              Icon(Icons.add_circle_outline, size: 16, color: tokens.onBrand),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   context.tr('widgets.gallery.addHint'),
-                  style: AthkarType.sans(size: 11.5, color: tokens.brandInk, height: 1.7),
+                  style: AthkarType.sans(
+                    size: 11.5,
+                    color: tokens.onBrand.withValues(alpha: 0.85),
+                    height: 1.7,
+                  ),
                 ),
               ),
             ],

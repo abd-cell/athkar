@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/arabic_text.dart';
 import '../core/l10n.dart';
 import '../core/numerals.dart';
 import '../core/settings.dart';
@@ -30,7 +31,9 @@ class DhikrCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            dhikr.arabicText,
+            settings.showTashkeel
+                ? dhikr.arabicText
+                : ArabicText.stripDiacritics(dhikr.arabicText),
             style: AthkarType.amiri(
               size: 21 * settings.fontScale,
               color: tokens.ink,

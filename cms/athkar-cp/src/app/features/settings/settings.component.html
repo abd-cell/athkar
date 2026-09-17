@@ -27,7 +27,7 @@
             <label>{{ 'settings.method' | translate }}</label>
             <select name="defaultCalculationMethod" [(ngModel)]="f.defaultCalculationMethod">
               @for (option of methods; track option.value) {
-                <option [ngValue]="option.value">{{ option.label }}</option>
+                <option [ngValue]="option.value">{{ option.key | translate }}</option>
               }
             </select>
           </div>

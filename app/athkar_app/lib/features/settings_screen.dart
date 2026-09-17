@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/api_client.dart';
 import '../core/bootstrap.dart';
 import '../core/l10n.dart';
 import '../core/mushaf.dart';
@@ -221,9 +222,21 @@ class SettingsScreen extends StatelessWidget {
     final response = await Api.devices.forget();
 
     if (!context.mounted) return;
-    response.success
-        ? AthkarAlerts.toast(context, context.tr('common.ok'))
-        : AthkarAlerts.error(context, response.errorMessage ?? context.tr('error.generic'));
+
+    if (!response.success) {
+      AthkarAlerts.error(context, response.errorMessage ?? context.tr('error.generic'));
+      return;
+    }
+
+    // Rotate the install identity: otherwise the next launch's own
+    // registration call re-sends the same key and the server un-deletes the
+    // row this button just asked it to forget.
+    final settings = SettingsScope.read(context);
+    await settings.resetDeviceKey();
+    ApiClient.instance.deviceKey = settings.deviceKey;
+
+    if (!context.mounted) return;
+    AthkarAlerts.toast(context, context.tr('settings.forgetDone'));
   }
 }
 

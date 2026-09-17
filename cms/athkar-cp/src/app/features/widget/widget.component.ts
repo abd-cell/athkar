@@ -50,6 +50,9 @@ export class WidgetComponent {
   protected readonly saved = signal(false);
   protected readonly error = signal<string | null>(null);
 
+  /** True once the settings fetch has answered, success or failure. */
+  protected readonly loaded = signal(false);
+
   protected readonly Kind = WidgetKind;
   protected readonly Theme = WidgetTheme;
 
@@ -61,9 +64,7 @@ export class WidgetComponent {
   ];
 
   constructor() {
-    this.api
-      .categories({ pageSize: 100 })
-      .subscribe((response) => this.categories.set(response.data?.data ?? []));
+    this.api.allCategories().subscribe((rows) => this.categories.set(rows));
 
     this.api.widgetCatalog().subscribe((response) =>
       this.offerable.set(
@@ -74,8 +75,13 @@ export class WidgetComponent {
     );
 
     this.api.widgetSettings().subscribe((response) => {
+      this.loaded.set(true);
+
       const data = response.data;
-      if (!data) return;
+      if (!data) {
+        this.error.set(errorKey(response.errorCode));
+        return;
+      }
 
       this.version.set(data.version);
 

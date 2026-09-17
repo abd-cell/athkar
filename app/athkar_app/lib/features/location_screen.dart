@@ -25,6 +25,7 @@ class LocationScreen extends StatefulWidget {
 class _LocationScreenState extends State<LocationScreen> {
   var _query = '';
   var _locating = false;
+  var _saving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class _LocationScreenState extends State<LocationScreen> {
               label: context.tr('prayer.useMyLocation'),
               icon: Icons.my_location,
               trailing: _locating ? const AthkarSpinner(size: 18) : null,
-              onTap: _locating ? null : _useMyLocation,
+              onTap: _locating || _saving ? null : _useMyLocation,
             ),
           ),
           Padding(
@@ -87,12 +88,14 @@ class _LocationScreenState extends State<LocationScreen> {
                 return AthkarListRow(
                   label: city.name(language),
                   value: city.country,
-                  onTap: () => _choose(
-                    city.latitude,
-                    city.longitude,
-                    city.name(language),
-                    country: city.country,
-                  ),
+                  onTap: _saving
+                      ? null
+                      : () => _choose(
+                          city.latitude,
+                          city.longitude,
+                          city.name(language),
+                          country: city.country,
+                        ),
                 );
               },
             ),
@@ -108,14 +111,21 @@ class _LocationScreenState extends State<LocationScreen> {
     String name, {
     String? country,
   }) async {
+    if (_saving) return;
+    setState(() => _saving = true);
+
     final settings = SettingsScope.read(context);
     final state = AppStateScope.read(context);
 
-    await settings.setLocation(latitude, longitude, name, country: country);
-    // Every anchored reminder just moved with the location.
-    await state.rescheduleReminders();
+    try {
+      await settings.setLocation(latitude, longitude, name, country: country);
+      // Every anchored reminder just moved with the location.
+      await state.rescheduleReminders();
 
-    if (mounted) Navigator.of(context).pop();
+      if (mounted) Navigator.of(context).pop();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   /// The only place in the app that asks for location permission.

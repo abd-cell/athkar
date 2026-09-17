@@ -92,4 +92,13 @@ class ArabicText {
   /// True when [haystack]'s folded text contains the folded [needle].
   static bool contains(String? haystack, String? needle) =>
       normalize(haystack).contains(normalize(needle));
+
+  /// [raw] with harakat and Qur'anic annotation marks removed, for *display*
+  /// — the reader's «إظهار التشكيل» toggle.
+  ///
+  /// Deliberately not [normalize]: that also folds letter shapes, strips
+  /// punctuation and lower-cases for search, none of which belong in text
+  /// shown on screen. This keeps every other character exactly as written.
+  static String stripDiacritics(String raw) =>
+      String.fromCharCodes(raw.runes.where((c) => !_isDiacritic(c)));
 }

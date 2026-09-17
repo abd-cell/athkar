@@ -182,6 +182,10 @@
         {{ 'common.save' | translate }}
       </button>
     </form>
+  } @else if (loaded()) {
+    <!-- The failure itself is already shown by the notice at the top of the
+         page; this only stops the screen from reading as still loading. -->
+    <div class="empty">{{ 'common.empty' | translate }}</div>
   } @else {
     <div class="empty">{{ 'common.loading' | translate }}</div>
   }

@@ -38,8 +38,10 @@ class _MushafScreenState extends State<MushafScreen> {
   void initState() {
     super.initState();
     _current = widget.initialPage.clamp(1, Mushaf.totalPages);
-    // Right to left: page 1 is the rightmost, as in the book.
-    _controller = PageController(initialPage: Mushaf.totalPages - _current);
+    // The PageView below is pinned to RTL regardless of the app's own
+    // language, so index 0 is always the rightmost page — page 1, as in the
+    // book — and the mapping is the identity, not a mirror.
+    _controller = PageController(initialPage: _current - 1);
     _loadNames();
 
     // The page it opens on counts: a reader who taps «متابعة القراءة» and reads
@@ -70,7 +72,7 @@ class _MushafScreenState extends State<MushafScreen> {
   /// Written per page turn and not per frame — `setLastPage` drops a write that
   /// would store the number already stored.
   void _onPageChanged(int index) {
-    final page = Mushaf.totalPages - index;
+    final page = index + 1;
     setState(() => _current = page);
     AppStateScope.read(context).quran.setLastPage(page);
   }
@@ -91,14 +93,20 @@ class _MushafScreenState extends State<MushafScreen> {
         ),
       ),
       body: SafeArea(
-        child: PageView.builder(
-          controller: _controller,
-          itemCount: Mushaf.totalPages,
-          onPageChanged: _onPageChanged,
-          itemBuilder: (context, index) => _Page(
-            store: store,
-            number: Mushaf.totalPages - index,
-            surahNames: _surahNames,
+        // Pinned to RTL independent of the app's own language: a mushaf turns
+        // the same direction whether the interface around it is Arabic or
+        // English, and the page-index mapping above assumes it.
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: Mushaf.totalPages,
+            onPageChanged: _onPageChanged,
+            itemBuilder: (context, index) => _Page(
+              store: store,
+              number: index + 1,
+              surahNames: _surahNames,
+            ),
           ),
         ),
       ),

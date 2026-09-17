@@ -73,6 +73,16 @@ class Settings extends ChangeNotifier {
     return key;
   }
 
+  /// Drops this install's key so the next read of [deviceKey] mints a new
+  /// one.
+  ///
+  /// Called after a confirmed «حذف بياناتي من الخادم»: without it, the next
+  /// launch's own registration call re-sends the same key, and the server
+  /// un-deletes the very row the reader just asked it to forget.
+  Future<void> resetDeviceKey() async {
+    await _prefs.remove(_kDeviceKey);
+  }
+
   // ─────────────────────────── appearance ───────────────────────────
 
   String get languageCode => _prefs.getString(_kLanguage) ?? 'ar';

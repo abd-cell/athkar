@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TranslationsEditorComponent } from '../../components/translations-editor.component';
@@ -51,19 +51,27 @@ export class AdhkarComponent {
     { value: HadithGrade.MuttafaqAlayh, key: 'adhkar.grade.muttafaqAlayh' },
   ];
 
-  /** True while the open form still lacks what publishing requires. */
-  protected readonly missingSource = computed(() => {
+  /**
+   * True while the open form still lacks what publishing requires.
+   *
+   * A plain method, not a `computed` — the dialog's `sourceBook`/
+   * `sourceReference` fields two-way-bind with `[(ngModel)]` onto the object
+   * `editing()` already holds, which mutates it in place without ever
+   * notifying the signal. A `computed` here would evaluate once at open and
+   * never again, so typing the source would never unlock Published (the D2/
+   * D12 trap CLAUDE.md documents). Called from the template every change
+   * detection pass instead.
+   */
+  protected missingSource(): boolean {
     const form = this.editing();
     if (!form) return false;
 
     return !form.sourceBook?.trim() || !form.sourceReference?.trim();
-  });
+  }
 
   constructor() {
     this.api.languages().subscribe((response) => this.languages.set(response.data ?? []));
-    this.api
-      .categories({ pageSize: 100 })
-      .subscribe((response) => this.categories.set(response.data?.data ?? []));
+    this.api.allCategories().subscribe((rows) => this.categories.set(rows));
 
     this.load();
   }

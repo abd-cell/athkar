@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { ApiService } from '../../core/api/api.service';
+import { ApiService, errorKey } from '../../core/api/api.service';
 import { DashboardOutput } from '../../core/api/models';
 import { TranslatePipe } from '../../core/pipes/translate.pipe';
 import { GlobalService } from '../../core/services/global.service';
@@ -18,9 +18,23 @@ export class DashboardComponent {
 
   protected readonly data = signal<DashboardOutput | null>(null);
   protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
 
   constructor() {
+    this.load();
+  }
+
+  protected load(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
     this.api.dashboard().subscribe((response) => {
+      if (!response.success) {
+        this.error.set(errorKey(response.errorCode));
+        this.loading.set(false);
+        return;
+      }
+
       this.data.set(response.data ?? null);
       this.loading.set(false);
     });

@@ -65,9 +65,13 @@ class WidgetAppearanceScreen extends StatelessWidget {
           ],
 
           if (rules.allowTransparency) ...[
-            AthkarSectionHeader(
-              title: context.tr('widgets.appearance.transparency'),
-              note: context.tr('widgets.appearance.transparencyHint'),
+            AthkarSectionHeader(title: context.tr('widgets.appearance.transparency')),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                context.tr('widgets.appearance.transparencyHint'),
+                style: AthkarType.sans(size: 11.5, color: tokens.muted, height: 1.7),
+              ),
             ),
             Slider(
               value: settings.widgetOpacity,
@@ -79,9 +83,13 @@ class WidgetAppearanceScreen extends StatelessWidget {
           ],
 
           if (rules.allowBackgroundImage) ...[
-            AthkarSectionHeader(
-              title: context.tr('widgets.appearance.image'),
-              note: context.tr('widgets.appearance.imageHint'),
+            AthkarSectionHeader(title: context.tr('widgets.appearance.image')),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                context.tr('widgets.appearance.imageHint'),
+                style: AthkarType.sans(size: 11.5, color: tokens.muted, height: 1.7),
+              ),
             ),
             const SizedBox(height: 12),
             Row(

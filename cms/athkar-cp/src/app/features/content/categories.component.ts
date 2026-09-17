@@ -238,22 +238,14 @@ export class CategoriesComponent {
    * which was invisible while there were fifteen chapters and became a wall the
    * moment the حصن المسلم import brought in 129 more. A management list of this
    * size is cheap to render whole; what is not acceptable is an editor being
-   * unable to reach a chapter at all.
+   * unable to reach a chapter at all. The gathering itself lives on
+   * `ApiService.allCategories()` now — every screen with a category filter or
+   * select needs the same full list, not just this table.
    */
-  protected load(page = 1, gathered: AdminCategoryOutput[] = []): void {
-    if (page === 1) this.loading.set(true);
+  protected load(): void {
+    this.loading.set(true);
 
-    this.api.categories({ pageNumber: page, pageSize: 100 }).subscribe((response) => {
-      const batch = response.data?.data ?? [];
-      const rows = [...gathered, ...batch];
-
-      // A short page is the last one. Guarded on the batch rather than on a
-      // total, because a total the server does not send reads as zero.
-      if (batch.length === 100) {
-        this.load(page + 1, rows);
-        return;
-      }
-
+    this.api.allCategories().subscribe((rows) => {
       this.rows.set(rows);
       this.loading.set(false);
     });

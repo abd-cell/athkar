@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/arabic_text.dart';
 import '../core/l10n.dart';
 import '../core/numerals.dart';
 import '../core/settings.dart';
@@ -71,7 +72,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        dhikr.arabicText,
+                        settings.showTashkeel
+                            ? dhikr.arabicText
+                            : ArabicText.stripDiacritics(dhikr.arabicText),
                         // Justified, which is how the design sets it and how a
                         // page of Arabic has always been set.
                         textAlign: TextAlign.justify,
@@ -146,6 +149,9 @@ class _ReadingBar extends StatelessWidget {
           Expanded(
             child: OutlinedButton(
               onPressed: () => settings.setShowTashkeel(!settings.showTashkeel),
+              style: settings.showTashkeel
+                  ? OutlinedButton.styleFrom(backgroundColor: tokens.brandTint)
+                  : null,
               child: Text(context.tr('reading.tashkeel')),
             ),
           ),

@@ -56,6 +56,8 @@ void main() {
       'reminders.anchor.maghrib',
       'reminders.anchor.isha',
       'reminders.anchor.bedtime',
+      'reminders.anchor.islamicMidnight',
+      'reminders.anchor.lastThirdOfNight',
     ];
 
     test('anchor names are bare nouns', () {

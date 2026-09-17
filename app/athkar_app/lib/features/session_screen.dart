@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../core/arabic_text.dart';
 import '../core/l10n.dart';
 import '../core/numerals.dart';
 import '../core/settings.dart';
@@ -36,7 +37,10 @@ class _SessionScreenState extends State<SessionScreen> {
   late final PageController _pages;
 
   var _index = 0;
-  var _count = 0;
+  // Keyed by dhikr index rather than a single shared count, so swiping to
+  // another dhikr and back does not zero what the reader had already said.
+  final _counts = <int, int>{};
+  int get _count => _counts[_index] ?? 0;
   var _finished = false;
 
   @override
@@ -49,8 +53,11 @@ class _SessionScreenState extends State<SessionScreen> {
       daily: widget.category.rhythm == CategoryRhythm.daily,
     );
 
-    _index = (resumed?.$1 ?? 0).clamp(0, widget.category.adhkar.length - 1);
-    _count = resumed?.$2 ?? 0;
+    // Defensive: _CategoryDetail no longer opens this screen on an empty
+    // chapter, but a stale route or a future caller should not crash here.
+    final last = widget.category.adhkar.length - 1;
+    _index = last < 0 ? 0 : (resumed?.$1 ?? 0).clamp(0, last);
+    _counts[_index] = resumed?.$2 ?? 0;
 
     _pages = PageController(initialPage: _index);
 
@@ -83,7 +90,7 @@ class _SessionScreenState extends State<SessionScreen> {
     if (next < _current.repeatCount) {
       if (settings.haptics) HapticFeedback.selectionClick();
 
-      setState(() => _count = next);
+      setState(() => _counts[_index] = next);
       await state.progress.saveSessionState(widget.category.id, _index, next);
       return;
     }
@@ -102,10 +109,10 @@ class _SessionScreenState extends State<SessionScreen> {
 
     setState(() {
       _index++;
-      _count = 0;
+      _counts.putIfAbsent(_index, () => 0);
     });
 
-    await state.progress.saveSessionState(widget.category.id, _index, 0);
+    await state.progress.saveSessionState(widget.category.id, _index, _counts[_index] ?? 0);
 
     await _pages.animateToPage(
       _index,
@@ -115,11 +122,16 @@ class _SessionScreenState extends State<SessionScreen> {
   }
 
   /// Manual navigation, for a reader who wants to go back over one.
+  ///
+  /// Does not touch the count: a swipe is not a reset, it is a look at
+  /// another dhikr, and DESIGN.md requires a reset to be confirmed.
   void _jumpTo(int index) {
-    setState(() {
-      _index = index;
-      _count = 0;
-    });
+    setState(() => _index = index);
+    AppStateScope.read(context).progress.saveSessionState(
+      widget.category.id,
+      index,
+      _counts[index] ?? 0,
+    );
   }
 
   @override
@@ -128,6 +140,17 @@ class _SessionScreenState extends State<SessionScreen> {
     final settings = SettingsScope.of(context);
 
     if (_finished) return _CompletedView(category: widget.category);
+
+    if (widget.category.adhkar.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text(widget.category.name)),
+        body: AthkarEmptyState(
+          title: context.tr('categories.empty'),
+          body: context.tr('categories.emptyHint'),
+          icon: Icons.menu_book_outlined,
+        ),
+      );
+    }
 
     final digits = settings.arabicNumerals;
 
@@ -190,7 +213,7 @@ class _SessionScreenState extends State<SessionScreen> {
                   onPageChanged: _jumpTo,
                   itemBuilder: (context, index) => _DhikrPage(
                     dhikr: widget.category.adhkar[index],
-                    count: index == _index ? _count : 0,
+                    count: _counts[index] ?? 0,
                   ),
                 ),
               ),
@@ -238,7 +261,9 @@ class _DhikrPage extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    dhikr.arabicText,
+                    settings.showTashkeel
+                        ? dhikr.arabicText
+                        : ArabicText.stripDiacritics(dhikr.arabicText),
                     textAlign: TextAlign.center,
                     style: AthkarType.amiri(
                       // Larger than anywhere else in the app: this is the one

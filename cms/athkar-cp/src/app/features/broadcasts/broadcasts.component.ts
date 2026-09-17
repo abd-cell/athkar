@@ -91,12 +91,22 @@ export class BroadcastsComponent {
       targetLanguageCode: row.targetLanguageCode,
       targetPlatform: row.targetPlatform,
       targetDeviceKey: row.targetDeviceKey,
-      // `datetime-local` wants a naive local string, so the trailing zone is
-      // trimmed; the server re-reads it as UTC.
-      scheduledAtUtc: row.scheduledAtUtc ? row.scheduledAtUtc.slice(0, 16) : null,
+      // `datetime-local` wants a naive *local* string. `row.scheduledAtUtc`
+      // carries a trailing `Z`; converting through `Date` (not `.slice`) is
+      // what actually shifts it into this browser's local clock — the table
+      // cell beside this dialog renders the same instant through `appDate`,
+      // also local, so the two must agree.
+      scheduledAtUtc: row.scheduledAtUtc ? this.toLocalInput(row.scheduledAtUtc) : null,
       route: row.route,
       translations: row.translations.map((t) => ({ ...t })),
     });
+  }
+
+  /** An ISO UTC instant, as the value a `datetime-local` input expects. */
+  private toLocalInput(iso: string): string {
+    const d = new Date(iso);
+    const p = (n: number) => `${n}`.padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
   }
 
   protected save(): void {
@@ -104,6 +114,15 @@ export class BroadcastsComponent {
     if (!input || this.saving()) return;
 
     input.translations = input.translations.filter((t) => t.title.trim().length > 0);
+
+    // `input.scheduledAtUtc` is still the naive local string the
+    // `datetime-local` input wrote. `new Date(...)` on a naive string parses
+    // it as *local* time, and `.toISOString()` puts a trailing `Z` on it —
+    // which is what makes the server's `UtcDateTimeConverter` take the value
+    // as UTC rather than re-stamping the local wall-clock reading as UTC.
+    if (input.scheduledAtUtc) {
+      input.scheduledAtUtc = new Date(input.scheduledAtUtc).toISOString();
+    }
 
     this.saving.set(true);
     this.error.set(null);

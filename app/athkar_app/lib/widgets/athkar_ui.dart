@@ -151,8 +151,20 @@ class AthkarSectionHeader extends StatelessWidget {
       children: [
         Text(title, style: AthkarType.amiri(size: 17, color: tokens.ink, weight: FontWeight.w700)),
         const Spacer(),
+        // Flexible with an ellipsis rather than an unconstrained Text: a note
+        // longer than the short "آية · حديث · دعاء" this was designed for
+        // would otherwise overflow the row (RenderFlex in debug, clipped text
+        // pushing the title off-screen in release).
         if (note != null)
-          Text(note!, style: AthkarType.sans(size: 11.5, color: tokens.muted)),
+          Flexible(
+            child: Text(
+              note!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: AthkarType.sans(size: 11.5, color: tokens.muted),
+            ),
+          ),
       ],
     );
   }

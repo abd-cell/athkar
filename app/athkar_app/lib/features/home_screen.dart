@@ -497,9 +497,21 @@ class _VerseCard extends StatefulWidget {
 class _VerseCardState extends State<_VerseCard> {
   DailyVerse? _verse;
 
+  String? _stamp;
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Depends on AppStateScope (via .of) so a mushaf downloaded or switched
+    // in the Qur'an tab wakes this card without restarting the app — and on
+    // the calendar day, so the verse rolls over at midnight while the app
+    // stays open. `_stamp` avoids re-loading on every unrelated rebuild.
+    final store = AppStateScope.of(context).quran;
+    final now = DateTime.now();
+    final stamp = '${store.selectedEdition}|${now.year}-${now.month}-${now.day}';
+    if (stamp == _stamp) return;
+    _stamp = stamp;
     _load();
   }
 

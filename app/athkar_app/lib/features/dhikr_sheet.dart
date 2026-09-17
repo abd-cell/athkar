@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../core/arabic_text.dart';
 import '../core/l10n.dart';
 import '../core/settings.dart';
 import '../core/theme.dart';
@@ -59,7 +60,9 @@ class _DhikrSheetBody extends StatelessWidget {
           const SizedBox(height: 20),
 
           Text(
-            dhikr.arabicText,
+            settings.showTashkeel
+                ? dhikr.arabicText
+                : ArabicText.stripDiacritics(dhikr.arabicText),
             style: AthkarType.amiri(
               size: 23 * settings.fontScale,
               color: tokens.ink,

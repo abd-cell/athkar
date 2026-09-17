@@ -29,19 +29,19 @@ export class SettingsComponent {
   protected readonly error = signal<string | null>(null);
 
   protected readonly methods = [
-    { value: CalculationMethod.UmmAlQura, label: 'أم القرى' },
-    { value: CalculationMethod.MuslimWorldLeague, label: 'رابطة العالم الإسلامي' },
-    { value: CalculationMethod.Egyptian, label: 'الهيئة المصرية' },
-    { value: CalculationMethod.Karachi, label: 'كراتشي' },
-    { value: CalculationMethod.Kuwait, label: 'الكويت' },
-    { value: CalculationMethod.Qatar, label: 'قطر' },
-    { value: CalculationMethod.Dubai, label: 'الإمارات' },
-    { value: CalculationMethod.Turkey, label: 'ديانت' },
-    { value: CalculationMethod.NorthAmerica, label: 'ISNA' },
-    { value: CalculationMethod.Singapore, label: 'سنغافورة' },
-    { value: CalculationMethod.Tehran, label: 'طهران' },
-    { value: CalculationMethod.MoonsightingCommittee, label: 'لجنة رؤية الهلال' },
-    { value: CalculationMethod.Jordan, label: 'دائرة الإفتاء الأردنية' },
+    { value: CalculationMethod.UmmAlQura, key: 'settings.method.ummAlQura' },
+    { value: CalculationMethod.MuslimWorldLeague, key: 'settings.method.muslimWorldLeague' },
+    { value: CalculationMethod.Egyptian, key: 'settings.method.egyptian' },
+    { value: CalculationMethod.Karachi, key: 'settings.method.karachi' },
+    { value: CalculationMethod.Kuwait, key: 'settings.method.kuwait' },
+    { value: CalculationMethod.Qatar, key: 'settings.method.qatar' },
+    { value: CalculationMethod.Dubai, key: 'settings.method.dubai' },
+    { value: CalculationMethod.Turkey, key: 'settings.method.turkey' },
+    { value: CalculationMethod.NorthAmerica, key: 'settings.method.northAmerica' },
+    { value: CalculationMethod.Singapore, key: 'settings.method.singapore' },
+    { value: CalculationMethod.Tehran, key: 'settings.method.tehran' },
+    { value: CalculationMethod.MoonsightingCommittee, key: 'settings.method.moonsighting' },
+    { value: CalculationMethod.Jordan, key: 'settings.method.jordan' },
   ];
 
   protected readonly Madhab = Madhab;

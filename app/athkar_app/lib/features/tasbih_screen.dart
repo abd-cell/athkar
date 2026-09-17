@@ -152,20 +152,17 @@ class _TasbihScreenState extends State<TasbihScreen> {
                   AthkarChip(
                     label: Numerals.format(target, arabicIndic: digits),
                     selected: _target == target,
-                    onTap: () => setState(() {
-                      _target = target;
-                      _count = 0;
-                    }),
+                    // Only the target changes — the count is still shown as
+                    // `_count % _target` below, so it stays meaningful. A
+                    // reset is a separate, confirmed action.
+                    onTap: () => setState(() => _target = target),
                   ),
                   const SizedBox(width: 8),
                 ],
                 AthkarChip(
                   label: context.tr('tasbih.free'),
                   selected: _target == null,
-                  onTap: () => setState(() {
-                    _target = null;
-                    _count = 0;
-                  }),
+                  onTap: () => setState(() => _target = null),
                 ),
               ],
             ),

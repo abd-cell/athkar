@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TranslationsEditorComponent } from '../../components/translations-editor.component';
@@ -6,6 +6,7 @@ import { ApiService, errorKey } from '../../core/api/api.service';
 import {
   AdminCategoryOutput,
   Audience,
+  DevicePlatform,
   LanguageOutput,
   PrayerAnchor,
   ReminderDelivery,
@@ -67,6 +68,15 @@ export class RemindersComponent {
     { value: Audience.Platform, key: 'reminders.audience.platform' },
   ];
 
+  protected readonly platforms = [
+    { value: DevicePlatform.Android, label: 'Android' },
+    { value: DevicePlatform.Ios, label: 'iOS' },
+    { value: DevicePlatform.Web, label: 'Web' },
+  ];
+
+  /** So the template can compare against the enum without importing it itself. */
+  protected readonly Audience = Audience;
+
   /** The seven bits, in the order a week is read. */
   protected readonly weekdays = [
     { bit: WeekDays.Sunday, key: 'days.sunday' },
@@ -78,16 +88,24 @@ export class RemindersComponent {
     { bit: WeekDays.Saturday, key: 'days.saturday' },
   ];
 
-  /** True when the kind forces device-local delivery. */
-  protected readonly deliveryLocked = computed(
-    () => this.editing()?.kind === ReminderKind.PrayerAnchored,
-  );
+  /**
+   * True when the kind forces device-local delivery.
+   *
+   * A plain method, not a `computed` — the Kind select two-way-binds
+   * `form.kind` onto the object `editing()` already holds, mutating it in
+   * place without notifying the signal. A `computed` here would keep
+   * whatever value it had when the dialog opened: a new reminder (opens
+   * PrayerAnchored) could never unlock Delivery after switching to Fixed
+   * time, and an edited FixedTime reminder switched to PrayerAnchored would
+   * leave Delivery wrongly enabled.
+   */
+  protected deliveryLocked(): boolean {
+    return this.editing()?.kind === ReminderKind.PrayerAnchored;
+  }
 
   constructor() {
     this.api.languages().subscribe((response) => this.languages.set(response.data ?? []));
-    this.api
-      .categories({ pageSize: 100 })
-      .subscribe((response) => this.categories.set(response.data?.data ?? []));
+    this.api.allCategories().subscribe((rows) => this.categories.set(rows));
 
     this.load();
   }
@@ -175,6 +193,15 @@ export class RemindersComponent {
   protected save(): void {
     const input = this.editing();
     if (!input || this.saving()) return;
+
+    if (input.audience === Audience.Language && !input.targetLanguageCode) {
+      this.error.set('push.needsLanguage');
+      return;
+    }
+    if (input.audience === Audience.Platform && input.targetPlatform == null) {
+      this.error.set('push.needsPlatform');
+      return;
+    }
 
     input.translations = input.translations.filter((t) => t.title.trim().length > 0);
 

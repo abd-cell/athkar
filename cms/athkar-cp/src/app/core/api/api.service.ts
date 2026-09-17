@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EMPTY, Observable, map, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 
 import { environment } from '../../environment';
 import { SKIP_AUTH_HANDLING } from '../interceptors/auth-context';
@@ -87,6 +87,29 @@ export class ApiService {
 
   categories(input: PageInput = {}): Observable<BaseResponse<PageOutput<AdminCategoryOutput>>> {
     return this.get('admin/content/categories', input);
+  }
+
+  /**
+   * Every chapter, not the first hundred.
+   *
+   * `PageInput` caps a page at 100 (`Paging.cs`), a wall the حصن المسلم import
+   * hit at 144 chapters. Screens that need the full list for a filter or a
+   * select — not just the paginated Chapters table — gather every page here
+   * rather than repeating the recursion each of them once had on its own.
+   */
+  allCategories(): Observable<AdminCategoryOutput[]> {
+    const gather = (page: number, acc: AdminCategoryOutput[]): Observable<AdminCategoryOutput[]> =>
+      this.categories({ pageNumber: page, pageSize: 100 }).pipe(
+        switchMap((response) => {
+          const batch = response.data?.data ?? [];
+          const rows = [...acc, ...batch];
+          // A short page is the last one — guarded on the batch rather than a
+          // total, because a total the server does not send reads as zero.
+          return batch.length === 100 ? gather(page + 1, rows) : of(rows);
+        }),
+      );
+
+    return gather(1, []);
   }
 
   category(id: number): Observable<BaseResponse<AdminCategoryOutput>> {

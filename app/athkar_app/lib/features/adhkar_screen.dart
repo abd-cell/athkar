@@ -196,7 +196,11 @@ class _SectionCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.chevron_left, size: 20, color: tokens.faint),
+          // chevron_right, not chevron_left: both mirror with text direction
+          // (matchTextDirection), so chevron_right is the one that points
+          // toward "forward" in both languages — see the note on
+          // AthkarListRow's own chevron in athkar_ui.dart.
+          Icon(Icons.chevron_right, size: 20, color: tokens.faint),
         ],
       ),
     );

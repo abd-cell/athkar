@@ -62,7 +62,7 @@
         <div class="bars">
           @for (entry of entries(d.pushLastDay); track entry[0]) {
             <div class="bar">
-              <span class="bar__name">{{ entry[0] }}</span>
+              <span class="bar__name">{{ 'push.status.' + entry[0] | translate }}</span>
               <span class="bar__track">
                 <span
                   class="bar__fill"
@@ -84,12 +84,14 @@
         <div class="bars">
           @for (entry of entries(d.devicesByPlatform); track entry[0]) {
             <div class="bar">
-              <span class="bar__name">{{ entry[0] }}</span>
+              <span class="bar__name">{{ 'platform.' + entry[0] | translate }}</span>
               <span class="bar__track">
                 <span class="bar__fill" [style.width.%]="share(entry[1], d.devicesByPlatform)"></span>
               </span>
               <span class="bar__value">{{ entry[1] }}</span>
             </div>
+          } @empty {
+            <div class="empty">{{ 'common.empty' | translate }}</div>
           }
         </div>
       </div>
@@ -105,9 +107,16 @@
               </span>
               <span class="bar__value">{{ entry[1] }}</span>
             </div>
+          } @empty {
+            <div class="empty">{{ 'common.empty' | translate }}</div>
           }
         </div>
       </div>
     </div>
+  } @else {
+    <div class="notice notice--error">{{ (error() ?? 'error.generic') | translate }}</div>
+    <button class="btn" style="margin-top: 12px" (click)="load()">
+      {{ 'common.retry' | translate }}
+    </button>
   }
 </div>

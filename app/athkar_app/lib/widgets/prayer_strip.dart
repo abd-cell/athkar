@@ -180,23 +180,15 @@ String prayerName(BuildContext context, PrayerAnchor anchor) => switch (anchor) 
       _ => '',
     };
 
-/// The convention's own name. Not translated: these are the names of specific
-/// bodies, and «أم القرى» is what it is called in every language.
-String methodName(BuildContext context, CalculationMethod method) => switch (method) {
-      CalculationMethod.ummAlQura => 'أم القرى',
-      CalculationMethod.muslimWorldLeague => 'رابطة العالم الإسلامي',
-      CalculationMethod.egyptian => 'الهيئة المصرية',
-      CalculationMethod.karachi => 'كراتشي',
-      CalculationMethod.kuwait => 'الكويت',
-      CalculationMethod.qatar => 'قطر',
-      CalculationMethod.dubai => 'الإمارات',
-      CalculationMethod.turkey => 'ديانت',
-      CalculationMethod.northAmerica => 'ISNA',
-      CalculationMethod.singapore => 'سنغافورة',
-      CalculationMethod.tehran => 'طهران',
-      CalculationMethod.moonsightingCommittee => 'لجنة رؤية الهلال',
-      CalculationMethod.jordan => 'دائرة الإفتاء الأردنية',
-    };
+/// The convention's own name, in the reader's language.
+///
+/// These are the names of specific bodies, but ordinary translatable ones —
+/// «كراتشي» is Karachi, «الكويت» is Kuwait — with established English forms,
+/// not proper nouns exempt from i18n. An English reader with the Arabic
+/// literals could read only "ISNA" and had no way to tell which of the other
+/// twelve conventions was in effect.
+String methodName(BuildContext context, CalculationMethod method) =>
+    context.tr('prayer.method.${method.name}');
 
 /// The design prints a 12-hour clock with no meridiem — «١٢:١٧», «٤:٥٢» — which
 /// is how prayer times are read aloud and how every printed timetable sets them.

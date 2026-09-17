@@ -125,7 +125,7 @@
           <div class="bars">
             @for (entry of entries(o.reach.reachableByPlatform); track entry.key) {
               <div class="bar">
-                <span class="bar__name">{{ entry.key }}</span>
+                <span class="bar__name">{{ 'platform.' + entry.key | translate }}</span>
                 <span class="bar__value">{{ entry.value }}</span>
               </div>
             }
@@ -246,7 +246,7 @@
               <tr>
                 <td>{{ row.scheduledAtUtc | appDate }}</td>
                 <td>{{ row.source }}</td>
-                <td>{{ row.platform }} · {{ row.languageCode }}</td>
+                <td>{{ 'platform.' + row.platform | translate }} · {{ row.languageCode }}</td>
                 <td>
                   <!--
                     An expired token is not a failure to fix — the device row was
@@ -270,10 +270,8 @@
       </div>
     }
   } @else {
-    <div class="empty">{{ 'common.noData' | translate }}</div>
+    <div class="empty">{{ 'common.empty' | translate }}</div>
   }
-</div>
-
 
   <!-- ───────────────────────────── delivery log ───────────────────────────── -->
 
@@ -383,6 +381,7 @@
       </table>
     }
   </div>
+</div>
 
 @if (composing()) {
   <div class="overlay" (click)="cancel()">
