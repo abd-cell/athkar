@@ -12,6 +12,16 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>لحساب مواقيت الصلاة واتجاه القبلة على جهازك. لا يُرسل موقعك إلى أي خادم.</string>
 
+	<!--
+		Never asked for: the app only wants location while it is open. But the
+		geolocator plugin's binary references requestAlwaysAuthorization, and App
+		Store Connect rejects any upload whose code can reach that API without this
+		key (ITMS-90683). It is harmless: geolocator checks the WhenInUse key first,
+		so the prompt a reader sees is unchanged.
+	-->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>لحساب مواقيت الصلاة واتجاه القبلة على جهازك. لا يُرسل موقعك إلى أي خادم.</string>
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
