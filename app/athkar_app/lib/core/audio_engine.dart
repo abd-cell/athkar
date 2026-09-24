@@ -65,6 +65,9 @@ class AudioEngine {
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
         notificationColor: AthkarColors.brand,
+        // The status-bar silhouette, not the launcher icon: Android keeps only
+        // an icon's alpha there, and the full-bleed launcher tile is a square.
+        androidNotificationIcon: 'drawable/ic_notification',
         fastForwardInterval: const Duration(seconds: 10),
         rewindInterval: const Duration(seconds: 10),
       );

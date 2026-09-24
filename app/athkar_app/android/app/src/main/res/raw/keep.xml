@@ -9,6 +9,9 @@
     lookup returned 0, and building the notification threw "You must specify
     an icon resource id" — no controls, and a session left inactive. Found on
     the first release build that had background playback.
+
+    ic_notification is the same story: flutter_local_notifications and
+    audio_service both take it as a string from Dart.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/audio_service_*,@mipmap/ic_launcher" />
+    tools:keep="@drawable/audio_service_*,@drawable/ic_notification,@mipmap/ic_launcher" />

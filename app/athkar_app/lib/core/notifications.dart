@@ -59,7 +59,7 @@ class LocalNotifications {
 
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('@drawable/ic_notification'),
         iOS: DarwinInitializationSettings(
           // Asked for explicitly at the moment the reader turns reminders on,
           // rather than thrown at them during the first launch.

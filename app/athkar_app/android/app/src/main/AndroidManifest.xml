@@ -125,6 +125,12 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="athkar.announcements.v1" />
+        <!-- The status-bar icon for a push drawn while the app is closed. The
+             launcher icon would do, badly: Android keeps only its alpha, and a
+             full-bleed tile comes out as a white square. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ic_launcher_background" />
