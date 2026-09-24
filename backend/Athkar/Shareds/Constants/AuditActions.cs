@@ -121,11 +121,4 @@ public static class AuditActions
     public const string FaqDelete = "support.faq.delete";
     public const string FeedbackReply = "support.feedback.reply";
     public const string FeedbackStatusChange = "support.feedback.status";
-
-    /// <summary>
-    /// A superadmin restored or synced the database from a JSON export. Logged
-    /// once for the whole call with an added/updated count per table, because
-    /// this is the one action that can touch every table at once.
-    /// </summary>
-    public const string DataImport = "admin.data.import";
 }
