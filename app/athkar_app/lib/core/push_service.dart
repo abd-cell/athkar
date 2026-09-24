@@ -79,8 +79,6 @@ class PushService {
       // local notifications gets there first — they are the same OS permission.
       await messaging.requestPermission();
 
-      _token = await messaging.getToken();
-
       // A token can rotate at any time. When it does the device row has to be
       // updated, or the next campaign pushes into a void — FCM will happily
       // accept a send to a token it has already retired, and the reader simply
@@ -115,6 +113,13 @@ class PushService {
       FirebaseMessaging.onMessage.listen(_showForeground);
 
       _ready = true;
+
+      // Last, and allowed to come back empty. Everything above is wired
+      // whatever happens here, so a token that is late — the usual case on an
+      // iPhone's first launch — still reaches the server through
+      // `onTokenRefresh` or the next `refresh()`, instead of taking the whole
+      // push setup down with it until the app is killed and reopened.
+      _token = await _readToken(messaging);
     } catch (error) {
       // The commonest reason to be here is a development build with no
       // `google-services.json`, which is a supported configuration.
@@ -134,7 +139,7 @@ class PushService {
     if (!_ready) return;
 
     try {
-      final current = await FirebaseMessaging.instance.getToken();
+      final current = await _readToken(FirebaseMessaging.instance);
       if (current == _token) return;
 
       _token = current;
@@ -144,6 +149,35 @@ class PushService {
         debugPrint('[push] refresh failed: $error');
         return true;
       }());
+    }
+  }
+
+  /// The FCM token, or null when there is none to be had yet.
+  ///
+  /// On iOS an FCM token is a wrapper round an APNs token, and APNs delivers
+  /// that asynchronously — on a first launch, typically a moment *after* the
+  /// reader answers the permission prompt. Asked before then, `getToken()`
+  /// throws `apns-token-not-set`. So on iOS this waits a few seconds for APNs
+  /// first, and gives up quietly: when the APNs token does land, FCM mints its
+  /// token and `onTokenRefresh` publishes it.
+  static Future<String?> _readToken(FirebaseMessaging messaging) async {
+    try {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+        String? apns;
+        for (var attempt = 0; attempt < 10 && apns == null; attempt++) {
+          apns = await messaging.getAPNSToken();
+          if (apns == null) await Future<void>.delayed(const Duration(milliseconds: 500));
+        }
+        if (apns == null) return null;
+      }
+
+      return await messaging.getToken();
+    } catch (error) {
+      assert(() {
+        debugPrint('[push] no token yet: $error');
+        return true;
+      }());
+      return null;
     }
   }
 

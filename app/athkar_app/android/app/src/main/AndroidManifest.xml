@@ -115,6 +115,20 @@
             </intent-filter>
         </receiver>
 
+        <!--
+            Where FCM puts a push whose channel this phone has not created yet —
+            the server names one, but channels are made on first launch, so a
+            push can beat them. Without this it lands in "Miscellaneous", with
+            no sound and a name no reader recognises. Must match
+            `LocalNotifications.announcementsChannel`.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="athkar.announcements.v1" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/ic_launcher_background" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
