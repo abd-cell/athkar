@@ -64,11 +64,17 @@ dependencies:
   # a WidgetKit extension, which is the outstanding work.
   # Verifying a downloaded Qur'an package against the checksum the server sent.
   crypto: ^3.0.6
-  # The live radio. A player, not a download: a stream is the one piece of
-  # content this app does not keep a copy of, and nothing else here needs audio
-  # decoding. Playback stops when the app is killed — a background audio service
-  # is a foreground-notification feature and its own piece of work.
+  # Audio: the live radio and the recitations. One player for both — see
+  # core/audio_engine.dart.
   just_audio: ^0.10.6
+  # Keeps a recitation playing with the screen off and puts its controls on the
+  # lock screen and in the notification shade. It owns the app's one
+  # AudioPlayer, which is why the radio goes through the same engine: a second
+  # player would be refused.
+  just_audio_background: ^0.0.1-beta.17
+  # Tells the OS this is spoken-word audio, so a phone call ducks or pauses it
+  # instead of talking over the Qur'an.
+  audio_session: ^0.2.4
 
 dev_dependencies:
   flutter_test:

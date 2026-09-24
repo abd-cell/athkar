@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'core/audio_engine.dart';
 import 'core/bootstrap.dart';
 import 'core/l10n.dart';
+import 'core/recitation_downloads.dart';
+import 'core/recitation_library.dart';
 import 'core/settings.dart';
 import 'core/theme.dart';
 import 'features/shell.dart';
@@ -18,6 +21,17 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  // Before anything can touch the shared player: the background service has
+  // to own it from the start, or it refuses to serve it at all.
+  await AudioEngine.initialize();
+
+  // Both read local state only — a preferences read and a directory listing —
+  // and neither is allowed to hold up the first frame on failure.
+  await Future.wait([
+    RecitationLibrary.instance.load(),
+    RecitationDownloads.instance.load(),
+  ]).catchError((_) => <void>[]);
 
   runApp(const AthkarApp());
 }

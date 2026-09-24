@@ -484,6 +484,134 @@ class RadioStation {
       };
 }
 
+/// A reciter the app offers under «الاستماع», as the catalogue delivers him.
+///
+/// Only the list rides the catalogue. The audio is fetched from the publisher
+/// named on each [Recitation] — never through this app's server — so the
+/// reader can browse reciters offline and needs a connection only to play or
+/// to download.
+class Reciter {
+  const Reciter({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.recitations,
+    this.imageUrl,
+    this.isFeatured = false,
+    this.sortOrder = 0,
+  });
+
+  final int id;
+
+  /// Stable slug. What a bookmark or a download is keyed on, so a corrected
+  /// name loses nobody their place.
+  final String key;
+  final String name;
+  final String? imageUrl;
+  final bool isFeatured;
+  final int sortOrder;
+
+  /// His published recordings, in the order the console set. Never empty —
+  /// the server leaves out a reciter with nothing to play.
+  final List<Recitation> recitations;
+
+  factory Reciter.fromJson(Map<String, dynamic> json) => Reciter(
+        id: json['id'] as int? ?? 0,
+        key: json['key'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        imageUrl: json['imageUrl'] as String?,
+        isFeatured: json['isFeatured'] as bool? ?? false,
+        sortOrder: json['sortOrder'] as int? ?? 0,
+        recitations: [
+          for (final entry in (json['recitations'] as List<dynamic>? ?? []))
+            Recitation.fromJson(entry as Map<String, dynamic>),
+        ],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'key': key,
+        'name': name,
+        'imageUrl': imageUrl,
+        'isFeatured': isFeatured,
+        'sortOrder': sortOrder,
+        'recitations': [for (final recitation in recitations) recitation.toJson()],
+      };
+}
+
+/// One complete recording by a reciter — «حفص عن عاصم - مرتل».
+///
+/// The riwaya is part of [name] and the reciter's page shows it as a choice,
+/// because two riwayat are two readings of the text and a reader must pick one
+/// knowingly.
+class Recitation {
+  const Recitation({
+    required this.id,
+    required this.name,
+    required this.serverUrl,
+    required this.surahs,
+    required this.sourceName,
+    this.timingUrl,
+    this.sourceUrl,
+    this.sortOrder = 0,
+  });
+
+  final int id;
+  final String name;
+
+  /// The folder the surah files are in; see [urlOf].
+  final String serverUrl;
+
+  /// The surahs this recording has. Not every recording is complete.
+  final List<int> surahs;
+
+  /// Where one surah's ayah timing is read from, with the surah number to be
+  /// appended. Null when the recording has none — the player says so rather
+  /// than offering a verse tracker that cannot track.
+  final String? timingUrl;
+
+  bool get hasTiming => timingUrl != null && timingUrl!.isNotEmpty;
+
+  /// Who publishes the audio. Credited beside the player, because the audio
+  /// is theirs and plays from their servers.
+  final String sourceName;
+  final String? sourceUrl;
+  final int sortOrder;
+
+  /// The file for [surah]: `…/007.mp3`.
+  String urlOf(int surah) {
+    final folder = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    return '$folder${surah.toString().padLeft(3, '0')}.mp3';
+  }
+
+  String? timingUrlOf(int surah) => hasTiming ? '$timingUrl$surah' : null;
+
+  factory Recitation.fromJson(Map<String, dynamic> json) => Recitation(
+        id: json['id'] as int? ?? 0,
+        name: json['name'] as String? ?? '',
+        serverUrl: json['serverUrl'] as String? ?? '',
+        surahs: [
+          for (final entry in (json['surahs'] as List<dynamic>? ?? []))
+            if (entry is int && entry >= 1 && entry <= 114) entry,
+        ],
+        timingUrl: json['timingUrl'] as String?,
+        sourceName: json['sourceName'] as String? ?? '',
+        sourceUrl: json['sourceUrl'] as String?,
+        sortOrder: json['sortOrder'] as int? ?? 0,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'serverUrl': serverUrl,
+        'surahs': surahs,
+        'timingUrl': timingUrl,
+        'sourceName': sourceName,
+        'sourceUrl': sourceUrl,
+        'sortOrder': sortOrder,
+      };
+}
+
 /// `/content/catalog` — the whole published corpus in one language.
 class Catalog {
   const Catalog({
@@ -492,6 +620,7 @@ class Catalog {
     required this.isUpToDate,
     required this.categories,
     this.radios = const [],
+    this.reciters = const [],
   });
 
   final int version;
@@ -507,6 +636,9 @@ class Catalog {
   /// answer — an install whose admin has published none.
   final List<RadioStation> radios;
 
+  /// The published reciters, for the listening tab. Empty is ordinary.
+  final List<Reciter> reciters;
+
   factory Catalog.fromJson(Map<String, dynamic> json) => Catalog(
         version: json['version'] as int? ?? 0,
         languageCode: json['languageCode'] as String? ?? 'ar',
@@ -519,6 +651,10 @@ class Catalog {
           for (final entry in (json['radios'] as List<dynamic>? ?? []))
             RadioStation.fromJson(entry as Map<String, dynamic>),
         ],
+        reciters: [
+          for (final entry in (json['reciters'] as List<dynamic>? ?? []))
+            Reciter.fromJson(entry as Map<String, dynamic>),
+        ],
       );
 
   Map<String, dynamic> toJson() => {
@@ -527,6 +663,7 @@ class Catalog {
         'isUpToDate': isUpToDate,
         'categories': [for (final category in categories) category.toJson()],
         'radios': [for (final station in radios) station.toJson()],
+        'reciters': [for (final reciter in reciters) reciter.toJson()],
       };
 }
 

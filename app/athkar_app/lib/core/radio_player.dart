@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 import '../models/models.dart';
+import 'audio_engine.dart';
 
 /// What the radio card is showing right now.
 enum RadioPlaybackState {
@@ -18,12 +20,13 @@ enum RadioPlaybackState {
   playing,
 }
 
-/// The one audio player in the app.
+/// The live radio.
 ///
 /// A singleton because there is one pair of speakers: starting a second station
 /// must stop the first, and that is only expressible if one object knows about
-/// both. Screens listen to it and read [station] and [state]; nothing else
-/// touches [AudioPlayer].
+/// both. Screens listen to it and read [station] and [state]. It plays through
+/// the app's one shared player — see [AudioEngine] — and steps back to idle
+/// the moment a recitation takes that player over.
 ///
 /// A live stream is *stopped*, never paused. Pausing keeps a position in a
 /// broadcast that has moved on, so resuming would play the past and then jump —
@@ -31,12 +34,23 @@ enum RadioPlaybackState {
 class RadioPlayer extends ChangeNotifier {
   RadioPlayer._() {
     _subscription = _player.playerStateStream.listen(_onPlayerState);
+    _claims = AudioEngine.instance.claims.listen((owner) {
+      // Somebody else has the speakers now. Not a stop — the player is theirs
+      // to drive — only this card going back to its resting state.
+      if (!identical(owner, this)) {
+        _failed = false;
+        _set(RadioPlaybackState.idle);
+      }
+    });
   }
 
   static final RadioPlayer instance = RadioPlayer._();
 
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer get _player => AudioEngine.instance.player;
+  bool get _mine => identical(AudioEngine.instance.owner, this);
+
   StreamSubscription<PlayerState>? _subscription;
+  StreamSubscription<Object>? _claims;
 
   RadioStation? _station;
   RadioPlaybackState _state = RadioPlaybackState.idle;
@@ -68,13 +82,28 @@ class RadioPlayer extends ChangeNotifier {
 
     _station = station;
     _failed = false;
+    AudioEngine.instance.claim(this);
     _set(RadioPlaybackState.connecting);
 
     try {
       // Stopped rather than left running while the next one loads: two streams
       // decoding at once is two streams coming out of the speaker.
       await _player.stop();
-      await _player.setUrl(station.streamUrl);
+      final uri = Uri.parse(station.streamUrl);
+      await _player.setAudioSource(
+        AudioSource.uri(
+          uri,
+          // The lock screen and the notification shade name what is playing.
+          tag: AudioEngine.needsMediaItems
+              ? MediaItem(
+                  id: 'radio:${station.key}',
+                  title: station.name,
+                  artist: station.provider,
+                  artUri: station.logoUrl == null ? null : Uri.tryParse(station.logoUrl!),
+                )
+              : null,
+        ),
+      );
       await _player.play();
     } catch (_) {
       // Every failure here is the same failure to the reader — it did not
@@ -89,6 +118,9 @@ class RadioPlayer extends ChangeNotifier {
     _failed = false;
     _set(RadioPlaybackState.idle);
 
+    // A recitation that has taken the player is not this card's to stop.
+    if (!_mine) return;
+
     try {
       await _player.stop();
     } catch (_) {
@@ -97,6 +129,8 @@ class RadioPlayer extends ChangeNotifier {
   }
 
   void _onPlayerState(PlayerState playerState) {
+    if (!_mine) return;
+
     // A stream that ends on its own — the broadcaster dropped, or the network
     // did — comes back as `completed` rather than as an error. To the reader it
     // is the same thing: the sound stopped.
@@ -123,7 +157,8 @@ class RadioPlayer extends ChangeNotifier {
   @override
   void dispose() {
     _subscription?.cancel();
-    _player.dispose();
+    _claims?.cancel();
+    // The player is shared; the engine outlives this.
     super.dispose();
   }
 }

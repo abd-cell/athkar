@@ -11,6 +11,11 @@ import {
   AdminDhikrOutput,
   AdminFaqOutput,
   AdminRadioStationOutput,
+  AdminReciterOutput,
+  RecitationInput,
+  RecitationSyncOutput,
+  ReciterInput,
+  ReciterListInput,
   AdminWidgetCatalogOutput,
   ApiLogOutput,
   AppConfigurationInput,
@@ -169,6 +174,38 @@ export class ApiService {
 
   deleteRadioStation(id: number): Observable<BaseResponse> {
     return this.delete(`admin/radio/stations/${id}`);
+  }
+
+  // ──────────────────────────────── recitations ────────────────────────────────
+
+  reciters(input: ReciterListInput = {}): Observable<BaseResponse<PageOutput<AdminReciterOutput>>> {
+    return this.get('admin/recitations/reciters', input);
+  }
+
+  updateReciter(id: number, input: ReciterInput): Observable<BaseResponse<AdminReciterOutput>> {
+    return this.put(`admin/recitations/reciters/${id}`, input);
+  }
+
+  updateRecitation(
+    reciterId: number,
+    recitationId: number,
+    input: RecitationInput,
+  ): Observable<BaseResponse<AdminReciterOutput>> {
+    return this.put(`admin/recitations/reciters/${reciterId}/recordings/${recitationId}`, input);
+  }
+
+  deleteReciter(id: number): Observable<BaseResponse> {
+    return this.delete(`admin/recitations/reciters/${id}`);
+  }
+
+  /** What a sync from the publisher would write. Writes nothing. */
+  previewRecitationSync(): Observable<BaseResponse<RecitationSyncOutput>> {
+    return this.get('admin/recitations/sync');
+  }
+
+  /** Writes the chosen reciters as drafts; publishes nothing. */
+  applyRecitationSync(externalIds: number[]): Observable<BaseResponse<RecitationSyncOutput>> {
+    return this.post('admin/recitations/sync', { externalIds });
   }
 
   adhkar(
@@ -694,6 +731,14 @@ export function errorKey(code: number): string {
       return 'widget.catalog.defaultOutOfRange';
     case 654:
       return 'widget.defaultUnknown';
+    case 800:
+      return 'recitations.notFound';
+    case 801:
+      return 'recitations.recordingNotFound';
+    case 802:
+      return 'recitations.sync.disabled';
+    case 803:
+      return 'recitations.sync.unreachable';
     default:
       return 'error.generic';
   }

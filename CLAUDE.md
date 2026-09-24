@@ -234,8 +234,16 @@ Standalone components + signals, lazy `loadComponent` routes, SSR enabled.
 
 Lean stack on purpose — **no state-management package**. `http` +
 `shared_preferences` + `intl`, plus `adhan`, `flutter_local_notifications`,
-`firebase_messaging`, `geolocator`, `flutter_compass`, `sqflite` and
-`google_fonts`.
+`firebase_messaging`, `geolocator`, `flutter_compass`, `sqflite`,
+`google_fonts`, and `just_audio` + `just_audio_background` for the radio and
+recitations.
+
+- **One audio player, shared.** `just_audio_background` serves exactly one
+  `AudioPlayer`, so the radio and the recitations both play through
+  `core/audio_engine.dart` and hand it over with `claim()`. Every source needs a
+  `MediaItem` tag once background playback is on. Its notification icons are
+  looked up by name, so `res/raw/keep.xml` stops the release shrinker from
+  deleting them — without it the lock-screen controls silently fail to build.
 
 - **Layers**: `core/` (infrastructure) → `services/` (one class per API area, all
   in `services/services.dart`) → `features/` (screens) → `widgets/` (the UI kit).

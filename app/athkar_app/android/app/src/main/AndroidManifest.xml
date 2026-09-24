@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
         Notifications. Every one of these is needed for a reminder to land at the
@@ -19,6 +20,12 @@
          taps "use my location"; a city picked from the list needs neither. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- A recitation keeps playing with the screen off: the player runs as a
+         media foreground service, with its controls in the notification shade
+         and on the lock screen. See lib/core/audio_engine.dart. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
     <application
         android:label="أذكاري"
@@ -82,6 +89,30 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/athkar_widget_info"/>
+        </receiver>
+
+        <!--
+            Background playback for recitations (just_audio_background, which is
+            audio_service underneath). The service is what keeps a surah going
+            when the screen locks; the receiver is what makes a headset's
+            play/pause button reach it.
+        -->
+        <service
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
+        <receiver
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            </intent-filter>
         </receiver>
 
         <!-- Don't delete the meta-data below.

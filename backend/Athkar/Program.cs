@@ -11,6 +11,7 @@ using Athkar;
 using Athkar.Areas.Domain.Staff;
 using Athkar.Areas.Services.Notifications;
 using Athkar.Areas.Services.Quran;
+using Athkar.Areas.Services.Recitations;
 using Athkar.DataAccess;
 using Athkar.DataAccess.Repositories;
 using Athkar.DataAccess.Seeders;
@@ -35,6 +36,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"))
 builder.Services.Configure<FcmSettings>(builder.Configuration.GetSection("Fcm"));
 builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection("Storage"));
 builder.Services.Configure<QuranMcpSettings>(builder.Configuration.GetSection("QuranMcp"));
+builder.Services.Configure<Mp3QuranSettings>(builder.Configuration.GetSection("Mp3Quran"));
 builder.Services.Configure<SwaggerSettings>(builder.Configuration.GetSection("Swagger"));
 
 // Read once, up front, like jwt below — AddSwaggerGen runs before the DI
@@ -121,6 +123,15 @@ builder.Services.AddHttpClient(QuranMcpClient.HttpClientName, (provider, client)
 {
     var quran = provider.GetRequiredService<IOptions<QuranMcpSettings>>().Value;
     client.Timeout = TimeSpan.FromSeconds(Math.Clamp(quran.TimeoutSeconds, 5, 120));
+});
+
+// The recitation publisher. Reached only when an admin presses the sync
+// button; readers stream from the publisher directly, never through here.
+builder.Services.AddHttpClient(Mp3QuranClient.HttpClientName, (provider, client) =>
+{
+    var mp3 = provider.GetRequiredService<IOptions<Mp3QuranSettings>>().Value;
+    client.Timeout = TimeSpan.FromSeconds(Math.Clamp(mp3.TimeoutSeconds, 5, 120));
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Athkari/1.0 (+https://athkar.technzone.com)");
 });
 
 // ── Background work ──

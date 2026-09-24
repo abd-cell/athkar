@@ -1,4 +1,5 @@
 using Athkar.Areas.Services.Radio.Models;
+using Athkar.Areas.Services.Recitations.Models;
 using Athkar.Shareds.Enums;
 
 namespace Athkar.Areas.Services.Content.Models;
@@ -38,6 +39,15 @@ public class CatalogOutput
     /// with no network; only pressing play needs one.
     /// </summary>
     public List<RadioStationOutput> Radios { get; set; } = [];
+
+    /// <summary>
+    /// The published reciters, each with his published recordings. Only the
+    /// list rides here — the audio and its ayah timings are fetched by the
+    /// phone from the publisher named on each recording, so the reader can
+    /// browse reciters offline and needs a connection only to press play or to
+    /// download.
+    /// </summary>
+    public List<ReciterOutput> Reciters { get; set; } = [];
 }
 
 public class CategoryOutput

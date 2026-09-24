@@ -214,4 +214,26 @@ public enum ErrorCode
 
     /// <summary>The device already has as many open submissions as the desk will hold.</summary>
     TooManyOpenFeedback = 702,
+
+    // ── Recitations (audio) ──
+
+    /// <summary>No reciter with that id.</summary>
+    ReciterNotFound = 800,
+
+    /// <summary>No recording with that id, or it does not belong to that reciter.</summary>
+    RecitationNotFound = 801,
+
+    /// <summary>
+    /// The recitation publisher is switched off for this deployment, so the
+    /// sync was not attempted. A setting, not a fault — see
+    /// <see cref="RecitationSourceUnreachable"/> for the fault.
+    /// </summary>
+    RecitationSourceDisabled = 802,
+
+    /// <summary>
+    /// The publisher could not be reached, timed out, or answered with
+    /// something that was not a catalogue. Nothing is written: a sync that
+    /// could not read the whole list does not apply half of it.
+    /// </summary>
+    RecitationSourceUnreachable = 803,
 }

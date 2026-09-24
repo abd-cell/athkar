@@ -49,6 +49,13 @@ export const routes: Routes = [
               import('./features/content/radio.component').then((m) => m.RadioComponent),
           },
           {
+            path: 'recitations',
+            loadComponent: () =>
+              import('./features/content/recitations.component').then(
+                (m) => m.RecitationsComponent,
+              ),
+          },
+          {
             path: 'adhkar',
             loadComponent: () =>
               import('./features/content/adhkar.component').then((m) => m.AdhkarComponent),

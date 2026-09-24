@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Resources the release build's shrinker cannot see being used.
+
+    audio_service draws the play/pause/skip buttons of the playback
+    notification and lock screen from its own drawables, looked up by *name*
+    at runtime (`getIdentifier("audio_service_play_arrow", ...)`). Nothing
+    references them statically, so R8's resource shrinking removed them, the
+    lookup returned 0, and building the notification threw "You must specify
+    an icon resource id" — no controls, and a session left inactive. Found on
+    the first release build that had background playback.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/audio_service_*,@mipmap/ic_launcher" />

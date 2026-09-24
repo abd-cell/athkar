@@ -305,6 +305,96 @@ export interface RadioStationInput {
   translations: TranslationInput[];
 }
 
+// ─────────────────────────────── recitations ───────────────────────────────
+
+export interface AdminRecitationOutput {
+  id: number;
+  externalId: number | null;
+  name: string;
+  serverUrl: string;
+  surahCount: number;
+  /** Whether the publisher has ayah timing for this recording — the verse tracker needs it. */
+  hasTiming: boolean;
+  sourceName: string;
+  sourceUrl: string | null;
+  sortOrder: number;
+  isPublished: boolean;
+  /** Title is the recording's name, riwaya included. */
+  translations: TranslationInput[];
+}
+
+export interface AdminReciterOutput {
+  id: number;
+  key: string;
+  externalId: number | null;
+  imageUrl: string | null;
+  isFeatured: boolean;
+  sortOrder: number;
+  isPublished: boolean;
+  name: string;
+  translatedLanguages: string[];
+  translations: TranslationInput[];
+  recitations: AdminRecitationOutput[];
+}
+
+export interface ReciterListInput extends PageInput {
+  isPublished?: boolean;
+}
+
+export interface ReciterInput {
+  imageUrl?: string | null;
+  isFeatured: boolean;
+  sortOrder: number;
+  isPublished: boolean;
+  /** Title is the reciter's name. */
+  translations: TranslationInput[];
+}
+
+export interface RecitationInput {
+  sortOrder: number;
+  isPublished: boolean;
+  translations: TranslationInput[];
+}
+
+/** Mirrors `RecitationSyncStatus` on the server — the numbers are the contract. */
+export enum RecitationSyncStatus {
+  New = 0,
+  Changed = 1,
+  Unchanged = 2,
+  Gone = 3,
+}
+
+export interface RecitationSyncRow {
+  externalId: number;
+  nameAr: string;
+  nameEn: string | null;
+  reciterId: number | null;
+  isPublished: boolean;
+  recordings: number;
+  timedRecordings: number;
+  /** Codes: recording-new, recording-gone, server, surahs, timing-added, timing-removed, name-en. */
+  changes: string[];
+  chosen: boolean;
+  status: RecitationSyncStatus;
+}
+
+export interface RecitationSyncOutput {
+  applied: boolean;
+  source: string;
+  sourceUrl: string | null;
+  publisherReciters: number;
+  publisherRecordings: number;
+  timedRecordings: number;
+  new: number;
+  changed: number;
+  unchanged: number;
+  gone: number;
+  skippedDeleted: number;
+  written: number;
+  published: number;
+  rows: RecitationSyncRow[];
+}
+
 export interface AdminDhikrOutput {
   id: number;
   categoryId: number;

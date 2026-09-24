@@ -8,7 +8,8 @@ import 'home_screen.dart';
 import 'prayer_times_screen.dart';
 import 'profile_screen.dart';
 import 'qibla_screen.dart';
-import 'quran/quran_screen.dart';
+import 'listen/listen_widgets.dart';
+import 'quran/quran_tab.dart';
 import 'tasbih_screen.dart';
 
 /// The seven tabs, as the bottom bar lays them out.
@@ -91,7 +92,7 @@ class _AppShellState extends State<AppShell> {
     const screens = [
       HomeScreen(),
       AdhkarScreen(),
-      QuranScreen(),
+      QuranTab(),
       PrayerTimesScreen(),
       TasbihScreen(),
       QiblaScreen(),
@@ -101,9 +102,17 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       backgroundColor: tokens.paper,
       body: IndexedStack(index: _index, children: screens),
-      bottomNavigationBar: _BottomBar(
-        index: _index,
-        onChanged: (value) => setState(() => _index = value),
+      // The recitation follows the reader across every tab — they can leave the
+      // player to check a prayer time and still stop the surah from here.
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const MiniPlayer(),
+          _BottomBar(
+            index: _index,
+            onChanged: (value) => setState(() => _index = value),
+          ),
+        ],
       ),
     );
   }

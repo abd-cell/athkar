@@ -19,6 +19,14 @@ public static class AuditActions
     public const string RadioStationDelete = "content.radio.delete";
     public const string RadioStationReorder = "content.radio.reorder";
 
+    public const string ReciterUpdate = "content.reciter.update";
+    public const string ReciterDelete = "content.reciter.delete";
+    public const string ReciterReorder = "content.reciter.reorder";
+    public const string RecitationUpdate = "content.recitation.update";
+
+    /// <summary>An admin applied a sync of the reciter catalogue from its publisher.</summary>
+    public const string RecitationSync = "content.recitation.sync";
+
     public const string DhikrCreate = "content.dhikr.create";
     public const string DhikrUpdate = "content.dhikr.update";
     public const string DhikrDelete = "content.dhikr.delete";
@@ -113,4 +121,11 @@ public static class AuditActions
     public const string FaqDelete = "support.faq.delete";
     public const string FeedbackReply = "support.feedback.reply";
     public const string FeedbackStatusChange = "support.feedback.status";
+
+    /// <summary>
+    /// A superadmin restored or synced the database from a JSON export. Logged
+    /// once for the whole call with an added/updated count per table, because
+    /// this is the one action that can touch every table at once.
+    /// </summary>
+    public const string DataImport = "admin.data.import";
 }

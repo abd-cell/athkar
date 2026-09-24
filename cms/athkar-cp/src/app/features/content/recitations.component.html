@@ -1,0 +1,317 @@
+<div class="page">
+  <div class="page-head">
+    <h1>{{ 'recitations.title' | translate }}</h1>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="field__hint" style="margin-bottom: 14px">{{ 'recitations.hint' | translate }}</div>
+
+  <!--
+    The credit and the licence question lead the page, before any list. The
+    audio is the publisher's and plays from the publisher's servers; the app
+    names them under every recitation, and whether their terms allow this use
+    is something only the people running this deployment can settle.
+  -->
+  <div class="notice notice--info" style="margin-bottom: 16px">
+    <strong>{{ 'recitations.licence.title' | translate }}</strong>
+    <div style="margin-top: 4px">{{ 'recitations.licence.body' | translate }}</div>
+    <div style="margin-top: 4px">{{ 'recitations.privacy.body' | translate }}</div>
+  </div>
+
+  @if (error(); as message) {
+    <div class="notice notice--error">{{ message | translate }}</div>
+  }
+
+  <!-- ── the sync ── -->
+  <div class="card" style="margin-bottom: 16px">
+    <h3 style="margin-bottom: 6px">{{ 'recitations.sync.title' | translate }}</h3>
+    <div class="field__hint" style="margin-bottom: 14px">{{ 'recitations.sync.hint' | translate }}</div>
+
+    @if (syncError(); as message) {
+      <div class="notice notice--error">{{ message | translate }}</div>
+    }
+
+    <div class="row" style="margin-bottom: 14px">
+      <button type="button" class="btn" [disabled]="syncRunning()" (click)="previewSync()">
+        {{ 'recitations.sync.check' | translate }}
+      </button>
+
+      @if (report(); as r) {
+        @if (!r.applied) {
+          <button
+            type="button"
+            class="btn btn--primary"
+            [disabled]="syncRunning() || chosen().size === 0"
+            (click)="applySync()"
+          >
+            {{ 'recitations.sync.apply' | translate }}
+            @if (chosen().size > 0) {
+              ({{ chosen().size }})
+            }
+          </button>
+        }
+      }
+    </div>
+
+    @if (syncRunning()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (report(); as r) {
+      <div class="notice notice--info">
+        @if (r.applied) {
+          {{ 'recitations.sync.applied' | translate }} · {{ 'recitations.sync.written' | translate }} {{ r.written }}
+        } @else {
+          {{ 'recitations.sync.previewed' | translate }}
+        }
+        · {{ 'recitations.sync.publisher' | translate }} {{ r.publisherReciters }} / {{ r.publisherRecordings }}
+        · {{ 'recitations.sync.timed' | translate }} {{ r.timedRecordings }}
+        · {{ 'recitations.sync.status.new' | translate }} {{ r.new }}
+        · {{ 'recitations.sync.status.changed' | translate }} {{ r.changed }}
+        · {{ 'recitations.sync.status.gone' | translate }} {{ r.gone }}
+        @if (r.skippedDeleted > 0) {
+          · {{ 'recitations.sync.skippedDeleted' | translate }} {{ r.skippedDeleted }}
+        }
+        <div style="margin-top: 6px">
+          <strong>{{ 'recitations.sync.noPublish' | translate }}</strong>
+        </div>
+        <div style="margin-top: 4px">
+          <code style="font-size: 10.5px; color: var(--faint)" dir="ltr">{{ r.source }} · {{ r.sourceUrl }}</code>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 8px; gap: 12px">
+        @if (!r.applied) {
+          <label class="field__hint" style="cursor: pointer">
+            <input type="checkbox" [checked]="allChosen(r)" (change)="toggleAll(r)" />
+            {{ 'recitations.sync.chooseAll' | translate }}
+          </label>
+        }
+        <span class="spacer"></span>
+        <button type="button" class="chip" [class.chip--on]="syncFilter() === 'pending'" (click)="syncFilter.set('pending')">
+          {{ 'recitations.sync.showPending' | translate }}
+        </button>
+        <button type="button" class="chip" [class.chip--on]="syncFilter() === 'all'" (click)="syncFilter.set('all')">
+          {{ 'recitations.sync.showAll' | translate }}
+        </button>
+      </div>
+
+      <div style="max-height: 360px; overflow-y: auto">
+        <table class="table">
+          <thead>
+            <tr>
+              @if (!r.applied) {
+                <th style="width: 32px"></th>
+              }
+              <th>{{ 'recitations.name' | translate }}</th>
+              <th>{{ 'recitations.recordings' | translate }}</th>
+              <th>{{ 'recitations.timing' | translate }}</th>
+              <th>{{ 'broadcasts.status' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of visibleRows(r); track row.externalId + '-' + row.status) {
+              <tr>
+                @if (!r.applied) {
+                  <td>
+                    @if (isOffered(row)) {
+                      <input type="checkbox" [checked]="chosen().has(row.externalId)" (change)="toggleChosen(row)" />
+                    }
+                  </td>
+                }
+                <td>
+                  {{ row.nameAr }}
+                  @if (row.nameEn) {
+                    <div class="field__hint" dir="ltr">{{ row.nameEn }}</div>
+                  }
+                </td>
+                <td>{{ row.recordings }}</td>
+                <td>{{ row.timedRecordings }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge--ok]="row.status === Status.New"
+                    [class.badge--warn]="row.status === Status.Changed"
+                    [class.badge--danger]="row.status === Status.Gone"
+                    [class.badge--draft]="row.status === Status.Unchanged"
+                  >
+                    {{ statusKey(row.status) | translate }}
+                  </span>
+                  @for (code of row.changes; track code) {
+                    <span class="field__hint" style="margin-inline-start: 6px">{{ changeKey(code) | translate }}</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- ── the reciters ── -->
+  <div class="row" style="margin-bottom: 10px; gap: 8px">
+    <button type="button" class="chip" [class.chip--on]="filter() === 'published'" (click)="setFilter('published')">
+      {{ 'common.published' | translate }}
+    </button>
+    <button type="button" class="chip" [class.chip--on]="filter() === 'drafts'" (click)="setFilter('drafts')">
+      {{ 'common.draft' | translate }}
+    </button>
+    <button type="button" class="chip" [class.chip--on]="filter() === 'all'" (click)="setFilter('all')">
+      {{ 'recitations.filterAll' | translate }}
+    </button>
+    <span class="spacer"></span>
+    <input
+      type="search"
+      name="search"
+      [(ngModel)]="search"
+      (keyup.enter)="goTo(1)"
+      [placeholder]="'recitations.search' | translate"
+      style="max-width: 240px"
+    />
+  </div>
+
+  <div class="card card--flush">
+    @if (loading()) {
+      <div class="empty">{{ 'common.loading' | translate }}</div>
+    } @else if (rows().length === 0) {
+      <div class="empty">{{ 'recitations.empty' | translate }}</div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{{ 'categories.order' | translate }}</th>
+            <th>{{ 'recitations.name' | translate }}</th>
+            <th>{{ 'recitations.recordings' | translate }}</th>
+            <th>{{ 'recitations.timing' | translate }}</th>
+            <th>{{ 'broadcasts.status' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.sortOrder }}</td>
+              <td>
+                {{ row.name }}
+                @if (row.isFeatured) {
+                  <span class="badge badge--warn" style="margin-inline-start: 6px">{{ 'recitations.featured' | translate }}</span>
+                }
+                <div class="field__hint"><code dir="ltr">{{ row.key }}</code></div>
+              </td>
+              <td>{{ publishedCount(row) }} / {{ row.recitations.length }}</td>
+              <td>{{ timedCount(row) }}</td>
+              <td>
+                <span class="badge" [class.badge--ok]="row.isPublished" [class.badge--draft]="!row.isPublished">
+                  {{ (row.isPublished ? 'common.published' : 'common.draft') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="row">
+                  <button type="button" class="btn btn--sm" (click)="edit(row)">{{ 'common.edit' | translate }}</button>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="remove(row)">
+                    {{ 'common.delete' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (pages() > 1) {
+    <div class="row" style="margin-top: 10px; gap: 8px; justify-content: center">
+      <button type="button" class="btn btn--sm" [disabled]="page() === 1" (click)="goTo(page() - 1)">‹</button>
+      <span class="field__hint">{{ page() }} / {{ pages() }}</span>
+      <button type="button" class="btn btn--sm" [disabled]="page() === pages()" (click)="goTo(page() + 1)">›</button>
+    </div>
+  }
+</div>
+
+@if (editing(); as row) {
+  @if (form; as f) {
+    <div class="overlay" (click)="cancel()">
+      <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="save()" style="max-width: 760px">
+        <div class="dialog__head">
+          <h2>{{ row.name }}</h2>
+        </div>
+
+        @if (dialogError(); as message) {
+          <div class="notice notice--error">{{ message | translate }}</div>
+        }
+
+        <div class="grid cols-2">
+          <div class="field">
+            <label>{{ 'categories.order' | translate }}</label>
+            <input type="number" name="sortOrder" [(ngModel)]="f.sortOrder" />
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <label class="checkbox">
+              <input type="checkbox" name="isFeatured" [(ngModel)]="f.isFeatured" />
+              {{ 'recitations.featured' | translate }}
+            </label>
+            <div class="field__hint">{{ 'recitations.featuredHint' | translate }}</div>
+          </div>
+          <div class="field" style="grid-column: 1 / -1">
+            <label>{{ 'recitations.image' | translate }}</label>
+            <input type="url" name="imageUrl" [(ngModel)]="f.imageUrl" dir="ltr" />
+            <div class="field__hint">{{ 'recitations.imageHint' | translate }}</div>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <label class="checkbox">
+              <input type="checkbox" name="isPublished" [(ngModel)]="f.isPublished" />
+              {{ 'common.published' | translate }}
+            </label>
+          </div>
+        </div>
+
+        <app-translations-editor
+          [languages]="languages()"
+          [(translations)]="f.translations"
+          titleLabel="recitations.name"
+        />
+
+        <h3 style="margin: 16px 0 6px">{{ 'recitations.recordings' | translate }}</h3>
+        <div class="field__hint" style="margin-bottom: 8px">{{ 'recitations.recordingsHint' | translate }}</div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{ 'recitations.recording' | translate }}</th>
+              <th>{{ 'recitations.surahs' | translate }}</th>
+              <th>{{ 'recitations.timing' | translate }}</th>
+              <th>{{ 'recitations.source' | translate }}</th>
+              <th>{{ 'common.published' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (recording of row.recitations; track recording.id) {
+              <tr>
+                <td>
+                  {{ recording.name }}
+                  <div><code dir="ltr" style="font-size: 10px; color: var(--faint)">{{ recording.serverUrl }}</code></div>
+                </td>
+                <td>{{ recording.surahCount }}</td>
+                <td>
+                  <span class="badge" [class.badge--ok]="recording.hasTiming" [class.badge--draft]="!recording.hasTiming">
+                    {{ (recording.hasTiming ? 'recitations.timingYes' : 'recitations.timingNo') | translate }}
+                  </span>
+                </td>
+                <td>{{ recording.sourceName }}</td>
+                <td>
+                  <input type="checkbox" [checked]="recording.isPublished" (change)="toggleRecording(recording)" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="dialog__actions">
+          <button type="button" class="btn" (click)="cancel()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn--primary" [disabled]="saving()">{{ 'common.save' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  }
+}

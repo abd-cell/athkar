@@ -589,6 +589,49 @@ Three things this settles:
   about 8 MB in total, and justifies by stretching the space between words where
   the press stretches the letters. `tools/quran-package/` builds either.
 
+### 7.5 Recitations (الاستماع)
+
+Recorded recitation comes from a publisher — mp3quran.net today — and the rules
+are about keeping three things apart: the **catalogue** (ours), the **audio**
+(theirs), and the **choice of what to offer** (an editor's).
+
+- **The server keeps the catalogue and nothing else.** A `Reciter` has
+  `Recitation`s (a publisher's «مصحف»: «حفص عن عاصم - مرتل»); each is a folder
+  URL, a surah list and an optional ayah-timing id. No audio is stored or
+  relayed here. Reciters ride the catalogue payload like radio stations, so the
+  list browses offline and `ContentVersion` is the sync.
+- **The phone fetches audio and timing from the publisher directly.** Surah `n`
+  is `ServerUrl + n:000 + ".mp3"`; timing is `TimingUrl + n`. The server never
+  sees what anybody listens to — there is no endpoint that could be told.
+- **That has a privacy cost, and the reader is told it — in the FAQ, not in a
+  dialog.** The publisher sees the reader's IP address and the surah requested.
+  The Privacy section of the FAQ says so (seeded on existing databases too, by
+  question, never resurrecting one an editor deleted), and a downloaded surah
+  never asks the publisher again. A confirmation in front of the first listen
+  was tried and removed at the product owner's request.
+- **The publisher is credited as the source in the FAQ** (Qur'an section, «من أين
+  تأتي التلاوات الصوتية؟»), and in the lock-screen media metadata. The player
+  itself carries no credit line, at the product owner's request. The credit is `Mp3Quran:SourceName` /
+  `SourceUrl`. Whether the publisher's terms permit a given deployment's use is
+  for that deployment to settle with them; the console says so above the sync.
+- **A sync writes drafts and never publishes.** It moves only the publisher's own
+  facts (folder URL, surah list, timing) on existing rows; names, portrait,
+  featured flag, order and the published switch are the editor's. A reciter an
+  editor deleted is skipped; a recording the publisher dropped is reported, not
+  withdrawn. Applying a sync is Admin; curating is Editor.
+- **A reciter cannot be published with nothing to play**, and withdrawing his last
+  published recording withdraws him — the catalogue would drop him anyway, and a
+  switch that lies is worse than one that turns itself off.
+- **Timing belongs to a recording, not to a reciter.** One of a reciter's
+  recordings can have it and another not. Without it the player says «لا يوجد
+  توقيت لهذه التلاوة» and hides verse tracking and custom-range repeat, which
+  cannot work without knowing where an ayah begins.
+- **Portraits are optional and never synced.** The publisher supplies none, a
+  photograph carries rights of its own, and a reciter without one is drawn by his
+  initial.
+- **Downloading is always the reader's tap, one surah at a time.** A whole
+  recording is a gigabyte or more.
+
 ---
 
 ## 8. Broadcasts

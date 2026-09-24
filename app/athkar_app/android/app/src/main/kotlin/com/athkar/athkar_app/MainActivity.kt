@@ -1,7 +1,7 @@
 package com.athkar.athkar_app
 
 import android.hardware.GeomagneticField
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
@@ -15,8 +15,13 @@ import io.flutter.plugin.common.MethodChannel
  * noticing. See `lib/core/true_heading.dart` for the whole reasoning.
  *
  * iOS needs no equivalent: `CLHeading.trueHeading` is already corrected.
+ *
+ * It extends [AudioServiceActivity] rather than `FlutterActivity` directly —
+ * that is a `FlutterActivity` whose engine the background audio service can
+ * share, which is what lets a recitation keep playing, and be controlled
+ * from the lock screen, after the activity has gone.
  */
-class MainActivity : FlutterActivity() {
+class MainActivity : AudioServiceActivity() {
     private companion object {
         const val GEOMAGNETIC_CHANNEL = "athkari/geomagnetic"
     }

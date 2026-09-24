@@ -1007,6 +1007,219 @@ namespace Athkar.Migrations
                     b.ToTable("RadioStationTranslations");
                 });
 
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.Recitation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ExternalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReciterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServerUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SourceUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("SurahList")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("TimingReadId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalId");
+
+                    b.HasIndex("ReciterId");
+
+                    b.ToTable("Recitations", (string)null);
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.RecitationTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("RecitationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecitationId", "LanguageCode")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("RecitationTranslations");
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.Reciter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ExternalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalId");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("SortOrder");
+
+                    b.ToTable("Reciters", (string)null);
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.ReciterTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ReciterId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReciterId", "LanguageCode")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("ReciterTranslations");
+                });
+
             modelBuilder.Entity("Athkar.Areas.Domain.Reminders.PushDispatch", b =>
                 {
                     b.Property<int>("Id")
@@ -1803,6 +2016,39 @@ namespace Athkar.Migrations
                     b.Navigation("Station");
                 });
 
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.Recitation", b =>
+                {
+                    b.HasOne("Athkar.Areas.Domain.Recitations.Reciter", "Reciter")
+                        .WithMany("Recitations")
+                        .HasForeignKey("ReciterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reciter");
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.RecitationTranslation", b =>
+                {
+                    b.HasOne("Athkar.Areas.Domain.Recitations.Recitation", "Recitation")
+                        .WithMany("Translations")
+                        .HasForeignKey("RecitationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recitation");
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.ReciterTranslation", b =>
+                {
+                    b.HasOne("Athkar.Areas.Domain.Recitations.Reciter", "Reciter")
+                        .WithMany("Translations")
+                        .HasForeignKey("ReciterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reciter");
+                });
+
             modelBuilder.Entity("Athkar.Areas.Domain.Reminders.PushDispatch", b =>
                 {
                     b.HasOne("Athkar.Areas.Domain.Notifications.Broadcast", "Broadcast")
@@ -1940,6 +2186,18 @@ namespace Athkar.Migrations
 
             modelBuilder.Entity("Athkar.Areas.Domain.Radio.RadioStation", b =>
                 {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.Recitation", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("Athkar.Areas.Domain.Recitations.Reciter", b =>
+                {
+                    b.Navigation("Recitations");
+
                     b.Navigation("Translations");
                 });
 

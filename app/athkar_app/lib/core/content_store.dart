@@ -21,6 +21,7 @@ class ContentStore {
 
   static const _kCatalog = 'content.catalog';
   static const _kRadios = 'content.radios';
+  static const _kReciters = 'content.reciters';
   static const _kVersion = 'content.version';
   static const _kLanguage = 'content.language';
 
@@ -37,8 +38,19 @@ class ContentStore {
   bool get isEmpty => categories.isEmpty;
 
   /// Whether a sync is needed for [language] at [serverVersion].
+  ///
+  /// A cache that has never held the reciters is out of date whatever its
+  /// version says: an install that updates to a build which knows about them
+  /// would otherwise be told "nothing has changed" by a server whose version
+  /// has not moved since, and show an empty listening tab until an editor
+  /// happened to publish something.
   bool needsSync(String language, int serverVersion) =>
-      languageCode != language || version != serverVersion || isEmpty;
+      languageCode != language ||
+      version != serverVersion ||
+      !isComplete;
+
+  /// Whether the cache holds every part of the payload this build reads.
+  bool get isComplete => !isEmpty && _prefs.containsKey(_kReciters);
 
   List<AthkarCategory> get categories {
     final raw = _prefs.getString(_kCatalog);
@@ -73,6 +85,29 @@ class ContentStore {
     }
   }
 
+  /// The published reciters, as last synced — browsable offline.
+  List<Reciter> get reciters {
+    final raw = _prefs.getString(_kReciters);
+    if (raw == null) return const [];
+
+    try {
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      return [
+        for (final entry in decoded) Reciter.fromJson(entry as Map<String, dynamic>),
+      ];
+    } on FormatException {
+      _prefs.remove(_kReciters);
+      return const [];
+    }
+  }
+
+  Reciter? reciterByKey(String key) {
+    for (final reciter in reciters) {
+      if (reciter.key == key) return reciter;
+    }
+    return null;
+  }
+
   Future<void> save(Catalog catalog) async {
     await _prefs.setString(
       _kCatalog,
@@ -83,6 +118,11 @@ class ContentStore {
     await _prefs.setString(
       _kRadios,
       jsonEncode([for (final station in catalog.radios) station.toJson()]),
+    );
+    // Written even when empty, for the same reason as the stations.
+    await _prefs.setString(
+      _kReciters,
+      jsonEncode([for (final reciter in catalog.reciters) reciter.toJson()]),
     );
     await _prefs.setInt(_kVersion, catalog.version);
     await _prefs.setString(_kLanguage, catalog.languageCode);

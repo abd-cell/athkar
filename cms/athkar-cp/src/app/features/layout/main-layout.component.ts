@@ -47,6 +47,7 @@ export class MainLayoutComponent {
         { path: 'categories', key: 'nav.categories' },
         { path: 'adhkar', key: 'nav.adhkar' },
         { path: 'radio', key: 'nav.radio' },
+        { path: 'recitations', key: 'nav.recitations' },
         { path: 'languages', key: 'nav.languages', adminOnly: true },
         { path: 'quran', key: 'nav.quran', adminOnly: true },
       ],

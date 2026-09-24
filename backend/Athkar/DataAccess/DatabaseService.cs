@@ -8,6 +8,7 @@ using Athkar.Areas.Domain.Logging;
 using Athkar.Areas.Domain.Notifications;
 using Athkar.Areas.Domain.Quran;
 using Athkar.Areas.Domain.Radio;
+using Athkar.Areas.Domain.Recitations;
 using Athkar.Areas.Domain.Reminders;
 using Athkar.Areas.Domain.Staff;
 using Athkar.Areas.Domain.Support;
@@ -35,6 +36,10 @@ public class DatabaseService : DbContext
     public DbSet<DhikrTranslation> DhikrTranslations => Set<DhikrTranslation>();
     public DbSet<RadioStation> RadioStations => Set<RadioStation>();
     public DbSet<RadioStationTranslation> RadioStationTranslations => Set<RadioStationTranslation>();
+    public DbSet<Reciter> Reciters => Set<Reciter>();
+    public DbSet<ReciterTranslation> ReciterTranslations => Set<ReciterTranslation>();
+    public DbSet<Recitation> Recitations => Set<Recitation>();
+    public DbSet<RecitationTranslation> RecitationTranslations => Set<RecitationTranslation>();
 
     // ── Localisation ──
     public DbSet<AppLanguage> Languages => Set<AppLanguage>();

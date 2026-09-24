@@ -200,7 +200,10 @@ class AppState extends ChangeNotifier {
 
     final response = await Api.content.catalog(
       language: language,
-      knownVersion: content.languageCode == language ? content.version : null,
+      // No known version when the cache predates a field the payload now
+      // carries: the server would answer "up to date" and send nothing,
+      // which is exactly the state this sync exists to leave.
+      knownVersion: content.languageCode == language && content.isComplete ? content.version : null,
     );
 
     final catalog = response.data;

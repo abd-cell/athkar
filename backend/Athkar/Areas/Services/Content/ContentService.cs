@@ -2,9 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Athkar.Areas.Domain.Configuration;
 using Athkar.Areas.Domain.Content;
 using Athkar.Areas.Domain.Radio;
+using Athkar.Areas.Domain.Recitations;
 using Athkar.Areas.Services.Content.Models;
 using Athkar.Areas.Services.Localization;
 using Athkar.Areas.Services.Radio.Models;
+using Athkar.Areas.Services.Recitations;
+using Athkar.Areas.Services.Recitations.Models;
+using Microsoft.Extensions.Options;
+using Athkar.Shareds.Models.Config;
 using Athkar.DataAccess.Repositories;
 using Athkar.Shareds.Constants;
 using Athkar.Shareds.Extensions;
@@ -18,6 +23,8 @@ public class ContentService : IContentService
     private readonly IRepository<AthkarCategory> categories;
     private readonly IRepository<Dhikr> adhkar;
     private readonly IRepository<RadioStation> stations;
+    private readonly IRepository<Reciter> reciters;
+    private readonly Mp3QuranSettings mp3quran;
     private readonly IRepository<AppConfiguration> configurations;
     private readonly ILanguageResolver languages;
 
@@ -25,12 +32,16 @@ public class ContentService : IContentService
         IRepository<AthkarCategory> categories,
         IRepository<Dhikr> adhkar,
         IRepository<RadioStation> stations,
+        IRepository<Reciter> reciters,
         IRepository<AppConfiguration> configurations,
-        ILanguageResolver languages)
+        ILanguageResolver languages,
+        IOptions<Mp3QuranSettings> mp3quran)
     {
         this.categories = categories;
         this.adhkar = adhkar;
         this.stations = stations;
+        this.reciters = reciters;
+        this.mp3quran = mp3quran.Value;
         this.configurations = configurations;
         this.languages = languages;
     }
@@ -83,6 +94,8 @@ public class ContentService : IContentService
             })
             .ToListAsync();
 
+        var readers = await Reciters(language);
+
         var catalog = new CatalogOutput
         {
             Version = version,
@@ -124,9 +137,71 @@ public class ContentService : IContentService
                     SortOrder = row.Station.SortOrder,
                 }),
             ],
+            Reciters = readers,
         };
 
         return new BaseResponse<CatalogOutput>(catalog);
+    }
+
+    /// <summary>
+    /// Published reciters with at least one published recording, names resolved
+    /// into the requested language and then Arabic. Loaded whole and shaped in
+    /// memory: two nested translation sets do not project cleanly into one SQL
+    /// statement, and the list is a few hundred rows at the very most.
+    /// </summary>
+    private async Task<List<ReciterOutput>> Reciters(string language)
+    {
+        var rows = await reciters.Query()
+            .Where(r => r.IsPublished)
+            .Include(r => r.Translations)
+            .Include(r => r.Recitations).ThenInclude(x => x.Translations)
+            .ToListAsync();
+
+        string Pick<T>(IEnumerable<T> translations, Func<T, string> name, string fallback)
+            where T : Shareds.Models.Base.TranslationEntity
+        {
+            var live = translations.Where(t => !t.IsDeleted).ToList();
+            return live.FirstOrDefault(t => t.LanguageCode == language) is { } exact ? name(exact)
+                : live.FirstOrDefault(t => t.LanguageCode == ContentRules.SourceLanguage) is { } arabic ? name(arabic)
+                : fallback;
+        }
+
+        var timingRoot = mp3quran.BaseUrl.TrimEnd('/');
+
+        return
+        [
+            .. rows
+                .Select(r => new ReciterOutput
+                {
+                    Id = r.Id,
+                    Key = r.Key,
+                    Name = Pick(r.Translations, t => t.Name, r.Key),
+                    ImageUrl = r.ImageUrl,
+                    IsFeatured = r.IsFeatured,
+                    SortOrder = r.SortOrder,
+                    Recitations =
+                    [
+                        .. r.Recitations
+                            .Where(x => !x.IsDeleted && x.IsPublished)
+                            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+                            .Select(x => new RecitationOutput
+                            {
+                                Id = x.Id,
+                                Name = Pick(x.Translations, t => t.Name, $"#{x.Id}"),
+                                ServerUrl = x.ServerUrl,
+                                Surahs = RecitationSurahs.Parse(x.SurahList),
+                                TimingUrl = x.TimingReadId is { } read
+                                    ? $"{timingRoot}/ayat_timing?read={read}&surah="
+                                    : null,
+                                SourceName = x.SourceName,
+                                SourceUrl = x.SourceUrl,
+                                SortOrder = x.SortOrder,
+                            }),
+                    ],
+                })
+                .Where(r => r.Recitations.Count > 0)
+                .OrderBy(r => r.SortOrder).ThenBy(r => r.Id),
+        ];
     }
 
     public async Task<BaseResponse<PageOutput<SearchHitOutput>>> Search(string? languageCode, PageInput input)

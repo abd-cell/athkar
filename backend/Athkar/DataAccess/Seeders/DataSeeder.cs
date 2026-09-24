@@ -47,6 +47,7 @@ public static class DataSeeder
         await SeedRadio(db);
         await SeedReminders(db);
         await SeedFaq(db);
+        await SeedRecitationFaq(db);
     }
 
     private static async Task SeedLanguages(DatabaseService db)
@@ -790,4 +791,135 @@ public static class DataSeeder
 
         await db.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// What a reader should know about the recitations: where the audio comes
+    /// from (the FAQ is where the publisher is credited — the player does not
+    /// carry the credit), what that publisher's servers can see, and why the
+    /// verse tracker is missing for some recordings.
+    ///
+    /// Not part of <see cref="SeedFaq"/>, which only ever runs on an empty
+    /// table: these arrived with the listening feature, and every database that
+    /// already has an FAQ — which is all of them — would otherwise never get
+    /// them. So each entry is added once, keyed on its Arabic question, and a
+    /// deleted one counts as present: an editor who removed it meant to.
+    ///
+    /// An entry whose wording this seeder wrote earlier is brought up to date —
+    /// but only while its answer is still exactly what the seeder wrote. The
+    /// moment an editor has touched it, it is theirs, and this leaves it alone.
+    /// </summary>
+    private static async Task SeedRecitationFaq(DatabaseService db)
+    {
+        var entries = new RecitationFaq[]
+        {
+            new(FaqCategory.Privacy,
+                "عند الاستماع إلى تلاوة، من يعلم بذلك؟",
+                "التلاوات تُشغَّل وتُحمَّل مباشرةً من خوادم موقع MP3Quran (mp3quran.net)، لا من خوادمنا. ولذلك يرى الموقع عنوان IP جهازك والسورة التي طلبتها، كما يرى ذلك أي موقع تزوره. لا نرسل إليه شيئًا غير ذلك، ولا نعلم نحن ما تستمع إليه. وإن حمّلت السورة استمعت إليها بعد ذلك دون أي اتصال.",
+                "When I listen to a recitation, who knows?",
+                "Recitations stream and download directly from the servers of MP3Quran (mp3quran.net), not from ours. That site therefore sees your device's IP address and which surah you asked for, as any website you visit would. Nothing else about you is sent to it, and we do not know what you listen to. Once you download a surah, you can listen to it with no connection at all.",
+                SupersededAr:
+                [
+                    "التلاوات تُشغَّل وتُحمَّل مباشرةً من خوادم ناشرها — واسمه مكتوب تحت كل تلاوة وفي المشغّل — لا من خوادمنا. ولذلك يرى الناشر عنوان IP جهازك والسورة التي طلبتها، كما يرى ذلك أي موقع تزوره. لا نرسل إليه شيئًا غير ذلك، ولا نعلم نحن ما تستمع إليه. وإن حمّلت السورة استمعت إليها بعد ذلك دون أي اتصال.",
+                ],
+                SupersededEn:
+                [
+                    "Recitations stream and download directly from their publisher's servers — named under every recitation and in the player — not from ours. The publisher therefore sees your device's IP address and which surah you asked for, as any website you visit would. Nothing else about you is sent to them, and we do not know what you listen to. Once you download a surah, you can listen to it with no connection at all.",
+                ]),
+
+            new(FaqCategory.Quran,
+                "من أين تأتي التلاوات الصوتية؟",
+                "المصدر: موقع MP3Quran (mp3quran.net)، وهو يوفّر تسجيلات مئات القرّاء بمختلف الروايات، والتسجيلات ملكٌ لناشرها. ويختار فريق المحتوى القرّاء والروايات المعروضة في التطبيق ويراجعها قبل نشرها، فلا يظهر تسجيل لم يُراجَع.",
+                "Where do the audio recitations come from?",
+                "Source: MP3Quran (mp3quran.net), which publishes recordings by hundreds of reciters across the riwayat; the recordings belong to their publisher. The content team chooses and reviews the reciters and riwayat offered in the app before publishing them, so no recording appears that has not been checked.",
+                SupersededAr:
+                [
+                    "من ناشرها المذكور اسمه تحت كل تلاوة وفي المشغّل، وأكثرها من موقع MP3Quran. ويختار فريق المحتوى القرّاء والروايات المعروضة في التطبيق ويراجعها قبل نشرها، فلا يظهر تسجيل لم يُراجَع.",
+                ],
+                SupersededEn:
+                [
+                    "From the publisher named under every recitation and in the player — most of them from MP3Quran. The content team chooses and reviews the reciters and riwayat offered in the app before publishing them, so no recording appears that has not been checked.",
+                ]),
+
+            new(FaqCategory.Quran,
+                "لماذا لا يتوفر تتبع الآيات مع بعض التلاوات؟",
+                "تتبع الآيات يحتاج إلى توقيت كل آية داخل التسجيل، وهذا التوقيت متاح لبعض التسجيلات دون بعض، حتى للقارئ الواحد. فإن لم يكن للتسجيل توقيت ظهرت عبارة «لا يوجد توقيت لهذه التلاوة»، وبقي الاستماع يعمل كما هو.",
+                "Why is verse tracking missing for some recitations?",
+                "Verse tracking needs the timing of every ayah inside the recording, and that timing exists for some recordings and not others — even for the same reciter. Where a recording has none, the player says so, and listening works exactly as before."),
+        };
+
+        // Deleted rows included, on purpose: see the summary.
+        var existing = await db.Set<FaqTranslation>()
+            .Where(t => t.LanguageCode == "ar")
+            .Select(t => new { t.FaqItemId, t.Question, t.IsDeleted })
+            .ToListAsync();
+
+        var changed = false;
+
+        foreach (var entry in entries)
+        {
+            var found = existing.FirstOrDefault(t => t.Question == entry.QuestionAr);
+
+            if (found is not null)
+            {
+                if (found.IsDeleted) continue;
+
+                var translations = await db.Set<FaqTranslation>()
+                    .Where(t => t.FaqItemId == found.FaqItemId && !t.IsDeleted)
+                    .ToListAsync();
+
+                foreach (var translation in translations)
+                {
+                    var (current, superseded) = translation.LanguageCode == "ar"
+                        ? (entry.AnswerAr, entry.SupersededAr)
+                        : translation.LanguageCode == "en"
+                            ? (entry.AnswerEn, entry.SupersededEn)
+                            : (null, null);
+
+                    if (current is null || superseded is null || !superseded.Contains(translation.Answer)) continue;
+
+                    translation.Answer = current;
+                    translation.ModificationDate = DateTime.UtcNow;
+                    changed = true;
+                }
+
+                continue;
+            }
+
+            var sortOrder = await db.FaqItems
+                .Where(f => f.Category == entry.Category)
+                .Select(f => (int?)f.SortOrder)
+                .MaxAsync() ?? -1;
+
+            var item = new FaqItem
+            {
+                Category = entry.Category,
+                SortOrder = sortOrder + 1,
+                IsPublished = true,
+            };
+            item.Translations.Add(new FaqTranslation
+            {
+                LanguageCode = "ar", Question = entry.QuestionAr, Answer = entry.AnswerAr,
+            });
+            item.Translations.Add(new FaqTranslation
+            {
+                LanguageCode = "en", Question = entry.QuestionEn, Answer = entry.AnswerEn,
+            });
+
+            db.FaqItems.Add(item);
+            changed = true;
+        }
+
+        if (changed) await db.SaveChangesAsync();
+    }
+
+    /// <param name="SupersededAr">Answers this seeder wrote before; only these are replaced.</param>
+    /// <param name="SupersededEn">The same, in English.</param>
+    private sealed record RecitationFaq(
+        FaqCategory Category,
+        string QuestionAr,
+        string AnswerAr,
+        string QuestionEn,
+        string AnswerEn,
+        string[]? SupersededAr = null,
+        string[]? SupersededEn = null);
 }
