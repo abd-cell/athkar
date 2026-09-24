@@ -87,10 +87,12 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<!-- A recitation keeps playing with the screen locked, with its controls on
-	     the lock screen. Audio only: no location, fetch or processing mode. -->
+	     the lock screen (audio); a pushed broadcast wakes the app's background
+	     handler (remote-notification). No location, fetch or processing mode. -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>

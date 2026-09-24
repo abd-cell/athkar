@@ -18,5 +18,15 @@
 	-->
 	<key>com.apple.developer.usernotifications.time-sensitive</key>
 	<true/>
+
+	<!--
+		Push Notifications. Without it iOS never issues an APNs token, so FCM has
+		nothing to map a registration token to and every broadcast and fixed-time
+		reminder is dropped on the floor. "development" is correct in the source
+		file: Xcode rewrites it to "production" when the archive is exported for
+		the App Store.
+	-->
+	<key>aps-environment</key>
+	<string>development</string>
 </dict>
 </plist>
